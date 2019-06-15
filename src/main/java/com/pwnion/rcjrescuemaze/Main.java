@@ -9,20 +9,21 @@ import com.pwnion.rcjrescuemaze.global.searching.pathing.Pathing;
 
 public class Main {
 	@Inject
-	static SharedData sharedData;
+	private static SharedData sharedData;
 	
 	@Inject
-	static Pathing pathing;
+	private static Pathing pathing;
 	
 	@Inject
-	static Searching searching;
+	private static Searching searching;
 	
 	@Inject
-	static Survivors survivors;
+	private static Survivors survivors;
 	
 	public static void main(String[] args) {
 		Injector injector = Guice.createInjector(new MainBinder());
 
+		sharedData = injector.getInstance(SharedData.class);
 		pathing = injector.getInstance(Pathing.class);
 		searching = injector.getInstance(Searching.class);
 		survivors = injector.getInstance(Survivors.class);

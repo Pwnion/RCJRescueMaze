@@ -10,7 +10,7 @@ public class SharedData {
 	//LIST VISITED: (Location, 4 bits for walls, 1 bit for Corner, 1 bit for Silver)
 	private ArrayList<VisitedTileData> visited = new ArrayList<VisitedTileData>();
 			
-	//LIST UNVISTED: (Location)
+	//LIST UNVISTED: (Location, distance)
 	private ArrayList<UnvisitedTileData> unvisited = new ArrayList<UnvisitedTileData>();
 			
 	//LAST SILVER TILE: (Location)
