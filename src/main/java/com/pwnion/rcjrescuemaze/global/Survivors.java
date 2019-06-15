@@ -1,5 +1,6 @@
 package com.pwnion.rcjrescuemaze.global;
 
 public class Survivors {
-	//What does this do?
+	//Search for any survivors
+	//If found using Infared check using colour
 }
