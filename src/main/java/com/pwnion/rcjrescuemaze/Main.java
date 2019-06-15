@@ -2,17 +2,22 @@ package com.pwnion.rcjrescuemaze;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
 
 public class Main {
 	
-	//LIST VISITED: (Location, Distance, 4 bits for walls, 1 bit for Corner, 1 bit for Silver)
-	ArrayList<HashMap<HashMap<Integer, Integer>,Boolean[6]>> visited;
+	//LIST VISITED: (Location, 4 bits for walls, 1 bit for Corner, 1 bit for Silver)
+	ArrayList<HashMap<HashMap<Integer, Integer>, Integer>> visited;
 	
 	//LIST UNVISTED: (Location)
 	ArrayList<HashMap<Integer, Integer>> unvisited;
 	
 	//LAST SILVER TILE: (Location)
 	HashMap<Integer, Integer> lastSilverTile;
+	
+	//CURRENT POSITION: (Location)
+	HashMap<Integer, Integer> currentPosition;
 
 	public static void main(String[] args) {
 		//This is probably important

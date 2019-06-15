@@ -6,15 +6,15 @@ public class Pathing {
 	//Move from point A to B
 	//Requires Knowledge on walls and tiles visited
 	
-	private static String generatePath(int A,int B) {
+	private static ArrayList<String> generatePath(int A,int B) {
 		//{Function: Generate Path from [A] to [B]
 		//(Insert Pathing Algorithm) Generates Path
 		//}Return [Path]
-		ArrayList<String> Path;
+		ArrayList<String> Path = null;
 		return Path; 
 	}
 
-	private static void moveByPath(String Path) {//{Function: Move using [Path]
+	private static void moveByPath(ArrayList<String> Path) {//{Function: Move using [Path]
 		
 		for (String direction: Path) {
 			Move(direction);//Use path to Move 1 tile (Use DrivingMotors.java {Function: Move 1 tile in [Direction]})
