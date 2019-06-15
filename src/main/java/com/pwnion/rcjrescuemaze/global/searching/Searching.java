@@ -5,14 +5,11 @@ public class Searching {
 	//Will find Distance from unvisited tiles and find which one is the closest.
 	
 	private static void findMoveUnvisited() {
-		//Search adjacent tiles to find obstacles, walls and unvisited tiles
-		//Add any found items to respective lists
-		//
-		//Calculate any new corners found and add to list
-		//
-		//Calculate distance to unvisited tiles and update each with new distance value (Uses Pathing.java functions)
-		//
 		//Find closest unvisited tiles
+		//(Use generatePath(A,B).Length to find 
+		
+		
 		//Randomly chose from closest unvisited tiles and send value to Pathing to move to.
+		
 	}
 }

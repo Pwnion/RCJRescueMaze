@@ -12,16 +12,20 @@ public class Pathing {
 		return Path; 
 	}
 
-	private static void moveByPath(String Path) {
-		//{Function: Move using [Path]
-		//
-		//	{Use path to Move 1 tile (Use DrivingMotors.java {Function: Move 1 tile in [Direction]})
-		//
+	private static void moveByPath(String Path) {//{Function: Move using [Path]
+		
+		for (String direction: Path) {
+			Move(direction);//Use path to Move 1 tile (Use DrivingMotors.java {Function: Move 1 tile in [Direction]})
+
 		//	Log any discrepancies with rotation or position 
 		//	If over tolerance levels repathing may be required
-		//	
+
 		//	After moving 1 tile check for Silver tiles and update last visited silver (if required)
 		//	(This process does not happen physically and just checks Silver tile list vs Current Position)
-		//	}Repeat until end of path
+			if (currentPostion == visted.silverTile) {
+				lastSilverTile = currentPostion
+			}
+
+		}//Repeat until end of path
 	}
 }
