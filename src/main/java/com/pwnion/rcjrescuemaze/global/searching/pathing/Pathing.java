@@ -9,7 +9,7 @@ public class Pathing implements SharedData {
 	//Move from point A to B
 	//Requires Knowledge on walls and tiles visited
 	
-	private static ArrayList<String> generatePath(HashMap coords) {
+	public static ArrayList<String> generatePath(HashMap coords) {
 		//{Function: Generate Path from [A] to [B]
 		//(Insert Pathing Algorithm) Generates Path
 		//}Return [Path]

@@ -2,16 +2,19 @@ package com.pwnion.rcjrescuemaze;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.pwnion.rcjrescuemaze.global.searching.pathing.Pathing;
 
 public class Main implements SharedData {
 	public static void main(String[] args) {
 		Injector injector = Guice.createInjector(new MainBinder());
+		Pathing pathing = new Pathing();
+		Searching searching = new Searching();
 
 		//This is probably important
 		
 		while (unvisited.size() > 0) {//While there are unvisited tiles
 		//Call upon searching function to find and move to next tile
-		findMoveUnvisited();
+		searching.findMoveUnvisited();
 		
 		//Move current tile to visited
 		//Search adjacent tiles to find obstacles, walls and unvisited tiles
@@ -20,7 +23,7 @@ public class Main implements SharedData {
 		
 		//Calculate distance to unvisited tiles and update each with new distance value (Uses Pathing.java functions)
 		for (UnvisitedTileData unvisitedTile: unvisited) {
-			unvisitedTile.setDistance(generatePath(unvisitedTile.getCoords()).size());
+			unvisitedTile.setDistance(pathing.generatePath(unvisitedTile.getCoords()).size());
 		}
 
 		//Detect for any problems in orientation or position (Mainly checks any information that may have been logged during Pathing)
