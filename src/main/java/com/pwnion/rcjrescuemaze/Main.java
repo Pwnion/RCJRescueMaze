@@ -11,10 +11,10 @@ import com.google.inject.Injector;
 public class Main {
 	
 	//LIST VISITED: (Location, 4 bits for walls, 1 bit for Corner, 1 bit for Silver)
-	ArrayList<HashMap<HashMap<Integer, Integer>, Integer>> visited;
+	ArrayList<VisitedTileData()> visited;
 	
 	//LIST UNVISTED: (Location)
-	ArrayList<HashMap<Integer, Integer>> unvisited;
+	ArrayList<UnvisitedTileData()> unvisited;
 	
 	//LAST SILVER TILE: (Location)
 	HashMap<Integer, Integer> lastSilverTile;
