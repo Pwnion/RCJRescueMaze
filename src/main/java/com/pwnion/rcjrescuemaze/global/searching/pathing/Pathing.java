@@ -2,7 +2,9 @@ package com.pwnion.rcjrescuemaze.global.searching.pathing;
 
 import java.util.ArrayList;
 
-public class Pathing {
+import com.pwnion.rcjrescuemaze.SharedData;
+
+public class Pathing implements SharedData {
 	//Move from point A to B
 	//Requires Knowledge on walls and tiles visited
 	
