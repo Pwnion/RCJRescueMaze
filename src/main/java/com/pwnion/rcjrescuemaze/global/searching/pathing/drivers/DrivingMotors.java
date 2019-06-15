@@ -1,5 +1,12 @@
 package com.pwnion.rcjrescuemaze.global.searching.pathing.drivers;
 
-public class DrivingMotors implements Pins {
+import com.google.inject.Inject;
+
+public class DrivingMotors {
+	Pins pins;
 	
+	@Inject
+	DrivingMotors(Pins pins) {
+		this.pins = pins;
+	}
 }

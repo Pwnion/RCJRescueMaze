@@ -11,7 +11,7 @@ import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import com.pi4j.io.gpio.RaspiPin;
 
 @Singleton
-public interface Pins {
+public class Pins {
 	//Initialise GpioController for the Pi4J Library
 	final GpioController gpio = GpioFactory.getInstance();
 	
