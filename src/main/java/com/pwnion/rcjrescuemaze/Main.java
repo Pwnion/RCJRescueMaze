@@ -6,7 +6,7 @@ import java.util.HashMap;
 public class Main {
 	
 	//LIST VISITED: (Location, Distance, 4 bits for walls, 1 bit for Corner, 1 bit for Silver)
-	ArrayList<HashMap<Integer, Integer>, Boolean, Boolean, Boolean, Boolean, Boolean, Boolean> visited;
+	ArrayList<HashMap<HashMap<Integer, Integer>,Boolean[6]>> visited;
 	
 	//LIST UNVISTED: (Location)
 	ArrayList<HashMap<Integer, Integer>> unvisited;
