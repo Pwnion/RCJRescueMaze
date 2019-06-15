@@ -17,7 +17,7 @@ public class Pathing implements SharedData {
 		return Path; 
 	}
 
-	private static void moveByPath(ArrayList<String> Path) {//{Function: Move using [Path]
+	public static void moveByPath(ArrayList<String> Path) {//{Function: Move using [Path]
 		
 		for (String direction: Path) {
 			Move(direction);//Use path to Move 1 tile (Use DrivingMotors.java {Function: Move 1 tile in [Direction]})
