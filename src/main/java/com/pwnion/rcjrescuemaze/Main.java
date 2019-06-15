@@ -1,20 +1,23 @@
 package com.pwnion.rcjrescuemaze;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class Main {
 	
 	//LIST VISITED: (Location, Distance, 4 bits for walls, 1 bit for Corner, 1 bit for Silver)
 	
 	//LIST UNVISTED: (Location)
-	
-	//LIST OBSTACLES: (Location)
+	ArrayList<HashMap<Integer, Integer>> unvisited;
 	
 	//LAST SILVER TILE: (Location)
+	HashMap<Integer, Integer> lastSilverTile;
 
 	public static void main(String[] args) {
 		//This is probably important
 		
-		while () {//While there are unvisited tiles
-		//{Call upon searching function to find and move to next tile
+		while (unvisited.length > 0) {//While there are unvisited tiles
+		//Call upon searching function to find and move to next tile
 		findMoveUnvisited();
 		
 		//Move current tile to visited

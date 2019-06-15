@@ -1,5 +1,7 @@
 package com.pwnion.rcjrescuemaze.global.searching.pathing;
 
+import java.util.ArrayList;
+
 public class Pathing {
 	//Move from point A to B
 	//Requires Knowledge on walls and tiles visited
@@ -8,7 +10,7 @@ public class Pathing {
 		//{Function: Generate Path from [A] to [B]
 		//(Insert Pathing Algorithm) Generates Path
 		//}Return [Path]
-		String Path = "Path";
+		ArrayList<String> Path;
 		return Path; 
 	}
 
