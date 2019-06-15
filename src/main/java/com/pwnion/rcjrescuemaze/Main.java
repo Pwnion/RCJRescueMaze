@@ -10,7 +10,7 @@ public class Main {
 		//
 		//{Call upon searching function to find and move to next tile
 		//
-		//Detect for any problems in orientation or position
+		//Detect for any problems in orientation or position (Mainly checks any information that may have been logged during Pathing)
 		//
 		//Call upon Survivors function to search for any survivors and detect them
 		//
