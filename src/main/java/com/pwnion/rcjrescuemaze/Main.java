@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 public class Main {
 	
 	//LIST VISITED: (Location, 4 bits for walls, 1 bit for Corner, 1 bit for Silver)
@@ -20,6 +23,8 @@ public class Main {
 	HashMap<Integer, Integer> currentPosition;
 
 	public static void main(String[] args) {
+		Injector injector = Guice.createInjector(new MainBinder());
+
 		//This is probably important
 		
 		while (unvisited.length > 0) {//While there are unvisited tiles

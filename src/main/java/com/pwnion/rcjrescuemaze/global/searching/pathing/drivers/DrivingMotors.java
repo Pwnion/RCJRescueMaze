@@ -1,6 +1,7 @@
 package com.pwnion.rcjrescuemaze.global.searching.pathing.drivers;
 
-public class DrivingMotors {
+
+public class DrivingMotors implements Pins {
 	//Vroom Vroom
 	
 	//{Function: (Move 1 tile in [Direction])
