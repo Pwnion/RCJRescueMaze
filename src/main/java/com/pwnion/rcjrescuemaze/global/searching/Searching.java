@@ -5,7 +5,7 @@ import com.pwnion.rcjrescuemaze.SharedData;
 import com.pwnion.rcjrescuemaze.UnvisitedTileData;
 
 public class Searching {
-	SharedData sharedData;
+	private final SharedData sharedData;
 	
 	@Inject
 	Searching(SharedData sharedData) {

@@ -6,7 +6,7 @@ import com.pwnion.rcjrescuemaze.SharedData;
 public class Survivors {
 	//Search for any survivors
 	
-	SharedData sharedData;
+	private final SharedData sharedData;
 	
 	@Inject
 	Survivors(SharedData sharedData) {

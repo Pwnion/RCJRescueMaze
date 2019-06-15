@@ -8,12 +8,13 @@ import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.GpioPinAnalogOutput;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
+import com.pi4j.io.gpio.GpioPinPwmOutput;
 import com.pi4j.io.gpio.RaspiPin;
 
 @Singleton
 public class Pins {
 	//Initialise GpioController for the Pi4J Library
-	final GpioController gpio = GpioFactory.getInstance();
+	private final GpioController gpio = GpioFactory.getInstance();
 	
 	//Provision digital ultrasonic output (trig) pins and populate a hashmap with them based on their position on the robot
 	final HashMap<String, GpioPinDigitalOutput> sendPins = new HashMap<String, GpioPinDigitalOutput>() {
@@ -59,14 +60,14 @@ public class Pins {
 		}
 	};
 	
-	//Provision analog motor output (EN(A/B)) pins and populate a hashmap with them based on their position on the robot
-	final HashMap<String, GpioPinAnalogOutput> speedPins = new HashMap<String, GpioPinAnalogOutput>() {
+	//Provision PWM motor output (EN(A/B)) pins and populate a hashmap with them based on their position on the robot
+	final HashMap<String, GpioPinPwmOutput> speedPins = new HashMap<String, GpioPinPwmOutput>() {
 		private static final long serialVersionUID = 1L;
 		{
-			put("front_left", gpio.provisionAnalogOutputPin(RaspiPin.GPIO_00));
-			put("back_left", gpio.provisionAnalogOutputPin(RaspiPin.GPIO_00));
-			put("back_right", gpio.provisionAnalogOutputPin(RaspiPin.GPIO_00));
-			put("front_right", gpio.provisionAnalogOutputPin(RaspiPin.GPIO_00));
+			put("front_left", gpio.provisionSoftPwmOutputPin(RaspiPin.GPIO_00));
+			put("back_left", gpio.provisionSoftPwmOutputPin(RaspiPin.GPIO_00));
+			put("back_right", gpio.provisionSoftPwmOutputPin(RaspiPin.GPIO_00));
+			put("front_right", gpio.provisionSoftPwmOutputPin(RaspiPin.GPIO_00));
 		}
 	};
 }

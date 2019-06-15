@@ -5,16 +5,19 @@ import java.util.HashMap;
 
 import com.google.inject.Inject;
 import com.pwnion.rcjrescuemaze.SharedData;
+import com.pwnion.rcjrescuemaze.global.searching.pathing.drivers.DrivingMotors;
 
 public class Pathing {
 	//Move from point A to B
 	//Requires Knowledge on walls and tiles visited
 	
-	SharedData sharedData;
+	private final SharedData sharedData;
+	private final DrivingMotors drivingMotors;
 	
 	@Inject
-	Pathing(SharedData sharedData) {
+	Pathing(SharedData sharedData, DrivingMotors drivingMotors) {
 		this.sharedData = sharedData;
+		this.drivingMotors = drivingMotors;
 	}
 	
 	
@@ -27,8 +30,8 @@ public class Pathing {
 	}
 
 	private void moveByPath(ArrayList<String> Path) {//{Function: Move using [Path]
-		for (String direction: Path) {
-			//move(direction); //Use path to Move 1 tile (Use DrivingMotors.java {Function: Move 1 tile in [Direction]})
+		for (String direction : Path) {
+			drivingMotors.move(direction);
 
 			//Log any discrepancies with rotation or position 
 			//If over tolerance levels repathing may be required

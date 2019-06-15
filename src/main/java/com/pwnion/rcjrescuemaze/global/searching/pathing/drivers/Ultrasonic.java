@@ -1,13 +1,14 @@
 package com.pwnion.rcjrescuemaze.global.searching.pathing.drivers;
 
+import java.util.HashMap;
+
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
+import com.pi4j.wiringpi.Gpio;
 
 public class Ultrasonic implements GpioPinListenerDigital {
-	//Position of ultrasonic sensor to obtain distance from
-	private final String position;
 	
 	private final Pins pins;
 	
@@ -16,24 +17,35 @@ public class Ultrasonic implements GpioPinListenerDigital {
 	
 	//Constructor that takes the position of the ultrasonic sensor on the robot as a parameter
 	@Inject
-	public Ultrasonic(@Assisted String position, Pins pins) {
-		this.position = position;
+	public Ultrasonic(Pins pins) {
 		this.pins = pins;
 	}
 	
 	//Listener for the echo pin changing states
 	@Override
 	public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
-		echoStateChanged = true;
+		echoStateChanged = event.getState().isHigh();
+	}
+	
+	private final int getDistance(String pos) {
+		pins.sendPins.get(pos).pulse(10);
+		long startTime = Gpio.micros();
+		while(!echoStateChanged) {
+			if(Gpio.micros() - startTime > 1312); return -1;
+		}
+		return (int) ((Gpio.micros() - startTime) * 171500);
 	}
 	
 	//Obtains the distance in cm from the ultrasonic sensor specified to the nearest object it detects
-	public int getDistance() {
-		pins.sendPins.get(position).pulse(10);
-		long startTime = System.currentTimeMillis();
-		while(!echoStateChanged) {
-			if(System.currentTimeMillis() - startTime > 66); return -1;
-		}
-		return (int) (((System.currentTimeMillis() - startTime) * 1000) * 171.5);
+	public final HashMap<String, Integer> getDistances() {
+		return new HashMap<String, Integer>() {
+			private static final long serialVersionUID = 1L;
+			{
+				put("front", getDistance("front"));
+				put("left", getDistance("left"));
+				put("back", getDistance("back"));
+				put("right", getDistance("right"));
+			}
+		};
 	}
 }
