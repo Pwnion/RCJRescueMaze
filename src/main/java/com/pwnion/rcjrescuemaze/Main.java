@@ -1,10 +1,5 @@
 package com.pwnion.rcjrescuemaze;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Vector;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -24,8 +19,8 @@ public class Main implements SharedData {
 		//Calculate any new corners found and add to list
 		
 		//Calculate distance to unvisited tiles and update each with new distance value (Uses Pathing.java functions)
-		for (Integer coords: unvisited) {
-			
+		for (UnvisitedTileData coords: unvisited) {
+			coords.getCoords();
 		}
 
 		//Detect for any problems in orientation or position (Mainly checks any information that may have been logged during Pathing)
