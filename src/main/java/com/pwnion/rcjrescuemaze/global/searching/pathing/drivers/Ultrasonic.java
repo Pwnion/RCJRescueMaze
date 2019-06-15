@@ -9,7 +9,7 @@ public class Ultrasonic implements Pins, GpioPinListenerDigital {
 	final String position;
 	boolean echoStateChanged;
 	
-	Ultrasonic(String position) {
+	public Ultrasonic(String position) {
 		this.position = position;
 	}
 	
@@ -18,13 +18,13 @@ public class Ultrasonic implements Pins, GpioPinListenerDigital {
 		echoStateChanged = true;
 	}
 	
-	long startTime, endTime;
-	
 	int getDistance() {
 		sendPins.get(position).pulse(10);
-		startTime = System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
 		while(!echoStateChanged) {
-			if(System.currentTimeMillis() - startTime > 4081);
+			if(System.currentTimeMillis() - startTime > 66); return -1;
 		}
+		return (int) ((System.currentTimeMillis() - startTime) / )
+		
 	}
 }
