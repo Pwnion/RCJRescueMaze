@@ -11,6 +11,7 @@ public class Searching implements SharedData {
 		//(Use generatePath(A,B).Length to find 
 		
 		
+		
 		//Randomly chose from closest unvisited tiles and send value to Pathing to move to.
 	}
 }

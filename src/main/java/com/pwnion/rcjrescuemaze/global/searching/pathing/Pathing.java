@@ -21,11 +21,11 @@ public class Pathing implements SharedData {
 		for (String direction: Path) {
 			Move(direction);//Use path to Move 1 tile (Use DrivingMotors.java {Function: Move 1 tile in [Direction]})
 
-		//	Log any discrepancies with rotation or position 
-		//	If over tolerance levels repathing may be required
+			//Log any discrepancies with rotation or position 
+			//If over tolerance levels repathing may be required
 
-		//	After moving 1 tile check for Silver tiles and update last visited silver (if required)
-		//	(This process does not happen physically and just checks Silver tile list vs Current Position)
+			//After moving 1 tile check for Silver tiles and update last visited silver (if required)
+			//(This process does not happen physically and just checks Silver tile list vs Current Position)
 			if (currentPostion == visted.silverTile) {
 				lastSilverTile = currentPostion
 			}
