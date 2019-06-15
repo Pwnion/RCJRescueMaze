@@ -8,14 +8,8 @@ public class Pathing {
 		//{Function: Generate Path from [A] to [B]
 		//(Insert Pathing Algorithm) Generates Path
 		//}Return [Path]
-		return Path
-	}
-	
-	private static int findDistance(String Path) {
-		//{Function: Find Distance using [Path]
-		//Find Distance using [Path]
-		//}Return [Distance]
-		return Distance
+		String Path = "Path";
+		return Path; 
 	}
 
 	private static void moveByPath(String Path) {
