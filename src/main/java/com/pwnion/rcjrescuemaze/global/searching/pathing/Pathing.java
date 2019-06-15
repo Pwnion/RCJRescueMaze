@@ -17,7 +17,8 @@ public class Pathing {
 		this.sharedData = sharedData;
 	}
 	
-	public ArrayList<String> generatePath(HashMap coords) {
+	
+	public ArrayList<String> generatePath(HashMap<Integer, Integer> coords) {
 		//{Function: Generate Path from [A] to [B]
 		//(Insert Pathing Algorithm) Generates Path
 		//}Return [Path]
@@ -26,7 +27,6 @@ public class Pathing {
 	}
 
 	private void moveByPath(ArrayList<String> Path) {//{Function: Move using [Path]
-		
 		for (String direction: Path) {
 			//move(direction); //Use path to Move 1 tile (Use DrivingMotors.java {Function: Move 1 tile in [Direction]})
 

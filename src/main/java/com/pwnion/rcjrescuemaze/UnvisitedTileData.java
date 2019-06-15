@@ -11,15 +11,15 @@ public class UnvisitedTileData {
 		this.distance = distance;
 	}
 	
-	HashMap<Integer, Integer> getCoords() {
+	public HashMap<Integer, Integer> getCoords() {
 		return coords;
 	}
 	
-	int getDistance() {
+	public int getDistance() {
 		return distance;
 	}
 	
-	void setDistance(int distance) {
+	public void setDistance(int distance) {
 		this.distance = distance;
 	}
 }
