@@ -16,17 +16,16 @@ public class Searching {
 	//Will find Distance from unvisited tiles and find which one is the closest.
 	public void findMoveUnvisited() {
 		
-	}
+		UnvisitedTileData closestTile = sharedData.getUnvisited().get(0);
 	
-	//Find closest unvisited tile
-	UnvisitedTileData closestTile = sharedData.getUnvisited().get(0);
-	
-	for(UnvisitedTileData unvisitedTileData : sharedData.getUnvisited()) {
-		if(unvisitedTileData.getDistance() < closestTile.getDistance()) {
-			closestTile = unvisitedTileData;
+		//Find closest unvisited tile
+		for(UnvisitedTileData unvisitedTileData : sharedData.getUnvisited()) {
+			if(unvisitedTileData.getDistance() < closestTile.getDistance()) {
+				closestTile = unvisitedTileData;
+			}	
 		}
-	}
 		
 	//Randomly chose from closest unvisited tiles and send value to Pathing to move to.
 	//moveByPath(generatePath(closestTile.getCoords()));
+	}
 }
