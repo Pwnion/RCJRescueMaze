@@ -1,15 +1,29 @@
 package com.pwnion.rcjrescuemaze;
 
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.pwnion.rcjrescuemaze.global.Survivors;
+import com.pwnion.rcjrescuemaze.global.searching.Searching;
 import com.pwnion.rcjrescuemaze.global.searching.pathing.Pathing;
 
 public class Main implements SharedData {
+	@Inject
+	static Pathing pathing;
+	
+	@Inject
+	static Searching searching;
+	
+	@Inject
+	static Survivors survivors;
+	
 	public static void main(String[] args) {
 		Injector injector = Guice.createInjector(new MainBinder());
-		Pathing pathing = new Pathing();
-		Searching searching = new Searching();
 
+		pathing = injector.getInstance(Pathing.class);
+		searching = injector.getInstance(Searching.class);
+		survivors = injector.getInstance(Survivors.class);
+		
 		//This is probably important
 		
 		while (unvisited.size() > 0) {//While there are unvisited tiles
