@@ -17,5 +17,4 @@ public class Searching {
 	//Randomly chose from closest unvisited tiles and send value to Pathing to move to.
 	//
 	//End
-	
 }

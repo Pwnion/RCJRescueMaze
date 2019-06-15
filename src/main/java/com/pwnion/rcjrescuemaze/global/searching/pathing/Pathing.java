@@ -4,16 +4,20 @@ public class Pathing {
 	//Move from point A to B
 	//Requires Knowledge on walls and tiles visited
 	
-	//Pseudo Code:
-	//
-	//{Function: Generate Path from [A] to [B]
-	//(Insert Pathing Algorithm) Generates Path
-	//}Return [Path]
-	//
-	//{Function: Find Distance using [Path]
-	//Find Distance using [Path]
-	//}Return [Distance]
-	//
+	private static String generatePath (int A,int B) {
+		//{Function: Generate Path from [A] to [B]
+		//(Insert Pathing Algorithm) Generates Path
+		//}Return [Path]
+		return Path
+	}
+	
+	private static String findDistance (int A,int B) {
+		//{Function: Find Distance using [Path]
+		//Find Distance using [Path]
+		//}Return [Distance]
+		return Distance
+	}
+
 	//{Function: Move using [Path]
 	//
 	//	{Use path to Move 1 tile (Use DrivingMotors.java {Function: Move 1 tile in [Direction]})
