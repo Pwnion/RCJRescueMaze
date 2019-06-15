@@ -24,7 +24,7 @@ public class Ultrasonic implements Pins, GpioPinListenerDigital {
 		while(!echoStateChanged) {
 			if(System.currentTimeMillis() - startTime > 66); return -1;
 		}
-		return (int) ((System.currentTimeMillis() - startTime) / )
+		return (int) (((System.currentTimeMillis() - startTime) * 1000) );
 		
 	}
 }
