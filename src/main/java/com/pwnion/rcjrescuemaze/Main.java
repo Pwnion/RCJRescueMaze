@@ -9,25 +9,23 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 public class Main {
-	
-	//LIST VISITED: (Location, 4 bits for walls, 1 bit for Corner, 1 bit for Silver)
-	ArrayList<VisitedTileData()> visited;
-	
-	//LIST UNVISTED: (Location)
-	ArrayList<UnvisitedTileData()> unvisited;
-	
-	//LAST SILVER TILE: (Location)
-	HashMap<Integer, Integer> lastSilverTile;
-	
-	//CURRENT POSITION: (Location)
-	HashMap<Integer, Integer> currentPosition;
 
 	public static void main(String[] args) {
 		Injector injector = Guice.createInjector(new MainBinder());
 
-		//This is probably important
+		//LIST VISITED: (Location, 4 bits for walls, 1 bit for Corner, 1 bit for Silver)
+		ArrayList<VisitedTileData> visited;
 		
-		while (unvisited.length > 0) {//While there are unvisited tiles
+		//LIST UNVISTED: (Location)
+		ArrayList<UnvisitedTileData> unvisited;
+		
+		//LAST SILVER TILE: (Location)
+		HashMap<Integer, Integer> lastSilverTile;
+		
+		//CURRENT POSITION: (Location)
+		HashMap<Integer, Integer> currentPosition;
+		
+		while (unvisited.size() > 0) {//While there are unvisited tiles
 		//Call upon searching function to find and move to next tile
 		findMoveUnvisited();
 		
