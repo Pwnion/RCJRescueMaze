@@ -1,6 +1,7 @@
 package com.pwnion.rcjrescuemaze.global.searching.pathing;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.pwnion.rcjrescuemaze.SharedData;
 
@@ -8,7 +9,7 @@ public class Pathing implements SharedData {
 	//Move from point A to B
 	//Requires Knowledge on walls and tiles visited
 	
-	private static ArrayList<String> generatePath(int A,int B) {
+	private static ArrayList<String> generatePath(HashMap coords) {
 		//{Function: Generate Path from [A] to [B]
 		//(Insert Pathing Algorithm) Generates Path
 		//}Return [Path]

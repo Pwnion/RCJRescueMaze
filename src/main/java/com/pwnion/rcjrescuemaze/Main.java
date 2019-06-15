@@ -20,7 +20,7 @@ public class Main implements SharedData {
 		
 		//Calculate distance to unvisited tiles and update each with new distance value (Uses Pathing.java functions)
 		for (UnvisitedTileData coords: unvisited) {
-			coords.getCoords();
+			coords.setDistance(generatePath(coords.getCoords()).size());
 		}
 
 		//Detect for any problems in orientation or position (Mainly checks any information that may have been logged during Pathing)
