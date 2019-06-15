@@ -23,6 +23,8 @@ public class Ultrasonic implements Pins, GpioPinListenerDigital {
 	int getDistance() {
 		sendPins.get(position).pulse(10);
 		startTime = System.currentTimeMillis();
-		while(echoStateChanged )
+		while(!echoStateChanged) {
+			if(System.currentTimeMillis() - startTime > 4081);
+		}
 	}
 }
