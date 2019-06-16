@@ -3,7 +3,6 @@ package com.pwnion.rcjrescuemaze.global.searching.pathing.drivers;
 import java.util.HashMap;
 
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import com.pi4j.wiringpi.Gpio;
