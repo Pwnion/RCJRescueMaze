@@ -1,11 +1,15 @@
 package com.pwnion.rcjrescuemaze;
 
+import java.util.ArrayList;
+
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.pwnion.rcjrescuemaze.global.Survivors;
+import com.pwnion.rcjrescuemaze.global.searching.FindWalls;
 import com.pwnion.rcjrescuemaze.global.searching.Searching;
 import com.pwnion.rcjrescuemaze.global.searching.pathing.Pathing;
+import com.pwnion.rcjrescuemaze.global.searching.pathing.drivers.Colour;
 
 public class Main {
 	@Inject
@@ -20,6 +24,12 @@ public class Main {
 	@Inject
 	private static Survivors survivors;
 	
+	@Inject
+	private static FindWalls findWalls;
+	
+	@Inject
+	private static Colour colour;
+	
 	public static void main(String[] args) {
 		Injector injector = Guice.createInjector(new MainBinder());
 
@@ -27,16 +37,31 @@ public class Main {
 		pathing = injector.getInstance(Pathing.class);
 		searching = injector.getInstance(Searching.class);
 		survivors = injector.getInstance(Survivors.class);
+		findWalls = injector.getInstance(FindWalls.class);
+		colour = injector.getInstance(Colour.class);
 		
-		while(sharedData.getUnvisited().size() > 0) {
 		//While there are unvisited tiles
+		while(sharedData.getUnvisited().size() > 0) {
+		
 		//Call upon searching function to find and move to next tile
 		searching.findMoveUnvisited();
 		
-		//Move current tile to visited
+		//Remove current tile from unvisited
+		sharedData.removeUnvisited(sharedData.getCurrentPos());
+		
 		//Search adjacent tiles to find obstacles, walls and unvisited tiles
-		//Add any found items to respective lists
+		ArrayList<Boolean> walls = findWalls.find();
+		
 		//Calculate any new corners found and add to list
+		boolean corner = false;
+		for (int i = 0; i < 4; ++i) {
+			if (walls.get(i) == true && walls.get(i + 1) == true) {
+				corner = true;
+			}
+	    }
+		
+		//Add current tile to visited
+		sharedData.appendVisited(VisitedTileData(sharedData.getCurrentPos(),walls,corner,colour.checkSilver()));
 		
 		//Calculate distance to unvisited tiles and update each with new distance value (Uses Pathing.java functions)
 		for (UnvisitedTileData unvisitedTile: sharedData.getUnvisited()) {
@@ -46,6 +71,7 @@ public class Main {
 		//Detect for any problems in orientation or position (Mainly checks any information that may have been logged during Pathing)
 
 		//Call upon Survivors function to search for any survivors and detect them
+		survivors.checkWalls();
 
 		}
 		
