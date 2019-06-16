@@ -39,7 +39,7 @@ public class Main {
 		//Calculate any new corners found and add to list
 		
 		//Calculate distance to unvisited tiles and update each with new distance value (Uses Pathing.java functions)
-		for (UnvisitedTileData unvisitedTile: sharedData.getUnvisited()) {
+		for (UnvisitedTileData unvisitedTile : sharedData.getUnvisited()) {
 			unvisitedTile.setDistance(pathing.generatePath(unvisitedTile.getCoords()).size());
 		}
 
