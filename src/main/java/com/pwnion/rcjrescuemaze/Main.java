@@ -29,6 +29,9 @@ public class Main {
 	
 	@Inject
 	private static Colour colour;
+
+	@Inject
+	private static VisitedTileData visitedTileData;
 	
 	public static void main(String[] args) {
 		Injector injector = Guice.createInjector(new MainBinder());
@@ -39,6 +42,7 @@ public class Main {
 		survivors = injector.getInstance(Survivors.class);
 		findWalls = injector.getInstance(FindWalls.class);
 		colour = injector.getInstance(Colour.class);
+		visitedTileData = injector.getInstance(VisitedTileData.class);
 		
 		//While there are unvisited tiles
 		while(sharedData.getUnvisited().size() > 0) {
@@ -55,13 +59,13 @@ public class Main {
 		//Calculate any new corners found and add to list
 		boolean corner = false;
 		for (int i = 0; i < 4; ++i) {
-			if (walls.get(i) == true && walls.get(i + 1) == true) {
+			if (walls.get(i) && walls.get(i + 1)) {
 				corner = true;
 			}
 	    }
 		
 		//Add current tile to visited
-		sharedData.appendVisited(VisitedTileData(sharedData.getCurrentPos(),walls,corner,colour.checkSilver()));
+		sharedData.appendVisited(new VisitedTileData(sharedData.getCurrentPos(),walls,corner,colour.checkSilver()));
 		
 		//Calculate distance to unvisited tiles and update each with new distance value (Uses Pathing.java functions)
 		for (UnvisitedTileData unvisitedTile : sharedData.getUnvisited()) {
