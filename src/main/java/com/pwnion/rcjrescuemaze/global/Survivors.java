@@ -14,7 +14,7 @@ public class Survivors {
 	}
 	
 	public void checkWalls() {
-		//use infared to scan walls
+		//use infared sensor to scan walls
 		sharedData.getVisited().contains()
 	}
 }
