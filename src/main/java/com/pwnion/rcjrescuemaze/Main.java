@@ -61,7 +61,7 @@ public class Main {
 	    }
 		
 		//Add current tile to visited
-		sharedData.appendVisited(VisitedTileData(sharedData.getCurrentPos(),walls,corner,colour.checkSilver()));
+		sharedData.appendVisited(new VisitedTileData(sharedData.getCurrentPos(),walls,corner,colour.checkSilver()));
 		
 		//Calculate distance to unvisited tiles and update each with new distance value (Uses Pathing.java functions)
 		for (UnvisitedTileData unvisitedTile: sharedData.getUnvisited()) {
