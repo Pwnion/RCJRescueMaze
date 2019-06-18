@@ -1,7 +1,9 @@
 package com.pwnion.rcjrescuemaze.global.searching.pathing;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.inject.Inject;
@@ -11,8 +13,6 @@ import com.pwnion.rcjrescuemaze.VisitedTileData;
 import com.pwnion.rcjrescuemaze.global.searching.pathing.drivers.DrivingMotors;
 
 public class Pathing {
-	//Move from point A to B
-	//Requires Knowledge on walls and tiles visited
 	
 	private final SharedData sharedData;
 	private final DrivingMotors drivingMotors;
@@ -24,7 +24,7 @@ public class Pathing {
 	}
 	
 	private Set<Coords> viableSurroundingCoords(Coords coords) {
-		final HashMap<Coords, Integer> viableCoords = new HashMap<Coords, Integer>() {
+		HashMap<Coords, Integer> viableCoords = new HashMap<Coords, Integer>() {
 			private static final long serialVersionUID = 1L;
 			{
 				put(new Coords(coords.getX() + 1, coords.getY()), 1);
@@ -60,20 +60,61 @@ public class Pathing {
 		return viableCoords.keySet();
 	}
 	
-	public ArrayList<String> generatePath(Coords coords) {
+	public HashMap<Coords, Integer> generatePath(Coords coords) {
 		HashMap<Coords, Integer> map = new HashMap<Coords, Integer>();
+		HashSet<Coords> previousViableCoords = new HashSet<Coords>(Arrays.asList(coords));
 		int counter = 0;
 		do {
-			for(Coords coord : viableSurroundingCoords(coords)) {
+			HashSet<Coords> combinedCoords = new HashSet<Coords>();
+			for(Coords coord : previousViableCoords) {
+				combinedCoords.addAll(viableSurroundingCoords(coord));
+			}
+			
+			for(Coords coord : combinedCoords) {
 				map.put(coord, counter);
 			}
+			
+			if(combinedCoords.contains(sharedData.getCurrentPos())) return map;
+			
+			previousViableCoords = combinedCoords;
+			
 			counter++;
 		} while(true);
 	}
 
 	public void moveToCoords(Coords coords) {//{Function: Move using [Path]
-		for (String direction : generatePath(coords)) {
-			//Move 1 tile
+		HashMap<Coords, Integer> path = generatePath(coords);
+		while(sharedData.getCurrentPos() != coords) {
+			
+			ArrayList<Coords> surroundingCoords = new ArrayList<Coords>() {
+				private static final long serialVersionUID = 1L;
+				{
+					add(new Coords(coords.getX() + 1, coords.getY()));
+					add(new Coords(coords.getX() - 1, coords.getY()));
+					add(new Coords(coords.getX(), coords.getY() + 1));
+					add(new Coords(coords.getX(), coords.getY() - 1));
+				}
+			};
+			
+			ArrayList<String> directions = new ArrayList<String>() {
+				{
+					add("up");
+					add("left");
+					add("down");
+					add("right");
+				}
+			};
+			
+			String direction = "";
+			int smallestNumber = 100;
+			for(int i = 0; i < 4; i++) {
+				int tileValue = path.get(surroundingCoords.get(i));
+				if(tileValue < smallestNumber) {
+					smallestNumber = tileValue;
+					direction = directions.get(i);
+				}
+			}
+			
 			drivingMotors.move(direction);
 			
 			//Update current position

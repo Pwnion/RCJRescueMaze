@@ -69,7 +69,7 @@ public class Main {
 		
 			//Calculate distance to unvisited tiles and update each with new distance value (Uses Pathing.java functions)
 			for (UnvisitedTileData unvisitedTile : sharedData.getUnvisited()) {
-				unvisitedTile.setDistance(pathing.generatePath(unvisitedTile.getCoords()).size());
+				unvisitedTile.setDistance(pathing.generatePath(unvisitedTile.getCoords()).get(sharedData.getCurrentPos()));
 			}
 
 			//Detect for any problems in orientation or position (Mainly checks any information that may have been logged during Pathing)
