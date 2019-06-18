@@ -31,6 +31,6 @@ public class Searching {
 		}
 		
 		//Randomly chose from closest unvisited tiles and send value to Pathing to move to.
-		pathing.moveByPath(pathing.generatePath(closestTile.getCoords()));
+		pathing.moveToCoords(closestTile.getCoords());
 	}
 }

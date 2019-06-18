@@ -58,8 +58,8 @@ public class Main {
 		
 			//Calculate any new corners found and add to list
 			boolean corner = false;
-			for (int i = 0; i < 4; ++i) {
-				if (walls.get(i) && walls.get(i + 1)) {
+			for (int i = 0; i < 4; i++) {
+				if (walls.get(i) && walls.get(i == 3 ? 0 : i + 1)) {
 					corner = true;
 				}
 	    	}

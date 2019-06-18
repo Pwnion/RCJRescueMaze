@@ -1,6 +1,7 @@
 package com.pwnion.rcjrescuemaze.global.searching.pathing;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.google.inject.Inject;
 import com.pwnion.rcjrescuemaze.Coords;
@@ -21,15 +22,12 @@ public class Pathing {
 	}
 	
 	public ArrayList<String> generatePath(Coords coords) {
-		//{Function: Generate Path from [A] to [B]
-		//(Insert Pathing Algorithm) Generates Path
-		//}Return [Path]
-		ArrayList<String> Path = null;
-		return Path; 
+		HashMap<Coords, Integer> map = new HashMap<Coords, Integer>();
+		
 	}
 
-	public void moveByPath(ArrayList<String> Path) {//{Function: Move using [Path]
-		for (String direction : Path) {
+	public void moveToCoords(Coords coords) {//{Function: Move using [Path]
+		for (String direction : generatePath(coords)) {
 			//Move 1 tile
 			drivingMotors.move(direction);
 			
