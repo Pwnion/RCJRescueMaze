@@ -12,4 +12,9 @@ public class Survivors {
 	Survivors(SharedData sharedData) {
 		this.sharedData = sharedData;
 	}
+	
+	public void checkWalls() {
+		//use infared sensor to scan walls
+		sharedData.getVisited().contains()
+	}
 }

@@ -16,7 +16,7 @@ public class FindWalls {
 	//Search using sensors to find walls
 	
 	public ArrayList<Boolean> find() {
-		ArrayList<Boolean> walls = null;
+		ArrayList<Boolean> walls = new ArrayList<Boolean>();
 		
 		return walls;
 	}
