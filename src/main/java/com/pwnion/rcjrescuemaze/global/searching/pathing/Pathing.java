@@ -31,7 +31,22 @@ public class Pathing {
 
 	public void moveByPath(ArrayList<String> Path) {//{Function: Move using [Path]
 		for (String direction : Path) {
+			//Move 1 tile
 			drivingMotors.move(direction);
+			
+			//Update current position
+			switch(direction) {
+			  case "up":
+				  sharedData.setCurrentPos(sharedData.getCurrentPos().);
+			    break;
+			  case "down":
+			    // code block
+			    break;
+			  case "left":
+			    // code block
+			  case "right":
+			}
+			sharedData.setCurrentPos();
 
 			//Log any discrepancies with rotation or position 
 			//If over tolerance levels repathing may be required
