@@ -5,19 +5,19 @@ import java.util.ArrayList;
 import com.google.inject.Inject;
 import com.pwnion.rcjrescuemaze.SharedData;
 
-public class FindWalls {
+public class SearchArea {
 	private final SharedData sharedData;
 	
 	@Inject
-	FindWalls(SharedData sharedData) {
+	SearchArea(SharedData sharedData) {
 		this.sharedData = sharedData;
 	}
 	
-	//Search using sensors to find walls
 	
-	public ArrayList<Boolean> find() {
+	
+	public ArrayList<Boolean> search() {
 		ArrayList<Boolean> walls = null;
-		
+		//Search using sensors to find walls and hence find unvisited tiles
 		return walls;
 	}
 }
