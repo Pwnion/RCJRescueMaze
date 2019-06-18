@@ -1,9 +1,9 @@
 package com.pwnion.rcjrescuemaze.global.searching.pathing;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.google.inject.Inject;
+import com.pwnion.rcjrescuemaze.Coords;
 import com.pwnion.rcjrescuemaze.SharedData;
 import com.pwnion.rcjrescuemaze.global.searching.pathing.drivers.DrivingMotors;
 
@@ -20,8 +20,7 @@ public class Pathing {
 		this.drivingMotors = drivingMotors;
 	}
 	
-	
-	public ArrayList<String> generatePath(int[] coords) {
+	public ArrayList<String> generatePath(Coords coords) {
 		//{Function: Generate Path from [A] to [B]
 		//(Insert Pathing Algorithm) Generates Path
 		//}Return [Path]
@@ -35,20 +34,19 @@ public class Pathing {
 			drivingMotors.move(direction);
 			
 			//Update current position
-			int[] newPos = new int[1];
-			newPos = sharedData.getCurrentPos();
+			Coords newPos = new Coords(sharedData.getCurrentPos());
 			switch(direction) {
 			  case "up":
-				newPos[1] += 1;
+				newPos.addY(1);
 			    break;
 			  case "down":
-			    newPos[1] -= 1;
+			    newPos.addY(-1);
 			    break;
 			  case "left":
-				newPos[0] -= 1;
+				newPos.addX(-1);
 				break;
 			  case "right":
-				newPos[0] += 1;
+				newPos.addX(1);
 				break;
 			}
 			sharedData.setCurrentPos(newPos);
