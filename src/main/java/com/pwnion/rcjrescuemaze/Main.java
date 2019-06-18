@@ -6,7 +6,6 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.pwnion.rcjrescuemaze.global.Survivors;
-import com.pwnion.rcjrescuemaze.global.searching.FindWalls;
 import com.pwnion.rcjrescuemaze.global.searching.SearchArea;
 import com.pwnion.rcjrescuemaze.global.searching.Searching;
 import com.pwnion.rcjrescuemaze.global.searching.pathing.Pathing;
