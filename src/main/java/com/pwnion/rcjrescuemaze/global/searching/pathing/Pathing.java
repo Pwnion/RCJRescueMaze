@@ -34,7 +34,7 @@ public class Pathing {
 			drivingMotors.move(direction);
 			
 			//Update current position
-			Coords newPos = new Coords(sharedData.getCurrentPos());
+			Coords newPos = sharedData.getCurrentPos();
 			switch(direction) {
 			  case "up":
 				newPos.addY(1);
