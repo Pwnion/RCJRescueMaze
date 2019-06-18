@@ -1,9 +1,9 @@
 package com.pwnion.rcjrescuemaze.global.searching.pathing;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.google.inject.Inject;
+import com.pwnion.rcjrescuemaze.Coords;
 import com.pwnion.rcjrescuemaze.SharedData;
 import com.pwnion.rcjrescuemaze.global.searching.pathing.drivers.DrivingMotors;
 
@@ -20,7 +20,7 @@ public class Pathing {
 		this.drivingMotors = drivingMotors;
 	}
 	
-	public ArrayList<String> generatePath(HashMap<Integer, Integer> coords) {
+	public ArrayList<String> generatePath(Coords coords) {
 		//{Function: Generate Path from [A] to [B]
 		//(Insert Pathing Algorithm) Generates Path
 		//}Return [Path]
@@ -30,7 +30,26 @@ public class Pathing {
 
 	public void moveByPath(ArrayList<String> Path) {//{Function: Move using [Path]
 		for (String direction : Path) {
+			//Move 1 tile
 			drivingMotors.move(direction);
+			
+			//Update current position
+			Coords newPos = sharedData.getCurrentPos();
+			switch(direction) {
+			  case "up":
+				newPos.addY(1);
+			    break;
+			  case "down":
+			    newPos.addY(-1);
+			    break;
+			  case "left":
+				newPos.addX(-1);
+				break;
+			  case "right":
+				newPos.addX(1);
+				break;
+			}
+			sharedData.setCurrentPos(newPos);
 
 			//Log any discrepancies with rotation or position 
 			//If over tolerance levels repathing may be required

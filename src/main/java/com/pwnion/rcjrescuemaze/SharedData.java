@@ -1,7 +1,6 @@
 package com.pwnion.rcjrescuemaze;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.google.inject.Singleton;
 
@@ -14,10 +13,10 @@ public class SharedData {
 	private ArrayList<UnvisitedTileData> unvisited = new ArrayList<UnvisitedTileData>();
 			
 	//LAST SILVER TILE: (Location)
-	private HashMap<Integer, Integer> lastSilverTile = new HashMap<Integer, Integer>();
+	private Coords lastSilverTile = new Coords(0, 0);
 			
 	//CURRENT POSITION: (Location)
-	private HashMap<Integer, Integer> currentPos = new HashMap<Integer, Integer>();
+	private Coords currentPos = new Coords(0, 0);
 	
 	public ArrayList<VisitedTileData> getVisited() {
 		return visited;
@@ -27,11 +26,11 @@ public class SharedData {
 		return unvisited;
 	}
 	
-	public HashMap<Integer, Integer> getLastSilverTile() {
+	public Coords getLastSilverTile() {
 		return lastSilverTile;
 	}
 	
-	public HashMap<Integer, Integer> getCurrentPos() {
+	public Coords getCurrentPos() {
 		return currentPos;
 	}
 
@@ -43,7 +42,7 @@ public class SharedData {
 		unvisited.add(unvisitedTileData);
 	}
 	
-	public void setUnvisited(HashMap<Integer, Integer> coords, int distance) {
+	public void setUnvisited(Coords coords, int distance) {
 		for(UnvisitedTileData unvisitedTileData : unvisited) {
 			if(unvisitedTileData.getCoords().equals(coords)) {
 				unvisitedTileData = new UnvisitedTileData(coords, distance);
@@ -52,7 +51,17 @@ public class SharedData {
 		}
 	}
 	
-	public void removeUnvisited(HashMap<Integer, Integer> coords) {
+	public void setUnvisited(int x, int y, int distance) {
+		Coords coords = new Coords(x, y);
+		for(UnvisitedTileData unvisitedTileData : unvisited) {
+			if(unvisitedTileData.getCoords().equals(coords)) {
+				unvisitedTileData = new UnvisitedTileData(coords, distance);
+				return;
+			}
+		}
+	}
+	
+	public void removeUnvisited(Coords coords) {
 		for(UnvisitedTileData unvisitedTileData : unvisited) {
 			if(unvisitedTileData.getCoords().equals(coords)) {
 				unvisited.remove(unvisitedTileData);
@@ -61,11 +70,28 @@ public class SharedData {
 		}
 	}
 	
-	public void setLastSilverTile(HashMap<Integer, Integer> coords) {
+	public void removeUnvisited(int x, int y) {
+		for(UnvisitedTileData unvisitedTileData : unvisited) {
+			if(unvisitedTileData.getCoords().equals(new Coords(x, y))) {
+				unvisited.remove(unvisitedTileData);
+				return;
+			}
+		}
+	}
+	
+	public void setLastSilverTile(Coords coords) {
 		lastSilverTile = coords;
 	}
 	
-	public void setCurrentPos(HashMap<Integer, Integer> coords) {
+	public void setLastSilverTile(int x, int y) {
+		lastSilverTile.set(x, y);
+	}
+	
+	public void setCurrentPos(Coords coords) {
 		currentPos = coords;
+	}
+	
+	public void setCurrentPos(int x, int y) {
+		currentPos.set(x, y);
 	}
 }

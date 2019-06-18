@@ -1,17 +1,15 @@
 package com.pwnion.rcjrescuemaze;
 
-import java.util.HashMap;
-
 public class UnvisitedTileData {
-	private final HashMap<Integer, Integer> coords;
+	private final Coords coords;
 	private int distance;
 	
-	UnvisitedTileData(HashMap<Integer, Integer> coords, int distance) {
+	UnvisitedTileData(Coords coords, int distance) {
 		this.coords = coords;
 		this.distance = distance;
 	}
 	
-	public HashMap<Integer, Integer> getCoords() {
+	public Coords getCoords() {
 		return coords;
 	}
 	

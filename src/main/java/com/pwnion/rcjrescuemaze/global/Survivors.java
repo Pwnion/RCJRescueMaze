@@ -16,6 +16,6 @@ public class Survivors {
 	}
 	
 	public void detect(ArrayList<Boolean> walls) {
-		//scan using infared sensor
+		//Scan using infared sensor
 	}
 }
