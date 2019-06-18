@@ -14,10 +14,10 @@ public class SharedData {
 	private ArrayList<UnvisitedTileData> unvisited = new ArrayList<UnvisitedTileData>();
 			
 	//LAST SILVER TILE: (Location)
-	private HashMap<Integer, Integer> lastSilverTile = new HashMap<Integer, Integer>();
+	private int[] lastSilverTile = new int[]();
 			
 	//CURRENT POSITION: (Location)
-	private HashMap<Integer, Integer> currentPos = new HashMap<Integer, Integer>();
+	private int[] currentPos = new int[]();
 	
 	public ArrayList<VisitedTileData> getVisited() {
 		return visited;
@@ -27,11 +27,11 @@ public class SharedData {
 		return unvisited;
 	}
 	
-	public HashMap<Integer, Integer> getLastSilverTile() {
+	public int[] getLastSilverTile() {
 		return lastSilverTile;
 	}
 	
-	public HashMap<Integer, Integer> getCurrentPos() {
+	public int[] getCurrentPos() {
 		return currentPos;
 	}
 
@@ -43,7 +43,7 @@ public class SharedData {
 		unvisited.add(unvisitedTileData);
 	}
 	
-	public void setUnvisited(HashMap<Integer, Integer> coords, int distance) {
+	public void setUnvisited(int[] coords, int distance) {
 		for(UnvisitedTileData unvisitedTileData : unvisited) {
 			if(unvisitedTileData.getCoords().equals(coords)) {
 				unvisitedTileData = new UnvisitedTileData(coords, distance);
@@ -52,7 +52,7 @@ public class SharedData {
 		}
 	}
 	
-	public void removeUnvisited(HashMap<Integer, Integer> coords) {
+	public void removeUnvisited(int[] coords) {
 		for(UnvisitedTileData unvisitedTileData : unvisited) {
 			if(unvisitedTileData.getCoords().equals(coords)) {
 				unvisited.remove(unvisitedTileData);
@@ -61,11 +61,11 @@ public class SharedData {
 		}
 	}
 	
-	public void setLastSilverTile(HashMap<Integer, Integer> coords) {
+	public void setLastSilverTile(int[] coords) {
 		lastSilverTile = coords;
 	}
 	
-	public void setCurrentPos(HashMap<Integer, Integer> coords) {
+	public void setCurrentPos(int[] coords) {
 		currentPos = coords;
 	}
 }

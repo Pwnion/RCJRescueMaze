@@ -21,7 +21,7 @@ public class Pathing {
 	}
 	
 	
-	public ArrayList<String> generatePath(HashMap<Integer, Integer> coords) {
+	public ArrayList<String> generatePath(int[] coords) {
 		//{Function: Generate Path from [A] to [B]
 		//(Insert Pathing Algorithm) Generates Path
 		//}Return [Path]
@@ -35,18 +35,23 @@ public class Pathing {
 			drivingMotors.move(direction);
 			
 			//Update current position
+			int[] newPos = new int[1];
+			newPos = sharedData.getCurrentPos();
 			switch(direction) {
 			  case "up":
-				  sharedData.setCurrentPos(sharedData.getCurrentPos().);
+				newPos[1] += 1;
 			    break;
 			  case "down":
-			    // code block
+			    newPos[1] -= 1;
 			    break;
 			  case "left":
-			    // code block
+				newPos[0] -= 1;
+				break;
 			  case "right":
+				newPos[0] += 1;
+				break;
 			}
-			sharedData.setCurrentPos();
+			sharedData.setCurrentPos(newPos);
 
 			//Log any discrepancies with rotation or position 
 			//If over tolerance levels repathing may be required
