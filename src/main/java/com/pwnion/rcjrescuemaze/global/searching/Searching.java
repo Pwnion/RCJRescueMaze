@@ -26,6 +26,7 @@ public class Searching {
 		for(UnvisitedTileData unvisitedTileData : sharedData.getUnvisited()) {
 			if(unvisitedTileData.getDistance() < closestTile.getDistance()) {
 				closestTile = unvisitedTileData;
+				break;
 			}	
 		}
 		
