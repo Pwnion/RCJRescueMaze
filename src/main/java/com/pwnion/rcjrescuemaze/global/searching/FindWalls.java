@@ -24,7 +24,7 @@ public class FindWalls {
 		ultrasonic.getDistances().values().forEach((distance) -> {
 			walls.add(distance <= 22.5 && distance != -1 ? true : false);
 		});
-
+		
 		return walls;
 	}
 }
