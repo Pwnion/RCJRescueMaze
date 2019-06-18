@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.google.inject.Inject;
 import com.pwnion.rcjrescuemaze.SharedData;
-import com.pwnion.rcjrescuemaze.VisitedTileData;
 
 public class Survivors {
 	//Search for any survivors
