@@ -23,18 +23,30 @@ public class SearchArea {
 		ArrayList<Boolean> walls = new ArrayList<Boolean>();
 		
 		//Search using sensors to find walls and hence find unvisited tiles
+		Integer count = 0;
 		for (Integer distance : ultrasonic.getDistances().values()) {
-			if (distance <= 22.5 && distance != -1) {
+			if (distance <= 22 && distance != -1) {
 				walls.add(true);
 			} else {
-				
+				walls.add(false);
+				ultrasonic.getDistances().keySet()
+					switch(direction) {
+						case "front":
+							newPos.addY(1);
+							break;
+						case "back":
+							newPos.addY(-1);
+							break;
+						case "left":
+							newPos.addX(-1);
+							break;
+						case "right":
+							newPos.addX(1);
+							break;
+					}
 			}
+			count += 1;
 		}
-		
-		ultrasonic.getDistances().values().forEach((distance) -> {
-			walls.add(distance <= 22.5 && distance != -1 ? true : false);
-		});
-		
 		return walls;
 	}
 }
