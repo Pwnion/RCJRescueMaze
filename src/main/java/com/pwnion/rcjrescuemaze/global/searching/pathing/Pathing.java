@@ -29,7 +29,7 @@ public class Pathing {
 		return Path; 
 	}
 
-	private void moveByPath(ArrayList<String> Path) {//{Function: Move using [Path]
+	public void moveByPath(ArrayList<String> Path) {//{Function: Move using [Path]
 		for (String direction : Path) {
 			drivingMotors.move(direction);
 
