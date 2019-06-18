@@ -1,7 +1,10 @@
 package com.pwnion.rcjrescuemaze.global;
 
+import java.util.ArrayList;
+
 import com.google.inject.Inject;
 import com.pwnion.rcjrescuemaze.SharedData;
+import com.pwnion.rcjrescuemaze.VisitedTileData;
 
 public class Survivors {
 	//Search for any survivors
@@ -13,8 +16,7 @@ public class Survivors {
 		this.sharedData = sharedData;
 	}
 	
-	public void checkWalls() {
-		//use infared to scan walls
-		sharedData.getVisited().contains()
+	public void detect(ArrayList<Boolean> walls) {
+		//scan using infared sensor
 	}
 }

@@ -34,7 +34,7 @@ public class SharedData {
 	public HashMap<Integer, Integer> getCurrentPos() {
 		return currentPos;
 	}
-	
+
 	public void appendVisited(VisitedTileData visitedTileData) {
 		visited.add(visitedTileData);
 	}

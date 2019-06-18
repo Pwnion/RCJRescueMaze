@@ -16,19 +16,19 @@ public class VisitedTileData {
 		this.silverTile = silverTile;
 	}
 	
-	HashMap<Integer, Integer> getCoords() {
+	public HashMap<Integer, Integer> getCoords() {
 		return coords;
 	}
 	
-	ArrayList<Boolean> getWalls() {
+	public ArrayList<Boolean> getWalls() {
 		return walls;
 	}
 	
-	boolean getCorner() {
+	public boolean getCorner() {
 		return corner;
 	}
 	
-	boolean getSilverTile() {
+	public boolean getSilverTile() {
 		return silverTile;
 	}
 }
