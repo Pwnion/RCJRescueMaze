@@ -20,7 +20,6 @@ public class Pathing {
 		this.drivingMotors = drivingMotors;
 	}
 	
-	
 	public ArrayList<String> generatePath(HashMap<Integer, Integer> coords) {
 		//{Function: Generate Path from [A] to [B]
 		//(Insert Pathing Algorithm) Generates Path
