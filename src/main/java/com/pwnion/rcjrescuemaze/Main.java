@@ -47,36 +47,35 @@ public class Main {
 		//While there are unvisited tiles
 		while(sharedData.getUnvisited().size() > 0) {
 		
-		//Call upon searching function to find and move to next tile
-		searching.findMoveUnvisited();
+			//Call upon searching function to find and move to next tile
+			searching.findMoveUnvisited();
 		
-		//Remove current tile from unvisited
-		sharedData.removeUnvisited(sharedData.getCurrentPos());
+			//Remove current tile from unvisited
+			sharedData.removeUnvisited(sharedData.getCurrentPos());
 		
-		//Search adjacent tiles to find obstacles, walls and unvisited tiles
-		ArrayList<Boolean> walls = findWalls.find();
+			//Search adjacent tiles to find obstacles, walls and unvisited tiles
+			ArrayList<Boolean> walls = findWalls.find();
 		
-		//Calculate any new corners found and add to list
-		boolean corner = false;
-		for (int i = 0; i < 4; ++i) {
-			if (walls.get(i) && walls.get(i + 1)) {
-				corner = true;
+			//Calculate any new corners found and add to list
+			boolean corner = false;
+			for (int i = 0; i < 4; ++i) {
+				if (walls.get(i) && walls.get(i + 1)) {
+					corner = true;
+				}
+	    	}
+		
+			//Add current tile to visited
+			sharedData.appendVisited(new VisitedTileData(sharedData.getCurrentPos(),walls,corner,colour.checkSilver()));
+		
+			//Calculate distance to unvisited tiles and update each with new distance value (Uses Pathing.java functions)
+			for (UnvisitedTileData unvisitedTile : sharedData.getUnvisited()) {
+				unvisitedTile.setDistance(pathing.generatePath(unvisitedTile.getCoords()).size());
 			}
-	    }
-		
-		//Add current tile to visited
-		sharedData.appendVisited(new VisitedTileData(sharedData.getCurrentPos(),walls,corner,colour.checkSilver()));
-		
-		//Calculate distance to unvisited tiles and update each with new distance value (Uses Pathing.java functions)
-		for (UnvisitedTileData unvisitedTile : sharedData.getUnvisited()) {
-			unvisitedTile.setDistance(pathing.generatePath(unvisitedTile.getCoords()).size());
-		}
 
-		//Detect for any problems in orientation or position (Mainly checks any information that may have been logged during Pathing)
+			//Detect for any problems in orientation or position (Mainly checks any information that may have been logged during Pathing)
 
-		//Call upon Survivors function to search for any survivors and detect them
-		survivors.checkWalls();
-
+			//Call upon Survivors function to search for any survivors and detect them
+			survivors.detect(walls);
 		}
 		
 		if (true) {//If user interaction
