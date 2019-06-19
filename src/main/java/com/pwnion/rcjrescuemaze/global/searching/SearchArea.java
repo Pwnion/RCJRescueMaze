@@ -30,20 +30,20 @@ public class SearchArea {
 			} else {
 				walls.add(false);
 				ultrasonic.getDistances().keySet()
-					switch(direction) {
-						case "front":
-							newPos.addY(1);
-							break;
-						case "back":
-							newPos.addY(-1);
-							break;
-						case "left":
-							newPos.addX(-1);
-							break;
-						case "right":
-							newPos.addX(1);
-							break;
-					}
+				switch(direction) {
+					case "front":
+						newPos.addY(1);
+						break;
+					case "back":
+						newPos.addY(-1);
+						break;
+					case "left":
+						newPos.addX(-1);
+						break;
+					case "right":
+						newPos.addX(1);
+						break;
+				}
 			}
 			count += 1;
 		}
