@@ -78,7 +78,7 @@ public class Pathing {
 	/*
 	Returns a hashmap that associates a set of viable coords with a number that represents the number of
 	tiles the robot would have to move to get from the given coords to the coord in the hashmap
-	The set of cooords is populated until one of the coords is equal to the coords of the robots current position
+	The set of coords is populated until one of the coords is equal to the coords of the robots current position
 	This creates a path that the robot can follow by always moving toward a surrounding coordinate associated with a 
 	number that is lower than the one it is on currently
 	*/
