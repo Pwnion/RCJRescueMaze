@@ -11,6 +11,7 @@ public class DrivingMotors {
 		this.pins = pins;
 	}
 
+	//Moves the robot in the given direction using all 4 motors
 	public void move(String direction) {
 		switch (direction) {
 		case "up":
