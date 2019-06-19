@@ -68,6 +68,12 @@ public class Pathing {
 			}
 		}
 		
+		//Replaces code block above
+		//{loop 4 times
+		//if coords does not have wall in counter direction
+		//(switch statement checking index of wall location and giving coord of tile behind)
+		//add that coord to viable tiles
+		
 		//Filter viable coords with the unviable coords list
 		unviableCoords.forEach((coord) -> viableCoords.remove(coord));
 		
