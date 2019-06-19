@@ -59,7 +59,7 @@ public class Pathing {
 		
 		//Add unviable coords to a list
 		for(Coords coord : viableCoords.keySet()) {
-			if(visitedWalls.get(visitedCoords.indexOf(coord)).get(viableCoords.get(coord))) {
+			if(visitedWalls.get(visitedCoords.indexOf(coords)).get(viableCoords.get(coord))) {
 				unviableCoords.add(coord);
 			} else if(!visitedCoords.contains(coord)) {
 				if(!coord.equals(coords)) {
