@@ -37,10 +37,10 @@ public class Pathing {
 		HashMap<Coords, Integer> viableCoords = new HashMap<Coords, Integer>() {
 			private static final long serialVersionUID = 1L;
 			{
-				put(new Coords(coords.getX() + 1, coords.getY()), 1);
-				put(new Coords(coords.getX() - 1, coords.getY()), 3);
-				put(new Coords(coords.getX(), coords.getY() + 1), 2);
-				put(new Coords(coords.getX(), coords.getY() - 1), 0);
+				put(new Coords(coords.getX() + 1, coords.getY()), 3);
+				put(new Coords(coords.getX() - 1, coords.getY()), 1);
+				put(new Coords(coords.getX(), coords.getY() + 1), 0);
+				put(new Coords(coords.getX(), coords.getY() - 1), 2);
 			}
 		};
 		
@@ -58,16 +58,14 @@ public class Pathing {
 		}
 		
 		//Add unviable coords to a list
-		int counter = 0;
 		for(Coords coord : viableCoords.keySet()) {
-			if(visitedWalls.get(counter).get(viableCoords.get(coord))) {
+			if(visitedWalls.get(visitedCoords.indexOf(coord)).get(viableCoords.get(coord))) {
 				unviableCoords.add(coord);
 			} else if(!visitedCoords.contains(coord)) {
 				if(!coord.equals(coords)) {
 					unviableCoords.add(coord);
 				}
 			}
-			counter++;
 		}
 		
 		//Filter viable coords with the unviable coords list
