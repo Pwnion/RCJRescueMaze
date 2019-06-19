@@ -29,6 +29,11 @@ public class Pathing {
 	surrounding coords
 	*/
 	private Set<Coords> viableSurroundingCoords(Coords coords) {
+		/*
+		Stores the coords that surround the coord given as keys
+		in the hashmap, where the values are the index of the wall position
+		between the given coordinate and the surrounding coord in question
+		*/
 		HashMap<Coords, Integer> viableCoords = new HashMap<Coords, Integer>() {
 			private static final long serialVersionUID = 1L;
 			{
@@ -43,11 +48,16 @@ public class Pathing {
 		ArrayList<Coords> visitedCoords = new ArrayList<Coords>();
 		ArrayList<ArrayList<Boolean>> visitedWalls = new ArrayList<ArrayList<Boolean>>();
 		
+		/*
+		Generate one list for the coordinates of all visited walls, and
+		one for the wall positions of each visited tile
+		*/
 		for(VisitedTileData visitedTileData : sharedData.getVisited()) {
 			visitedCoords.add(visitedTileData.getCoords());
 			visitedWalls.add(visitedTileData.getWalls());
 		}
 		
+		//Add unviable coords to a list
 		int counter = 0;
 		for(Coords coord : viableCoords.keySet()) {
 			if(!visitedCoords.contains(coord) || visitedWalls.get(counter).get(viableCoords.get(coord))) {
@@ -56,12 +66,14 @@ public class Pathing {
 			counter++;
 		}
 		
+		//Filter viable coords with the unviable coords list
 		for(Coords coord : unviableCoords) {
 			if(viableCoords.containsKey(coord)) {
 				viableCoords.remove(coord);
 			}
 		}
 		
+		//Return viable coords
 		return viableCoords.keySet();
 	}
 	
@@ -76,17 +88,30 @@ public class Pathing {
 		HashMap<Coords, Integer> map = new HashMap<Coords, Integer>();
 		HashSet<Coords> previousViableCoords = new HashSet<Coords>(Arrays.asList(coords));
 
+		
 		int counter = 0;
 		do {
 			HashSet<Coords> combinedCoords = new HashSet<Coords>();
+			/*
+			Add all coords previously determined to be viable to a hashset,
+			beginning with the coords given
+			*/
 			for(Coords coord : previousViableCoords) {
 				combinedCoords.addAll(viableSurroundingCoords(coord));
 			}
 			
+			/*
+			Put all viable coords as keys in a hashmap, where the values are the
+			distances between the gives coords and the viable coord in question
+			*/ 
 			for(Coords coord : combinedCoords) {
 				map.put(coord, counter);
 			}
 			
+			/*
+			When one of the viable coords equals the coords of the robot, return the hashmap
+			of coords and distances
+			*/
 			if(combinedCoords.contains(sharedData.getCurrentPos())) return map;
 			
 			previousViableCoords = combinedCoords;
@@ -112,7 +137,7 @@ public class Pathing {
 					add(new Coords(coords.getX(), coords.getY() - 1));
 				}
 			};
-			
+
 			ArrayList<String> directions = new ArrayList<String>() {
 				private static final long serialVersionUID = 1L;
 				{
@@ -123,6 +148,10 @@ public class Pathing {
 				}
 			};
 			
+			/*
+			From the coords surrounding the robot, obtain the tile that has
+			the smallest distance value and intepret which direction that is in
+			*/
 			String direction = "";
 			int smallestNumber = 100;
 			for(int i = 0; i < 4; i++) {
@@ -133,9 +162,10 @@ public class Pathing {
 				}
 			}
 			
+			//Move one tile in the correct direction determined
 			drivingMotors.move(direction);
 			
-			//Update current position
+			//Update current position of the robot
 			Coords newPos = sharedData.getCurrentPos();
 			switch(direction) {
 			  case "up":
