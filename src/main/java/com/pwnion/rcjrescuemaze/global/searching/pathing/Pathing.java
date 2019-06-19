@@ -60,18 +60,18 @@ public class Pathing {
 		//Add unviable coords to a list
 		int counter = 0;
 		for(Coords coord : viableCoords.keySet()) {
-			if(!visitedCoords.contains(coord) || visitedWalls.get(counter).get(viableCoords.get(coord))) {
+			if(visitedWalls.get(counter).get(viableCoords.get(coord))) {
 				unviableCoords.add(coord);
+			} else if(!visitedCoords.contains(coord)) {
+				if(!coord.equals(coords)) {
+					unviableCoords.add(coord);
+				}
 			}
 			counter++;
 		}
 		
 		//Filter viable coords with the unviable coords list
-		for(Coords coord : unviableCoords) {
-			if(viableCoords.containsKey(coord)) {
-				viableCoords.remove(coord);
-			}
-		}
+		unviableCoords.forEach((coord) -> viableCoords.remove(coord));
 		
 		//Return viable coords
 		return viableCoords.keySet();
@@ -85,16 +85,20 @@ public class Pathing {
 	number that is lower than the one it is on currently
 	*/
 	public HashMap<Coords, Integer> generatePath(Coords coords) {
-		HashMap<Coords, Integer> map = new HashMap<Coords, Integer>();
-		HashSet<Coords> previousViableCoords = new HashSet<Coords>(Arrays.asList(coords));
+		HashMap<Coords, Integer> map = new HashMap<Coords, Integer>() {
+			private static final long serialVersionUID = 1L;
+			{
+				put(sharedData.getCurrentPos(), 0);
+			}
+		};
+		HashSet<Coords> previousViableCoords = new HashSet<Coords>(Arrays.asList(sharedData.getCurrentPos()));
 
-		
-		int counter = 0;
+		int counter = 1;
 		do {
 			HashSet<Coords> combinedCoords = new HashSet<Coords>();
 			/*
 			Add all coords previously determined to be viable to a hashset,
-			beginning with the coords given
+			beginning with the coords of the robot
 			*/
 			for(Coords coord : previousViableCoords) {
 				combinedCoords.addAll(viableSurroundingCoords(coord));
@@ -102,17 +106,17 @@ public class Pathing {
 			
 			/*
 			Put all viable coords as keys in a hashmap, where the values are the
-			distances between the gives coords and the viable coord in question
+			distances between the coords of the robot and the viable coord in question
 			*/ 
 			for(Coords coord : combinedCoords) {
 				map.put(coord, counter);
 			}
 			
 			/*
-			When one of the viable coords equals the coords of the robot, return the hashmap
+			When one of the viable coords equals the coords given, return the hashmap
 			of coords and distances
 			*/
-			if(combinedCoords.contains(sharedData.getCurrentPos())) return map;
+			if(combinedCoords.contains(coords)) return map;
 			
 			previousViableCoords = combinedCoords;
 			
@@ -127,14 +131,13 @@ public class Pathing {
 	public void moveToCoords(Coords coords) {
 		HashMap<Coords, Integer> path = generatePath(coords);
 		while(sharedData.getCurrentPos() != coords) {
-			
 			ArrayList<Coords> surroundingCoords = new ArrayList<Coords>() {
 				private static final long serialVersionUID = 1L;
 				{
-					add(new Coords(coords.getX() + 1, coords.getY()));
-					add(new Coords(coords.getX() - 1, coords.getY()));
-					add(new Coords(coords.getX(), coords.getY() + 1));
-					add(new Coords(coords.getX(), coords.getY() - 1));
+					add(new Coords(sharedData.getCurrentPos().getX() + 1, sharedData.getCurrentPos().getY()));
+					add(new Coords(sharedData.getCurrentPos().getX() - 1, sharedData.getCurrentPos().getY()));
+					add(new Coords(sharedData.getCurrentPos().getX(), sharedData.getCurrentPos().getY() + 1));
+					add(new Coords(sharedData.getCurrentPos().getX(), sharedData.getCurrentPos().getY() - 1));
 				}
 			};
 
@@ -150,14 +153,14 @@ public class Pathing {
 			
 			/*
 			From the coords surrounding the robot, obtain the tile that has
-			the smallest distance value and intepret which direction that is in
+			the largest distance value and intepret which direction that is in
 			*/
 			String direction = "";
-			int smallestNumber = 100;
+			int largestNumber = 0;
 			for(int i = 0; i < 4; i++) {
 				int tileValue = path.get(surroundingCoords.get(i));
-				if(tileValue < smallestNumber) {
-					smallestNumber = tileValue;
+				if(tileValue > largestNumber) {
+					largestNumber = tileValue;
 					direction = directions.get(i);
 				}
 			}
