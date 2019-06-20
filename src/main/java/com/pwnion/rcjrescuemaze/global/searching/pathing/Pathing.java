@@ -69,6 +69,16 @@ public class Pathing {
 		}
 		
 		//Replaces code block above
+		for(int i = 0; i < 4; i++) {
+			if(!visitedWalls.get(visitedCoords.indexOf(coords)).get(i)) {
+				switch(i) {
+					case 0:
+						//viableCoords.add(new Coords(coords.getX, coords.getY + 1));
+						break;
+				}
+			}
+		}
+
 		//{loop 4 times
 		//if coords does not have wall in counter direction
 		//(switch statement checking index of wall location and giving coord of tile behind)
