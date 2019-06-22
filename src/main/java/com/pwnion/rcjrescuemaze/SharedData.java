@@ -33,6 +33,54 @@ public class SharedData {
 	public Coords getCurrentPos() {
 		return currentPos;
 	}
+	
+	public ArrayList<Coords> getVisitedCoords() {
+		ArrayList<Coords> visitedCoords = new ArrayList<Coords>();
+		for(VisitedTileData visitedTileData : visited) {
+			visitedCoords.add(visitedTileData.getCoords());
+		}
+		return visitedCoords;
+	}
+	
+	public ArrayList<ArrayList<Boolean>> getVisitedWalls() {
+		ArrayList<ArrayList<Boolean>> visitedWalls = new ArrayList<ArrayList<Boolean>>();
+		for(VisitedTileData visitedTileData : visited) {
+			visitedWalls.add(visitedTileData.getWalls());
+		}
+		return visitedWalls;
+	}
+	
+	public ArrayList<Boolean> getVisitedCorners() {
+		ArrayList<Boolean> visitedCorners = new ArrayList<Boolean>();
+		for(VisitedTileData visitedTileData : visited) {
+			visitedCorners.add(visitedTileData.getCorner());
+		}
+		return visitedCorners;
+	}
+	
+	public ArrayList<Boolean> getVisitedSilverTiles() {
+		ArrayList<Boolean> visitedSilverTiles = new ArrayList<Boolean>();
+		for(VisitedTileData visitedTileData : visited) {
+			visitedSilverTiles.add(visitedTileData.getSilverTile());
+		}
+		return visitedSilverTiles;
+	}
+	
+	public ArrayList<Coords> getUnvisitedCoords() {
+		ArrayList<Coords> unvisitedCoords = new ArrayList<Coords>();
+		for(UnvisitedTileData unvisitedTileData : unvisited) {
+			unvisitedCoords.add(unvisitedTileData.getCoords());
+		}
+		return unvisitedCoords;
+	}
+	
+	public ArrayList<Integer> getUnvisitedDistances() {
+		ArrayList<Integer> unvisitedDistances = new ArrayList<Integer>();
+		for(UnvisitedTileData unvisitedTileData : unvisited) {
+			unvisitedDistances.add(unvisitedTileData.getDistance());
+		}
+		return unvisitedDistances;
+	}
 
 	public void appendVisited(VisitedTileData visitedTileData) {
 		visited.add(visitedTileData);

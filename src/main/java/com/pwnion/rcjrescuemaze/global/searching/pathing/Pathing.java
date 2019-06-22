@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.inject.Inject;
 import com.pwnion.rcjrescuemaze.Coords;
@@ -25,32 +27,10 @@ public class Pathing {
 	
 	/*
 	Returns a set of coords surrounding the given coords that are viable, meaning
-	that they are both visited, and there isn't a wall between the given coords and the
-	surrounding coords
+	that there isn't a wall between the given coords and the surrounding coords
 	*/
-	private ArrayList<Coords> viableSurroundingCoords(Coords coords, Coords destinationCoords) {
-		/*
-		Stores the coords that surround the coord given as keys
-		in the hashmap, where the values are the index of the wall position
-		between the given coordinate and the surrounding coord in question
-		*/
-		ArrayList<Coords> viableCoords = new ArrayList<Coords>();
-		ArrayList<Coords> visitedCoords = new ArrayList<Coords>() {
-			private static final long serialVersionUID = 1L;
-			{
-				add(destinationCoords);
-			}
-		};
-		ArrayList<ArrayList<Boolean>> visitedWalls = new ArrayList<ArrayList<Boolean>>();
-		
-		/*
-		Generate one list for the coordinates of all visited walls, and
-		one for the wall positions of each visited tile
-		*/
-		for(VisitedTileData visitedTileData : sharedData.getVisited()) {
-			visitedCoords.add(visitedTileData.getCoords());
-			visitedWalls.add(visitedTileData.getWalls());
-		}
+	private HashSet<Coords> viableSurroundingCoords(Coords coords, Coords destinationCoords) {
+		HashSet<Coords> viableSurroundingCoords = new HashSet<Coords>();
 		
 		//Directions mapped to relative coordinates for the surrounding tiles
 		HashMap<Integer, int[]> coordsToAdd = new HashMap<Integer, int[]>() {
@@ -63,17 +43,18 @@ public class Pathing {
 			}
 		};
 
-		int visitedIndex = visitedCoords.indexOf(coords);
+		//Adds the coords surrounding the given coords that don't have a wall obstruction
+		int visitedIndex = sharedData.getVisitedCoords().indexOf(coords);
 		if(visitedIndex != -1) {
 			for(int i = 0; i < 4; i++) {
-				if(!visitedWalls.get(visitedIndex).get(i)) {
-					viableCoords.add(new Coords(coords.getX() + coordsToAdd.get(i)[0], coords.getY() + coordsToAdd.get(i)[1]));
+				if(!sharedData.getVisitedWalls().get(visitedIndex).get(i)) {
+					viableSurroundingCoords.add(new Coords(coords.getX() + coordsToAdd.get(i)[0], coords.getY() + coordsToAdd.get(i)[1]));
 				}
 			}
 		}
 
-		//Return viable coords
-		return viableCoords;
+		//Return the coords surrounding the given coords that don't have a wall obstruction
+		return viableSurroundingCoords;
 	}
 	
 	/*
@@ -83,7 +64,7 @@ public class Pathing {
 	This creates a path that the robot can follow by always moving toward a surrounding coordinate associated with a 
 	number that is lower than the one it is on currently
 	*/
-	public HashMap<Coords, Integer> generatePath(Coords coords) {
+	public HashMap<Coords, Integer> generateMap(Coords coords) {
 		HashMap<Coords, Integer> map = new HashMap<Coords, Integer>() {
 			private static final long serialVersionUID = 1L;
 			{
@@ -115,7 +96,8 @@ public class Pathing {
 			When one of the viable coords equals the coords given, return the hashmap
 			of coords and distances
 			*/
-			if(combinedCoords.contains(coords)) return map;
+			
+			if(Stream.of(sharedData.getVisitedCoords(), sharedData.getUnvisitedCoords()).flatMap(x -> x.stream()).collect(Collectors.toSet()).containsAll(combinedCoords)) return map;
 			
 			previousViableCoords = combinedCoords;
 			
@@ -128,7 +110,7 @@ public class Pathing {
 	terminates when the robot gets to the given coords
 	*/
 	public void moveToCoords(Coords coords) {
-		HashMap<Coords, Integer> path = generatePath(coords);
+		HashMap<Coords, Integer> path = generateMap(coords);
 		while(sharedData.getCurrentPos() != coords) {
 			ArrayList<Coords> surroundingCoords = new ArrayList<Coords>() {
 				private static final long serialVersionUID = 1L;
