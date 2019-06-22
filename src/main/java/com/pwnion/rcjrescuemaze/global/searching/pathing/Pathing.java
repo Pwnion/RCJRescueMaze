@@ -134,7 +134,7 @@ public class Pathing {
 			
 			/*
 			From the coords surrounding the robot, obtain the tile that has
-			the largest distance value and intepret which direction that is in
+			the largest distance value and interpret which direction that is in
 			*/
 			String direction = "";
 			int largestNumber = 0;
