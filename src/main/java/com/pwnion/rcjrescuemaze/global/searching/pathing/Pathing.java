@@ -28,24 +28,19 @@ public class Pathing {
 	that they are both visited, and there isn't a wall between the given coords and the
 	surrounding coords
 	*/
-	private Set<Coords> viableSurroundingCoords(Coords coords) {
+	private ArrayList<Coords> viableSurroundingCoords(Coords coords, Coords destinationCoords) {
 		/*
 		Stores the coords that surround the coord given as keys
 		in the hashmap, where the values are the index of the wall position
 		between the given coordinate and the surrounding coord in question
 		*/
-		HashMap<Coords, Integer> viableCoords = new HashMap<Coords, Integer>() {
+		ArrayList<Coords> viableCoords = new ArrayList<Coords>();
+		ArrayList<Coords> visitedCoords = new ArrayList<Coords>() {
 			private static final long serialVersionUID = 1L;
 			{
-				put(new Coords(coords.getX() + 1, coords.getY()), 3);
-				put(new Coords(coords.getX() - 1, coords.getY()), 1);
-				put(new Coords(coords.getX(), coords.getY() + 1), 0);
-				put(new Coords(coords.getX(), coords.getY() - 1), 2);
+				add(destinationCoords);
 			}
 		};
-		
-		ArrayList<Coords> unviableCoords = new ArrayList<Coords>();
-		ArrayList<Coords> visitedCoords = new ArrayList<Coords>();
 		ArrayList<ArrayList<Boolean>> visitedWalls = new ArrayList<ArrayList<Boolean>>();
 		
 		/*
@@ -57,38 +52,28 @@ public class Pathing {
 			visitedWalls.add(visitedTileData.getWalls());
 		}
 		
-		//Add unviable coords to a list
-		for(Coords coord : viableCoords.keySet()) {
-			if(visitedWalls.get(visitedCoords.indexOf(coords)).get(viableCoords.get(coord))) {
-				unviableCoords.add(coord);
-			} else if(!visitedCoords.contains(coord)) {
-				if(!coord.equals(coords)) {
-					unviableCoords.add(coord);
-				}
+		//Directions mapped to relative coordinates for the surrounding tiles
+		HashMap<Integer, int[]> coordsToAdd = new HashMap<Integer, int[]>() {
+			private static final long serialVersionUID = 1L;
+			{
+				put(0, new int[] {0, 1});
+				put(1, new int[] {-1, 0});
+				put(2, new int[] {0, -1});
+				put(3, new int[] {1, 0});
 			}
-		}
-		
-		//Replaces code block above
-		for(int i = 0; i < 4; i++) {
-			if(!visitedWalls.get(visitedCoords.indexOf(coords)).get(i)) {
-				switch(i) {
-					case 0:
-						//viableCoords.add(new Coords(coords.getX, coords.getY + 1));
-						break;
+		};
+
+		int visitedIndex = visitedCoords.indexOf(coords);
+		if(visitedIndex != -1) {
+			for(int i = 0; i < 4; i++) {
+				if(!visitedWalls.get(visitedIndex).get(i)) {
+					viableCoords.add(new Coords(coords.getX() + coordsToAdd.get(i)[0], coords.getY() + coordsToAdd.get(i)[1]));
 				}
 			}
 		}
 
-		//{loop 4 times
-		//if coords does not have wall in counter direction
-		//(switch statement checking index of wall location and giving coord of tile behind)
-		//add that coord to viable tiles
-		
-		//Filter viable coords with the unviable coords list
-		unviableCoords.forEach((coord) -> viableCoords.remove(coord));
-		
 		//Return viable coords
-		return viableCoords.keySet();
+		return viableCoords;
 	}
 	
 	/*
@@ -115,7 +100,7 @@ public class Pathing {
 			beginning with the coords of the robot
 			*/
 			for(Coords coord : previousViableCoords) {
-				combinedCoords.addAll(viableSurroundingCoords(coord));
+				combinedCoords.addAll(viableSurroundingCoords(coord, coords));
 			}
 			
 			/*
