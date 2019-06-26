@@ -65,12 +65,7 @@ public class Pathing {
 	number that is lower than the one it is on currently
 	*/
 	public HashMap<Coords, Integer> generateMap(Coords coords) {
-		HashMap<Coords, Integer> map = new HashMap<Coords, Integer>() {
-			private static final long serialVersionUID = 1L;
-			{
-				put(sharedData.getCurrentPos(), 0);
-			}
-		};
+		HashMap<Coords, Integer> map = new HashMap<Coords, Integer>();
 		HashSet<Coords> previousViableCoords = new HashSet<Coords>(Arrays.asList(sharedData.getCurrentPos()));
 
 		int counter = 1;
@@ -92,12 +87,8 @@ public class Pathing {
 				map.put(coord, counter);
 			}
 			
-			/*
-			When one of the viable coords equals the coords given, return the hashmap
-			of coords and distances
-			*/
-			
-			if(Stream.of(sharedData.getVisitedCoords(), sharedData.getUnvisitedCoords()).flatMap(x -> x.stream()).collect(Collectors.toSet()).containsAll(combinedCoords)) return map;
+			//When the set of unvisited coords becomes a subset of combined coords, return the map
+			if(combinedCoords.containsAll(sharedData.getUnvisitedCoords().stream().collect(Collectors.toSet()))) return map;
 			
 			previousViableCoords = combinedCoords;
 			
