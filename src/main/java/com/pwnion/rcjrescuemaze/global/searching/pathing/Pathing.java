@@ -4,14 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.google.inject.Inject;
 import com.pwnion.rcjrescuemaze.Coords;
 import com.pwnion.rcjrescuemaze.SharedData;
-import com.pwnion.rcjrescuemaze.VisitedTileData;
 import com.pwnion.rcjrescuemaze.global.searching.pathing.drivers.DrivingMotors;
 
 public class Pathing {
