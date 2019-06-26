@@ -33,6 +33,24 @@ public class SharedData {
 	public Coords getCurrentPos() {
 		return currentPos;
 	}
+
+	public int getVisitedIndex(Coords coords) {
+		for(int i = 0; i < visited.size(); i++) {
+			if(visited.get(i).getCoords() == coords) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	public int getUnvisitedIndex(Coords coords) {
+		for(int i = 0; i < unvisited.size(); i++) {
+			if(unvisited.get(i).getCoords() == coords) {
+				return i;
+			}
+		}
+		return -1;
+	}
 	
 	public ArrayList<Coords> getVisitedCoords() {
 		ArrayList<Coords> visitedCoords = new ArrayList<Coords>();
@@ -65,7 +83,7 @@ public class SharedData {
 		}
 		return visitedSilverTiles;
 	}
-	
+
 	public ArrayList<Coords> getUnvisitedCoords() {
 		ArrayList<Coords> unvisitedCoords = new ArrayList<Coords>();
 		for(UnvisitedTileData unvisitedTileData : unvisited) {

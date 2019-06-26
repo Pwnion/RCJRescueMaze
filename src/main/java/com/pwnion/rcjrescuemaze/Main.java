@@ -69,9 +69,9 @@ public class Main {
 			sharedData.appendVisited(new VisitedTileData(sharedData.getCurrentPos(), walls, corner, colour.checkSilver()));
 		
 			//Calculate distance to unvisited tiles and update each with new distance value (Uses Pathing.java functions)
-			HashMap<Coords, Integer> largePath = pathing.generatePath(new Coords(20, 20));
+			HashMap<Coords, Integer> map = pathing.generateMap();
 			for (UnvisitedTileData unvisitedTile : sharedData.getUnvisited()) {
-				unvisitedTile.setDistance(largePath.get(unvisitedTile.getCoords()));
+				unvisitedTile.setDistance(map.get(unvisitedTile.getCoords()));
 			}
 
 			//Detect for any problems in orientation or position (Mainly checks any information that may have been logged during Pathing)
