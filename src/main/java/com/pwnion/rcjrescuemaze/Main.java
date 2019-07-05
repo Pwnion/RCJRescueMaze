@@ -1,39 +1,43 @@
 package com.pwnion.rcjrescuemaze;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.pwnion.rcjrescuemaze.global.Survivors;
-import com.pwnion.rcjrescuemaze.global.searching.SearchArea;
-import com.pwnion.rcjrescuemaze.global.searching.Searching;
-import com.pwnion.rcjrescuemaze.global.searching.pathing.Pathing;
-import com.pwnion.rcjrescuemaze.global.searching.pathing.drivers.Colour;
-import com.pwnion.rcjrescuemaze.global.searching.pathing.drivers.DrivingMotors;
+import com.pwnion.rcjrescuemaze.binders.MainBinder;
+import com.pwnion.rcjrescuemaze.datatypes.Coords;
+import com.pwnion.rcjrescuemaze.datatypes.UnvisitedTileData;
+import com.pwnion.rcjrescuemaze.datatypes.VisitedTileData;
+import com.pwnion.rcjrescuemaze.hardware.Colour;
+import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
+import com.pwnion.rcjrescuemaze.hardware.ImplColour;
+import com.pwnion.rcjrescuemaze.hardware.ImplInfared;
+import com.pwnion.rcjrescuemaze.hardware.ImplUltrasonic;
+import com.pwnion.rcjrescuemaze.hardware.Infared;
+import com.pwnion.rcjrescuemaze.hardware.Ultrasonic;
+import com.pwnion.rcjrescuemaze.software.ImplPathing;
+import com.pwnion.rcjrescuemaze.software.Searching;
+import com.pwnion.rcjrescuemaze.software.SharedData;
 
 public class Main {
 	@Inject
 	private static SharedData sharedData;
 	
 	@Inject
-	private static Pathing pathing;
+	private static ImplPathing pathing;
 	
 	@Inject
 	private static Searching searching;
 	
 	@Inject
-	private static Survivors survivors;
-	
-	@Inject
-	private static SearchArea searchArea;
-	
-	@Inject
 	private static Colour colour;
-
+	
 	@Inject
-	private static VisitedTileData visitedTileData;
+	private static Ultrasonic ultrasonic;
+	
+	@Inject
+	private static Infared infared;
 	
 	@Inject
 	private static DrivingMotors drivingMotors;
@@ -42,12 +46,11 @@ public class Main {
 		Injector injector = Guice.createInjector(new MainBinder());
 
 		sharedData = injector.getInstance(SharedData.class);
-		pathing = injector.getInstance(Pathing.class);
+		pathing = injector.getInstance(ImplPathing.class);
 		searching = injector.getInstance(Searching.class);
-		survivors = injector.getInstance(Survivors.class);
-		searchArea = injector.getInstance(SearchArea.class);
-		colour = injector.getInstance(Colour.class);
-		visitedTileData = injector.getInstance(VisitedTileData.class);
+		colour = injector.getInstance(ImplColour.class);
+		ultrasonic = injector.getInstance(ImplUltrasonic.class);
+		infared = injector.getInstance(ImplInfared.class);
 		drivingMotors = injector.getInstance(DrivingMotors.class);
 		
 		//Setup
@@ -63,20 +66,40 @@ public class Main {
 		
 			//Remove current tile from unvisited
 			sharedData.removeUnvisited(sharedData.getCurrentPos());
-		
-			//Search adjacent tiles to find obstacles, walls and unvisited tiles
-			ArrayList<Boolean> walls = searchArea.search();
-		
+			
+			//Update the list of unvisited tiles with viable surrounding tiles
+			Coords coords;
+			for(int i = 0; i < 4; i++) {
+				coords = sharedData.getCurrentPos();
+				if(!ultrasonic.findWalls().get(i)) {
+					switch(i) {
+					case 0: //Front
+						coords.addY(1);
+						break;
+					case 1: //Left
+						coords.addX(-1);
+						break;
+					case 2: //Back
+						coords.addY(-1);
+						break;
+					case 3: //Right
+						coords.addX(1);
+						break;
+					}
+					sharedData.appendUnvisited(new UnvisitedTileData(coords, 1));
+				}
+			}
+			
 			//Calculate any new corners found and add to list
 			boolean corner = false;
 			for (int i = 0; i < 4; i++) {
-				if (walls.get(i) && walls.get(i == 3 ? 0 : i + 1)) {
+				if (ultrasonic.findWalls().get(i) && ultrasonic.findWalls().get(i == 3 ? 0 : i + 1)) {
 					corner = true;
 				}
 	    	}
-		
+			
 			//Add current tile to visited
-			sharedData.appendVisited(new VisitedTileData(sharedData.getCurrentPos(), walls, corner, colour.checkSilver()));
+			sharedData.appendVisited(new VisitedTileData(sharedData.getCurrentPos(), ultrasonic.findWalls(), corner, colour.detectSilver()));
 		
 			//Calculate distance to unvisited tiles and update each with new distance value (Uses Pathing.java functions)
 			HashMap<Coords, Integer> map = pathing.generateMap();
@@ -87,7 +110,7 @@ public class Main {
 			//Detect for any problems in orientation or position (Mainly checks any information that may have been logged during Pathing)
 
 			//Call upon Survivors function to search for any survivors and detect them
-			survivors.detect(walls);
+			infared.detectSurvivors(ultrasonic.findWalls());
 		}
 		
 		if (true) {//If user interaction

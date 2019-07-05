@@ -1,4 +1,4 @@
-package com.pwnion.rcjrescuemaze;
+package com.pwnion.rcjrescuemaze.datatypes;
 
 public class Coords {
 	private int x;

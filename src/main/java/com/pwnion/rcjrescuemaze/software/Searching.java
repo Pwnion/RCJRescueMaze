@@ -1,16 +1,14 @@
-package com.pwnion.rcjrescuemaze.global.searching;
+package com.pwnion.rcjrescuemaze.software;
 
 import com.google.inject.Inject;
-import com.pwnion.rcjrescuemaze.SharedData;
-import com.pwnion.rcjrescuemaze.UnvisitedTileData;
-import com.pwnion.rcjrescuemaze.global.searching.pathing.Pathing;
+import com.pwnion.rcjrescuemaze.datatypes.UnvisitedTileData;
 
 public class Searching {
 	private final SharedData sharedData;
 	private final Pathing pathing;
 	
 	@Inject
-	Searching(SharedData sharedData, Pathing pathing) {
+	Searching(SharedData sharedData, ImplPathing pathing) {
 		this.sharedData = sharedData;
 		this.pathing = pathing;
 	}

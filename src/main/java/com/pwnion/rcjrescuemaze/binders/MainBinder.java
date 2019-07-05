@@ -1,7 +1,10 @@
-package com.pwnion.rcjrescuemaze;
+package com.pwnion.rcjrescuemaze.binders;
 
 import com.google.inject.AbstractModule;
-import com.pwnion.rcjrescuemaze.global.searching.pathing.drivers.Pins;
+import com.pwnion.rcjrescuemaze.hardware.ImplUltrasonic;
+import com.pwnion.rcjrescuemaze.hardware.Pins;
+import com.pwnion.rcjrescuemaze.hardware.Ultrasonic;
+import com.pwnion.rcjrescuemaze.software.SharedData;
 
 public class MainBinder extends AbstractModule {
     
@@ -10,5 +13,7 @@ public class MainBinder extends AbstractModule {
     protected void configure() {
     	bind(Pins.class).asEagerSingleton();
     	bind(SharedData.class).asEagerSingleton();
+    	
+    	bind(Ultrasonic.class).to(ImplUltrasonic.class);
     }
 }

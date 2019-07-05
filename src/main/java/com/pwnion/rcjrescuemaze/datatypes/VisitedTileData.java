@@ -1,4 +1,4 @@
-package com.pwnion.rcjrescuemaze;
+package com.pwnion.rcjrescuemaze.datatypes;
 
 import java.util.ArrayList;
 

@@ -1,5 +1,6 @@
-package com.pwnion.rcjrescuemaze.global.searching.pathing.drivers;
+package com.pwnion.rcjrescuemaze.hardware;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.google.inject.Inject;
@@ -7,7 +8,7 @@ import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import com.pi4j.wiringpi.Gpio;
 
-public class Ultrasonic implements GpioPinListenerDigital {
+public abstract class Ultrasonic implements GpioPinListenerDigital {
 	
 	//Inject a pins object as a dependency
 	private final Pins pins;
@@ -17,7 +18,7 @@ public class Ultrasonic implements GpioPinListenerDigital {
 	
 	//Constructor that takes the position of the ultrasonic sensor on the robot as a parameter
 	@Inject
-	public Ultrasonic(Pins pins) {
+	protected Ultrasonic(Pins pins) {
 		this.pins = pins;
 	}
 	
@@ -38,7 +39,7 @@ public class Ultrasonic implements GpioPinListenerDigital {
 	}
 	
 	//Runs getDistance() for all four sensors, associates them with a position in a hashmap and returns said hashmap
-	public final HashMap<String, Float> outputs() {
+	protected final HashMap<String, Float> rawSensorOutput() {
 		return new HashMap<String, Float>() {
 			private static final long serialVersionUID = 1L;
 			{
@@ -49,4 +50,7 @@ public class Ultrasonic implements GpioPinListenerDigital {
 			}
 		};
 	}
+	
+	//Abstract implementation
+	public abstract ArrayList<Boolean> findWalls();
 }

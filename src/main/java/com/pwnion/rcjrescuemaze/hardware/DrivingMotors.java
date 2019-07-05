@@ -1,4 +1,4 @@
-package com.pwnion.rcjrescuemaze.global.searching.pathing.drivers;
+package com.pwnion.rcjrescuemaze.hardware;
 
 import com.google.inject.Inject;
 

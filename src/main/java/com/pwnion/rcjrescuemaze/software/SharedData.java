@@ -1,8 +1,11 @@
-package com.pwnion.rcjrescuemaze;
+package com.pwnion.rcjrescuemaze.software;
 
 import java.util.ArrayList;
 
 import com.google.inject.Singleton;
+import com.pwnion.rcjrescuemaze.datatypes.Coords;
+import com.pwnion.rcjrescuemaze.datatypes.UnvisitedTileData;
+import com.pwnion.rcjrescuemaze.datatypes.VisitedTileData;
 
 @Singleton
 public class SharedData {
