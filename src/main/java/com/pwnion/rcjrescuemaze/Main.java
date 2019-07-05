@@ -44,14 +44,6 @@ public class Main {
 	
 	public static void main(String[] args) {
 		Injector injector = Guice.createInjector(new MainBinder());
-
-		sharedData = injector.getInstance(SharedData.class);
-		pathing = injector.getInstance(ImplPathing.class);
-		searching = injector.getInstance(Searching.class);
-		colour = injector.getInstance(ImplColour.class);
-		ultrasonic = injector.getInstance(ImplUltrasonic.class);
-		infared = injector.getInstance(ImplInfared.class);
-		drivingMotors = injector.getInstance(DrivingMotors.class);
 		
 		//Setup
 		drivingMotors.move("up");
@@ -60,6 +52,14 @@ public class Main {
 		
 		//While there are unvisited tiles
 		while(sharedData.getUnvisited().size() > 0) {
+			
+			sharedData = injector.getInstance(SharedData.class);
+			pathing = injector.getInstance(ImplPathing.class);
+			searching = injector.getInstance(Searching.class);
+			colour = injector.getInstance(ImplColour.class);
+			ultrasonic = injector.getInstance(ImplUltrasonic.class);
+			infared = injector.getInstance(ImplInfared.class);
+			drivingMotors = injector.getInstance(DrivingMotors.class);
 		
 			//Call upon searching function to find and move to next tile
 			searching.findMoveUnvisited();
