@@ -7,10 +7,11 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.pwnion.rcjrescuemaze.global.Survivors;
-import com.pwnion.rcjrescuemaze.global.searching.FindWalls;
+import com.pwnion.rcjrescuemaze.global.searching.SearchArea;
 import com.pwnion.rcjrescuemaze.global.searching.Searching;
 import com.pwnion.rcjrescuemaze.global.searching.pathing.Pathing;
 import com.pwnion.rcjrescuemaze.global.searching.pathing.drivers.Colour;
+import com.pwnion.rcjrescuemaze.global.searching.pathing.drivers.DrivingMotors;
 
 public class Main {
 	@Inject
@@ -26,13 +27,16 @@ public class Main {
 	private static Survivors survivors;
 	
 	@Inject
-	private static FindWalls findWalls;
+	private static SearchArea searchArea;
 	
 	@Inject
 	private static Colour colour;
 
 	@Inject
 	private static VisitedTileData visitedTileData;
+	
+	@Inject
+	private static DrivingMotors drivingMotors;
 	
 	public static void main(String[] args) {
 		Injector injector = Guice.createInjector(new MainBinder());
@@ -41,9 +45,15 @@ public class Main {
 		pathing = injector.getInstance(Pathing.class);
 		searching = injector.getInstance(Searching.class);
 		survivors = injector.getInstance(Survivors.class);
-		findWalls = injector.getInstance(FindWalls.class);
+		searchArea = injector.getInstance(SearchArea.class);
 		colour = injector.getInstance(Colour.class);
 		visitedTileData = injector.getInstance(VisitedTileData.class);
+		drivingMotors = injector.getInstance(DrivingMotors.class);
+		
+		//Setup
+		drivingMotors.move("up");
+		sharedData.setCurrentPos(0, 0);
+		sharedData.appendUnvisited(new UnvisitedTileData(new Coords(0, 0), 1));
 		
 		//While there are unvisited tiles
 		while(sharedData.getUnvisited().size() > 0) {
@@ -55,7 +65,7 @@ public class Main {
 			sharedData.removeUnvisited(sharedData.getCurrentPos());
 		
 			//Search adjacent tiles to find obstacles, walls and unvisited tiles
-			ArrayList<Boolean> walls = findWalls.find();
+			ArrayList<Boolean> walls = searchArea.search();
 		
 			//Calculate any new corners found and add to list
 			boolean corner = false;
