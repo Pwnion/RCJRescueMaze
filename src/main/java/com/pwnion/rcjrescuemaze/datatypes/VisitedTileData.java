@@ -1,34 +1,33 @@
-package com.pwnion.rcjrescuemaze;
+package com.pwnion.rcjrescuemaze.datatypes;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class VisitedTileData {
-	private final HashMap<Integer, Integer> coords;
+	private final Coords coords;
 	private final ArrayList<Boolean> walls;
 	private final boolean corner;
 	private final boolean silverTile;
 	
-	VisitedTileData(HashMap<Integer, Integer> coords, ArrayList<Boolean> walls, boolean corner, boolean silverTile) {
+	public VisitedTileData(Coords coords, ArrayList<Boolean> walls, boolean corner, boolean silverTile) {
 		this.coords = coords;
 		this.walls = walls;
 		this.corner = corner;
 		this.silverTile = silverTile;
 	}
 	
-	HashMap<Integer, Integer> getCoords() {
+	public Coords getCoords() {
 		return coords;
 	}
 	
-	ArrayList<Boolean> getWalls() {
+	public ArrayList<Boolean> getWalls() {
 		return walls;
 	}
 	
-	boolean getCorner() {
+	public boolean getCorner() {
 		return corner;
 	}
 	
-	boolean getSilverTile() {
+	public boolean getSilverTile() {
 		return silverTile;
 	}
 }
