@@ -29,19 +29,22 @@ public class SearchArea {
 				walls.add(true);
 			} else {
 				walls.add(false);
-				ultrasonic.getDistances().keySet()
-				switch(direction) {
-					case "front":
-						newPos.addY(1);
+				switch(count) {
+					case 0:
+						//Front
+						//newPos.addY(1);
 						break;
-					case "back":
-						newPos.addY(-1);
+					case 1:
+						//Back?
+						//newPos.addY(-1);
 						break;
-					case "left":
-						newPos.addX(-1);
+					case 2:
+						//Left?
+						//newPos.addX(-1);
 						break;
-					case "right":
-						newPos.addX(1);
+					case 3:
+						//Right?
+						//newPos.addX(1);
 						break;
 				}
 			}
