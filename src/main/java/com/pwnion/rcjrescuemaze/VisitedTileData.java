@@ -8,7 +8,7 @@ public class VisitedTileData {
 	private final boolean corner;
 	private final boolean silverTile;
 	
-	VisitedTileData(Coords coords, ArrayList<Boolean> walls, boolean corner, boolean silverTile) {
+	public VisitedTileData(Coords coords, ArrayList<Boolean> walls, boolean corner, boolean silverTile) {
 		this.coords = coords;
 		this.walls = walls;
 		this.corner = corner;

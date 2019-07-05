@@ -28,18 +28,18 @@ public class Ultrasonic implements GpioPinListenerDigital {
 	}
 	
 	//Triggers pulse of sound for sensor at specified position, records time and calculates/returns distance
-	private final int getDistance(String pos) {
+	private final float getDistance(String pos) {
 		pins.sendPins.get(pos).pulse(10);
 		long startTime = Gpio.micros();
 		while(!echoStateChanged) {
-			if(Gpio.micros() - startTime > 1312); return -1; //1312 = time taken in microseconds for a pulse of sound to travel 22.5cm and back again
+			if(Gpio.micros() - startTime > 1282); return -1; //1282 = time taken in microseconds for a pulse of sound to travel 22cm and back again
 		}
-		return (int) ((Gpio.micros() - startTime) * 171500);
+		return (float) ((Gpio.micros() - startTime) * 0.01715); //0.01715 = (343/2)/10^6
 	}
 	
 	//Runs getDistance() for all four sensors, associates them with a position in a hashmap and returns said hashmap
-	public final HashMap<String, Integer> getDistances() {
-		return new HashMap<String, Integer>() {
+	public final HashMap<String, Float> outputs() {
+		return new HashMap<String, Float>() {
 			private static final long serialVersionUID = 1L;
 			{
 				put("front", getDistance("front"));

@@ -4,7 +4,7 @@ public class UnvisitedTileData {
 	private final Coords coords;
 	private int distance;
 	
-	UnvisitedTileData(Coords coords, int distance) {
+	public UnvisitedTileData(Coords coords, int distance) {
 		this.coords = coords;
 		this.distance = distance;
 	}
