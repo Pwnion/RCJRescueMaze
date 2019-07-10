@@ -19,10 +19,10 @@ public class Pins {
 	final HashMap<String, GpioPinDigitalOutput> sendPins = new HashMap<String, GpioPinDigitalOutput>() {
 		private static final long serialVersionUID = 1L;
 		{
-			put("front", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00));
-			put("left", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00));
-			put("back", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00));
-			put("right", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00));
+			put("front", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_12));
+			put("left", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_12));
+			put("back", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_12));
+			put("right", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_12));
 		}
 	};
 	
@@ -30,10 +30,10 @@ public class Pins {
 	final HashMap<String, GpioPinDigitalInput> receivePins = new HashMap<String, GpioPinDigitalInput>() {
 		private static final long serialVersionUID = 1L;
 		{
-			put("front", gpio.provisionDigitalInputPin(RaspiPin.GPIO_00));
-			put("left", gpio.provisionDigitalInputPin(RaspiPin.GPIO_00));
-			put("back", gpio.provisionDigitalInputPin(RaspiPin.GPIO_00));
-			put("right", gpio.provisionDigitalInputPin(RaspiPin.GPIO_00));
+			put("front", gpio.provisionDigitalInputPin(RaspiPin.GPIO_13));
+			put("left", gpio.provisionDigitalInputPin(RaspiPin.GPIO_14));
+			put("back", gpio.provisionDigitalInputPin(RaspiPin.GPIO_15));
+			put("right", gpio.provisionDigitalInputPin(RaspiPin.GPIO_16));
 		}
 	};
 	
@@ -41,10 +41,10 @@ public class Pins {
 	final HashMap<String, GpioPinDigitalOutput> clockwisePins = new HashMap<String, GpioPinDigitalOutput>() {
 		private static final long serialVersionUID = 1L;
 		{
-			put("front_left", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00));
-			put("back_left", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00));
-			put("back_right", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00));
-			put("front_right", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00));
+			put("front_left", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_02));
+			put("back_left", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_06));
+			put("back_right", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_10));
+			put("front_right", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_04));
 		}
 	};
 	
@@ -52,10 +52,10 @@ public class Pins {
 	final HashMap<String, GpioPinDigitalOutput> anticlockwisePins = new HashMap<String, GpioPinDigitalOutput>() {
 		private static final long serialVersionUID = 1L;
 		{
-			put("front_left", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00));
-			put("back_left", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00));
-			put("back_right", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00));
-			put("front_right", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00));
+			put("front_left", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_03));
+			put("back_left", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_07));
+			put("back_right", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_11));
+			put("front_right", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_05));
 		}
 	};
 	
@@ -63,10 +63,10 @@ public class Pins {
 	final HashMap<String, GpioPinPwmOutput> speedPins = new HashMap<String, GpioPinPwmOutput>() {
 		private static final long serialVersionUID = 1L;
 		{
-			put("front_left", gpio.provisionSoftPwmOutputPin(RaspiPin.GPIO_00));
-			put("back_left", gpio.provisionSoftPwmOutputPin(RaspiPin.GPIO_00));
-			put("back_right", gpio.provisionSoftPwmOutputPin(RaspiPin.GPIO_00));
-			put("front_right", gpio.provisionSoftPwmOutputPin(RaspiPin.GPIO_00));
+			put("front_left", gpio.provisionSoftPwmOutputPin(RaspiPin.GPIO_01));
+			put("back_left", gpio.provisionSoftPwmOutputPin(RaspiPin.GPIO_24));
+			put("back_right", gpio.provisionSoftPwmOutputPin(RaspiPin.GPIO_26));
+			put("front_right", gpio.provisionSoftPwmOutputPin(RaspiPin.GPIO_23));
 		}
 	};
 }
