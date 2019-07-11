@@ -17,12 +17,13 @@ public class Pins {
 	
 	//Provision digital ultrasonic output (trig) pins and populate a hashmap with them based on their position on the robot
 	final HashMap<String, GpioPinDigitalOutput> sendPins = new HashMap<String, GpioPinDigitalOutput>() {
+		GpioPinDigitalOutput sharedTrigPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_12);
 		private static final long serialVersionUID = 1L;
 		{
-			put("front", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_12));
-			put("left", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_12));
-			put("back", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_12));
-			put("right", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_12));
+			put("front", sharedTrigPin);
+			put("left", sharedTrigPin);
+			put("back", sharedTrigPin);
+			put("right", sharedTrigPin);
 		}
 	};
 	

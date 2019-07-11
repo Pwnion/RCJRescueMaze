@@ -2,7 +2,11 @@ package com.pwnion.rcjrescuemaze.hardware;
 
 import java.util.ArrayList;
 
+import com.google.inject.Inject;
+
 public class ImplUltrasonic extends Ultrasonic {
+	
+	@Inject
 	public ImplUltrasonic(Pins pins) {
 		super(pins);
 	}

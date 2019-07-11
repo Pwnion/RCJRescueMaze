@@ -1,7 +1,10 @@
 package com.pwnion.rcjrescuemaze.hardware;
 
+import com.google.inject.Inject;
+
 public class ImplColour extends Colour {
 	
+	@Inject
 	public ImplColour(Pins pins) {
 		super(pins);
 	}

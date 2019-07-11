@@ -3,11 +3,14 @@ package com.pwnion.rcjrescuemaze.software;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import com.pwnion.rcjrescuemaze.datatypes.Coords;
 import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
 
 public class ImplPathing extends Pathing {
 	
+	@Inject
 	public ImplPathing(SharedData sharedData, DrivingMotors drivingMotors) {
 		super(sharedData, drivingMotors);
 	}

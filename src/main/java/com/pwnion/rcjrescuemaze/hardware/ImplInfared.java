@@ -2,8 +2,11 @@ package com.pwnion.rcjrescuemaze.hardware;
 
 import java.util.ArrayList;
 
+import com.google.inject.Inject;
+
 public class ImplInfared extends Infared {
 	
+	@Inject
 	public ImplInfared(Pins pins) {
 		super(pins);
 	}
