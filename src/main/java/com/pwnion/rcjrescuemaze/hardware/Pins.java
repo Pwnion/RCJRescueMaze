@@ -1,5 +1,6 @@
 package com.pwnion.rcjrescuemaze.hardware;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 import com.google.inject.Singleton;
@@ -7,13 +8,30 @@ import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
-import com.pi4j.io.gpio.GpioPinPwmOutput;
+import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiPin;
 
 @Singleton
 public class Pins {
+	
 	//Initialise GpioController for the Pi4J Library
 	private final GpioController gpio = GpioFactory.getInstance();
+	
+	//Set all pin shutdown options
+	public Pins() {
+		for(GpioPinDigitalOutput pin : sendPins.values()) {
+			pin.setShutdownOptions(true, PinState.LOW);
+		}
+		for(GpioPinDigitalInput pin : receivePins.values()) {
+			pin.setShutdownOptions(true, PinState.LOW);
+		}
+		for(GpioPinDigitalOutput pin : clockwisePins.values()) {
+			pin.setShutdownOptions(true, PinState.LOW);
+		}
+		for(GpioPinDigitalOutput pin : anticlockwisePins.values()) {
+			pin.setShutdownOptions(true, PinState.LOW);
+		}
+	}
 	
 	//Provision digital ultrasonic output (trig) pins and populate a hashmap with them based on their position on the robot
 	final HashMap<String, GpioPinDigitalOutput> sendPins = new HashMap<String, GpioPinDigitalOutput>() {
@@ -60,14 +78,26 @@ public class Pins {
 		}
 	};
 	
-	//Provision PWM motor output (EN(A/B)) pins and populate a hashmap with them based on their position on the robot
-	final HashMap<String, GpioPinPwmOutput> speedPins = new HashMap<String, GpioPinPwmOutput>() {
+	//Map motor directions to (EN(A/B)) pins based on their BCM numbering
+	final HashMap<String, Integer> speedPins = new HashMap<String, Integer>() {
 		private static final long serialVersionUID = 1L;
 		{
-			put("front_left", gpio.provisionSoftPwmOutputPin(RaspiPin.GPIO_01));
-			put("back_left", gpio.provisionSoftPwmOutputPin(RaspiPin.GPIO_24));
-			put("back_right", gpio.provisionSoftPwmOutputPin(RaspiPin.GPIO_26));
-			put("front_right", gpio.provisionSoftPwmOutputPin(RaspiPin.GPIO_23));
+			put("front_left", 18);
+			put("back_left", 19);
+			put("back_right", 12);
+			put("front_right", 13);
 		}
 	};
+	
+	//Method to set value for (EN(A/B)) pins
+	public final void setSpeedPins(int speed) {
+		try {
+			for(String direction : speedPins.keySet()) {
+				new ProcessBuilder("/bin/sh", "-c", "echo \"" + speedPins.get(direction) + "=" + ((float) speed / 100) + "\" > /dev/pi-blaster").start();
+			}
+		} catch (IOException e) {
+			System.out.println("Couldn't set value for software PWM pin");
+			e.printStackTrace();
+		}
+	}
 }

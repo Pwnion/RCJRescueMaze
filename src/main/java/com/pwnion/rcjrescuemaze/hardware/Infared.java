@@ -7,7 +7,7 @@ import com.google.inject.Inject;
 
 public abstract class Infared {
 
-	private final Pins pins;
+	protected final Pins pins;
 	
 	@Inject
 	protected Infared(Pins pins) {

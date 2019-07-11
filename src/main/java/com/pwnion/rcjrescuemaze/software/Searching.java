@@ -1,8 +1,10 @@
 package com.pwnion.rcjrescuemaze.software;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.pwnion.rcjrescuemaze.datatypes.UnvisitedTileData;
 
+@Singleton
 public class Searching {
 	private final SharedData sharedData;
 	private final Pathing pathing;
@@ -12,7 +14,6 @@ public class Searching {
 		this.sharedData = sharedData;
 		this.pathing = pathing;
 	}
-	
 	
 	//Look through tiles and find which tile is the best to visit
 	//Will find Distance from unvisited tiles and find which one is the closest.

@@ -6,7 +6,7 @@ import com.google.inject.Inject;
 
 public abstract class Colour {
 	
-	private final Pins pins;
+	protected final Pins pins;
 	
 	@Inject
 	protected Colour(Pins pins) {

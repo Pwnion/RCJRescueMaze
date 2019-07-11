@@ -42,8 +42,17 @@ public class Main {
 	@Inject
 	private static DrivingMotors drivingMotors;
 	
+	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		Injector injector = Guice.createInjector(new MainBinder());
+		
+		drivingMotors = injector.getInstance(DrivingMotors.class);
+		sharedData = injector.getInstance(SharedData.class);
+		pathing = injector.getInstance(ImplPathing.class);
+		searching = injector.getInstance(Searching.class);
+		colour = injector.getInstance(ImplColour.class);
+		ultrasonic = injector.getInstance(ImplUltrasonic.class);
+		infared = injector.getInstance(ImplInfared.class);
 		
 		//Setup
 		drivingMotors.move("up");
@@ -53,14 +62,6 @@ public class Main {
 		//While there are unvisited tiles
 		while(sharedData.getUnvisited().size() > 0) {
 			
-			sharedData = injector.getInstance(SharedData.class);
-			pathing = injector.getInstance(ImplPathing.class);
-			searching = injector.getInstance(Searching.class);
-			colour = injector.getInstance(ImplColour.class);
-			ultrasonic = injector.getInstance(ImplUltrasonic.class);
-			infared = injector.getInstance(ImplInfared.class);
-			drivingMotors = injector.getInstance(DrivingMotors.class);
-		
 			//Call upon searching function to find and move to next tile
 			searching.findMoveUnvisited();
 		
@@ -113,7 +114,7 @@ public class Main {
 			infared.detectSurvivors(ultrasonic.findWalls());
 		}
 		
-		if (true) {//If user interaction
+		if (false) {//If user interaction
 			//Reset current position to last silver tile
 			sharedData.setCurrentPos(sharedData.getLastSilverTile());
 		}
