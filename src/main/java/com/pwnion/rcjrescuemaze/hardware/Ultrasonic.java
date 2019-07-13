@@ -11,7 +11,7 @@ import com.pi4j.wiringpi.Gpio;
 public abstract class Ultrasonic implements GpioPinListenerDigital {
 	
 	//Inject a pins object as a dependency
-	protected final Pins pins;
+	private final Pins pins;
 	
 	//Boolean that is true when the ultrasonic sensor receives the sound wave back
 	private boolean echoStateChanged;
@@ -52,5 +52,6 @@ public abstract class Ultrasonic implements GpioPinListenerDigital {
 	}
 	
 	//Abstract implementation
-	public abstract ArrayList<Boolean> findWalls();
+	public abstract ArrayList<Boolean> get();
+	public abstract boolean get(int i);
 }

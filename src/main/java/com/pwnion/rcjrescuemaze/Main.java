@@ -11,11 +11,10 @@ import com.pwnion.rcjrescuemaze.datatypes.UnvisitedTileData;
 import com.pwnion.rcjrescuemaze.datatypes.VisitedTileData;
 import com.pwnion.rcjrescuemaze.hardware.Colour;
 import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
+import com.pwnion.rcjrescuemaze.hardware.FindWalls;
 import com.pwnion.rcjrescuemaze.hardware.ImplColour;
 import com.pwnion.rcjrescuemaze.hardware.ImplInfared;
-import com.pwnion.rcjrescuemaze.hardware.ImplUltrasonic;
 import com.pwnion.rcjrescuemaze.hardware.Infared;
-import com.pwnion.rcjrescuemaze.hardware.Ultrasonic;
 import com.pwnion.rcjrescuemaze.software.ImplPathing;
 import com.pwnion.rcjrescuemaze.software.Searching;
 import com.pwnion.rcjrescuemaze.software.SharedData;
@@ -34,7 +33,7 @@ public class Main {
 	private static Colour colour;
 	
 	@Inject
-	private static Ultrasonic ultrasonic;
+	private static FindWalls findWalls;
 	
 	@Inject
 	private static Infared infared;
@@ -42,65 +41,70 @@ public class Main {
 	@Inject
 	private static DrivingMotors drivingMotors;
 	
-	@SuppressWarnings("unused")
+	private static final void manageTiles(boolean start, FindWalls findWalls) {
+		//Update the list of unvisited tiles with viable surrounding tiles
+		Coords coords;
+		for(int i = 0; i < 4; i++) {
+			coords = sharedData.getCurrentPos();
+			if(!findWalls.get(i)) {
+				switch(i) {
+				case 0: //Front
+					coords.addY(1);
+					break;
+				case 1: //Left
+					coords.addX(-1);
+					break;
+				case 2: //Back
+					coords.addY(-1);
+					break;
+				case 3: //Right
+					coords.addX(1);
+					break;
+				}
+				if(!sharedData.getVisitedCoords().contains(coords) && !(i == 2 && start)) {
+					sharedData.appendUnvisited(new UnvisitedTileData(coords, 1));
+				}
+			}
+		}
+		
+		//Calculate any new corners found and add to list
+		boolean corner = false;
+		for (int i = 0; i < 4; i++) {
+			if (findWalls.get(i) && findWalls.get(i == 3 ? 0 : i + 1)) {
+				corner = true;
+			}
+    	}
+		
+		//Add current tile to visited
+		sharedData.appendVisited(new VisitedTileData(sharedData.getCurrentPos(), findWalls.get(), corner, colour.detectSilver()));
+	}
+	
 	public static void main(String[] args) {
 		Injector injector = Guice.createInjector(new MainBinder());
-		
-		drivingMotors = injector.getInstance(DrivingMotors.class);
+
 		sharedData = injector.getInstance(SharedData.class);
-		pathing = injector.getInstance(ImplPathing.class);
 		searching = injector.getInstance(Searching.class);
-		colour = injector.getInstance(ImplColour.class);
-		ultrasonic = injector.getInstance(ImplUltrasonic.class);
-		infared = injector.getInstance(ImplInfared.class);
+		drivingMotors = injector.getInstance(DrivingMotors.class);
 		
 		//Setup
 		drivingMotors.move("up");
 		sharedData.setCurrentPos(0, 0);
-		sharedData.appendUnvisited(new UnvisitedTileData(new Coords(0, 0), 1));
+		manageTiles(true, injector.getInstance(FindWalls.class));
 		
 		//While there are unvisited tiles
 		while(sharedData.getUnvisited().size() > 0) {
-			
+			colour = injector.getInstance(ImplColour.class);
+			findWalls = injector.getInstance(FindWalls.class);
+			infared = injector.getInstance(ImplInfared.class);
+			pathing = injector.getInstance(ImplPathing.class);
+		
 			//Call upon searching function to find and move to next tile
 			searching.findMoveUnvisited();
 		
 			//Remove current tile from unvisited
 			sharedData.removeUnvisited(sharedData.getCurrentPos());
 			
-			//Update the list of unvisited tiles with viable surrounding tiles
-			Coords coords;
-			for(int i = 0; i < 4; i++) {
-				coords = sharedData.getCurrentPos();
-				if(!ultrasonic.findWalls().get(i)) {
-					switch(i) {
-					case 0: //Front
-						coords.addY(1);
-						break;
-					case 1: //Left
-						coords.addX(-1);
-						break;
-					case 2: //Back
-						coords.addY(-1);
-						break;
-					case 3: //Right
-						coords.addX(1);
-						break;
-					}
-					sharedData.appendUnvisited(new UnvisitedTileData(coords, 1));
-				}
-			}
-			
-			//Calculate any new corners found and add to list
-			boolean corner = false;
-			for (int i = 0; i < 4; i++) {
-				if (ultrasonic.findWalls().get(i) && ultrasonic.findWalls().get(i == 3 ? 0 : i + 1)) {
-					corner = true;
-				}
-	    	}
-			
-			//Add current tile to visited
-			sharedData.appendVisited(new VisitedTileData(sharedData.getCurrentPos(), ultrasonic.findWalls(), corner, colour.detectSilver()));
+			manageTiles(false, findWalls);
 		
 			//Calculate distance to unvisited tiles and update each with new distance value (Uses Pathing.java functions)
 			HashMap<Coords, Integer> map = pathing.generateMap();
@@ -111,10 +115,10 @@ public class Main {
 			//Detect for any problems in orientation or position (Mainly checks any information that may have been logged during Pathing)
 
 			//Call upon Survivors function to search for any survivors and detect them
-			infared.detectSurvivors(ultrasonic.findWalls());
+			infared.detectSurvivors(findWalls.get());
 		}
 		
-		if (false) {//If user interaction
+		if (true) {//If user interaction
 			//Reset current position to last silver tile
 			sharedData.setCurrentPos(sharedData.getLastSilverTile());
 		}
