@@ -1,18 +1,21 @@
 package com.pwnion.rcjrescuemaze.hardware;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
+@Singleton
 public class DrivingMotors {
 	private final Pins pins;
-	private static final long moveDuration = 2000;
+	private final long moveDuration = 2000;
 
 	@Inject
-	DrivingMotors(Pins pins) {
+	public DrivingMotors(Pins pins) {
 		this.pins = pins;
 	}
 
 	//Moves the robot in the given direction using all 4 motors
 	public void move(String direction) {
+		pins.setSpeedPins(100);
 		switch (direction) {
 		case "up":
 			pins.clockwisePins.get("front_left").pulse(moveDuration);
@@ -51,7 +54,7 @@ public class DrivingMotors {
 			Thread.sleep(moveDuration);
 		} catch (InterruptedException e) {
 			System.out.println("Sleep is causing some problems...");
-			e.printStackTrace();
 		}
+		pins.setSpeedPins(0);
 	}
 }

@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
+import com.google.inject.Singleton;
 import com.pwnion.rcjrescuemaze.datatypes.Coords;
 import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
 
+@Singleton
 public class ImplPathing extends Pathing {
 	
 	@Inject
