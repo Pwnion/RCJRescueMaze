@@ -3,17 +3,17 @@ package com.pwnion.rcjrescuemaze.hardware;
 import java.util.ArrayList;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
-@Singleton
-public class ImplInfared extends Infared {
+public class FindSurvivors extends Infared {
 	
 	@Inject
-	public ImplInfared(Pins pins) {
+	protected FindSurvivors(Pins pins) {
 		super(pins);
 	}
 
+	@Override
 	public void detectSurvivors(ArrayList<Boolean> walls) {
-		//Scan for survivors using infared sensor
+		
 	}
+
 }
