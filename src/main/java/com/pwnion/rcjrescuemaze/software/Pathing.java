@@ -60,7 +60,7 @@ public abstract class Pathing {
 	This creates a path that the robot can follow by always moving toward a surrounding coordinate associated with a 
 	number that is lower than the one it is on currently
 	*/
-	protected HashMap<Coords, Integer> generateMap() {
+	public HashMap<Coords, Integer> generateMap() {
 		HashMap<Coords, Integer> map = new HashMap<Coords, Integer>();
 		HashSet<Coords> previousViableCoords = new HashSet<Coords>(Arrays.asList(sharedData.getCurrentPos()));
 

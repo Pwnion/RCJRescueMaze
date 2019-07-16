@@ -102,6 +102,20 @@ public class SharedData {
 		}
 		return unvisitedDistances;
 	}
+	
+	public Coords getClosestTile() {
+		
+		UnvisitedTileData closestTile = getUnvisited().get(0);
+	
+		//Find closest unvisited tile
+		for(UnvisitedTileData unvisitedTileData : getUnvisited()) {
+			if(unvisitedTileData.getDistance() < closestTile.getDistance()) {
+				closestTile = unvisitedTileData;
+				break;
+			}	
+		}
+		return closestTile.getCoords();
+	}
 
 	public void appendVisited(VisitedTileData visitedTileData) {
 		visited.add(visitedTileData);

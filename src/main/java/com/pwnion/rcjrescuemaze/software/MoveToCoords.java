@@ -1,7 +1,6 @@
 package com.pwnion.rcjrescuemaze.software;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -9,16 +8,11 @@ import com.pwnion.rcjrescuemaze.datatypes.Coords;
 import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
 
 @Singleton
-public class ImplPathing extends Pathing {
+public class MoveToCoords extends Pathing {
 	
 	@Inject
-	public ImplPathing(SharedData sharedData, DrivingMotors drivingMotors) {
+	public MoveToCoords(SharedData sharedData, DrivingMotors drivingMotors) {
 		super(sharedData, drivingMotors);
-	}
-	
-	@Override
-	public HashMap<Coords, Integer> generateMap() {
-		return super.generateMap();
 	}
 	
 	/*

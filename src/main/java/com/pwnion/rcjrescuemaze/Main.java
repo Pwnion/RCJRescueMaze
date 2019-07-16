@@ -11,12 +11,11 @@ import com.pwnion.rcjrescuemaze.datatypes.UnvisitedTileData;
 import com.pwnion.rcjrescuemaze.datatypes.VisitedTileData;
 import com.pwnion.rcjrescuemaze.hardware.Colour;
 import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
+import com.pwnion.rcjrescuemaze.hardware.FindSurvivors;
 import com.pwnion.rcjrescuemaze.hardware.FindWalls;
 import com.pwnion.rcjrescuemaze.hardware.ImplColour;
-import com.pwnion.rcjrescuemaze.hardware.ImplInfared;
 import com.pwnion.rcjrescuemaze.hardware.Infared;
-import com.pwnion.rcjrescuemaze.software.ImplPathing;
-import com.pwnion.rcjrescuemaze.software.Searching;
+import com.pwnion.rcjrescuemaze.software.MoveToCoords;
 import com.pwnion.rcjrescuemaze.software.SharedData;
 
 public class Main {
@@ -24,10 +23,7 @@ public class Main {
 	private static SharedData sharedData;
 	
 	@Inject
-	private static ImplPathing pathing;
-	
-	@Inject
-	private static Searching searching;
+	private static MoveToCoords pathing;
 	
 	@Inject
 	private static Colour colour;
@@ -83,7 +79,6 @@ public class Main {
 		Injector injector = Guice.createInjector(new MainBinder());
 
 		sharedData = injector.getInstance(SharedData.class);
-		searching = injector.getInstance(Searching.class);
 		drivingMotors = injector.getInstance(DrivingMotors.class);
 		
 		//Setup
@@ -95,11 +90,11 @@ public class Main {
 		while(sharedData.getUnvisited().size() > 0) {
 			colour = injector.getInstance(ImplColour.class);
 			findWalls = injector.getInstance(FindWalls.class);
-			infared = injector.getInstance(ImplInfared.class);
-			pathing = injector.getInstance(ImplPathing.class);
+			infared = injector.getInstance(FindSurvivors.class);
+			pathing = injector.getInstance(MoveToCoords.class);
 		
 			//Call upon searching function to find and move to next tile
-			searching.findMoveUnvisited();
+			pathing.moveToCoords(sharedData.getClosestTile());
 		
 			//Remove current tile from unvisited
 			sharedData.removeUnvisited(sharedData.getCurrentPos());
