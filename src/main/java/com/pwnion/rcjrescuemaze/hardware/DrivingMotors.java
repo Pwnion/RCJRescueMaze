@@ -1,12 +1,16 @@
 package com.pwnion.rcjrescuemaze.hardware;
 
+import java.util.Optional;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.pi4j.io.gpio.GpioPinDigitalOutput;
 
 @Singleton
-public class DrivingMotors {
+public abstract class DrivingMotors {
 	private final Pins pins;
-	private final long moveDuration = 2000;
+	
+	protected long globalMoveDuration = 2000;
 
 	@Inject
 	public DrivingMotors(Pins pins) {
@@ -14,47 +18,49 @@ public class DrivingMotors {
 	}
 
 	//Moves the robot in the given direction using all 4 motors
-	public void move(String direction) {
+	protected final void start(String direction, Optional<Long> localMoveDuration) {
 		pins.setSpeedPins(100);
 		switch (direction) {
 		case "up":
-			pins.clockwisePins.get("front_left").pulse(moveDuration);
-			pins.clockwisePins.get("back_left").pulse(moveDuration);
+			pins.clockwisePins.get("front_left").pulse(localMoveDuration.orElse(globalMoveDuration));
+			pins.clockwisePins.get("back_left").pulse(localMoveDuration.orElse(globalMoveDuration));
 
-			pins.anticlockwisePins.get("front_right").pulse(moveDuration);
-			pins.anticlockwisePins.get("back_right").pulse(moveDuration);
+			pins.anticlockwisePins.get("front_right").pulse(localMoveDuration.orElse(globalMoveDuration));
+			pins.anticlockwisePins.get("back_right").pulse(localMoveDuration.orElse(globalMoveDuration));
 
 			break;
 		case "down":
-			pins.clockwisePins.get("front_right").pulse(moveDuration);
-			pins.clockwisePins.get("back_right").pulse(moveDuration);
+			pins.clockwisePins.get("front_right").pulse(localMoveDuration.orElse(globalMoveDuration));
+			pins.clockwisePins.get("back_right").pulse(localMoveDuration.orElse(globalMoveDuration));
 
-			pins.anticlockwisePins.get("front_left").pulse(moveDuration);
-			pins.anticlockwisePins.get("back_left").pulse(moveDuration);
+			pins.anticlockwisePins.get("front_left").pulse(localMoveDuration.orElse(globalMoveDuration));
+			pins.anticlockwisePins.get("back_left").pulse(localMoveDuration.orElse(globalMoveDuration));
 
 			break;
 		case "left":
-			pins.clockwisePins.get("back_left").pulse(moveDuration);
-			pins.clockwisePins.get("back_right").pulse(moveDuration);
+			pins.clockwisePins.get("back_left").pulse(localMoveDuration.orElse(globalMoveDuration));
+			pins.clockwisePins.get("back_right").pulse(localMoveDuration.orElse(globalMoveDuration));
 
-			pins.anticlockwisePins.get("front_left").pulse(moveDuration);
-			pins.anticlockwisePins.get("front_right").pulse(moveDuration);
+			pins.anticlockwisePins.get("front_left").pulse(localMoveDuration.orElse(globalMoveDuration));
+			pins.anticlockwisePins.get("front_right").pulse(localMoveDuration.orElse(globalMoveDuration));
 
 			break;
 		case "right":
-			pins.clockwisePins.get("front_right").pulse(moveDuration);
-			pins.clockwisePins.get("front_left").pulse(moveDuration);
+			pins.clockwisePins.get("front_right").pulse(localMoveDuration.orElse(globalMoveDuration));
+			pins.clockwisePins.get("front_left").pulse(localMoveDuration.orElse(globalMoveDuration));
 
-			pins.anticlockwisePins.get("back_left").pulse(moveDuration);
-			pins.anticlockwisePins.get("back_right").pulse(moveDuration);
+			pins.anticlockwisePins.get("back_left").pulse(localMoveDuration.orElse(globalMoveDuration));
+			pins.anticlockwisePins.get("back_right").pulse(localMoveDuration.orElse(globalMoveDuration));
 
 			break;
 		}
-		try {
-			Thread.sleep(moveDuration);
-		} catch (InterruptedException e) {
-			System.out.println("Sleep is causing some problems...");
-		}
+	}
+	
+	protected final void stop() {
+		for(GpioPinDigitalOutput pin : pins.clockwisePins.values()) pin.low();
+		for(GpioPinDigitalOutput pin : pins.anticlockwisePins.values()) pin.low();
 		pins.setSpeedPins(0);
 	}
+	
+	public abstract void go(String direction);
 }

@@ -42,9 +42,11 @@ public abstract class Pathing {
 		//Adds the coords surrounding the given coords that don't have a wall obstruction
 		int visitedIndex = sharedData.getVisitedCoords().indexOf(coords);
 		if(visitedIndex != -1) {
+			Coords nextTile;
 			for(int i = 0; i < 4; i++) {
-				if(!sharedData.getVisitedWalls().get(visitedIndex).get(i)) {
-					viableSurroundingCoords.add(new Coords(coords.getX() + coordsToAdd.get(i)[0], coords.getY() + coordsToAdd.get(i)[1]));
+				nextTile = new Coords(coords.getX() + coordsToAdd.get(i)[0], coords.getY() + coordsToAdd.get(i)[1]);
+				if(!sharedData.getVisitedWalls().get(visitedIndex).get(i) && !sharedData.getBlackTiles().contains(nextTile)) {
+					viableSurroundingCoords.add(nextTile);
 				}
 			}
 		}

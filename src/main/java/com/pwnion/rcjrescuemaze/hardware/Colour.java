@@ -18,6 +18,5 @@ public abstract class Colour {
 	}
 	
 	//Abstract implementations
-	public abstract void detectSurvivor(String position);
-	public abstract boolean detectSilver();
+	public abstract String get();
 }

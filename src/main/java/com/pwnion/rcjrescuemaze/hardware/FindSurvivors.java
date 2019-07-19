@@ -12,8 +12,7 @@ public class FindSurvivors extends Infared {
 	}
 
 	@Override
-	public void detectSurvivors(ArrayList<Boolean> walls) {
+	public void get(ArrayList<Boolean> walls) {
 		
 	}
-
 }

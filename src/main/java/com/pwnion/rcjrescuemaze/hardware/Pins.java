@@ -14,8 +14,35 @@ import com.pi4j.io.gpio.RaspiPin;
 @Singleton
 public class Pins {
 	
-	//Initialise GpioController for the Pi4J Library
-	private final GpioController gpio = GpioFactory.getInstance();
+	/*
+	 * IR TEMP PINS
+	 */
+	
+	//Slave Addresses
+	final byte I2CADDR1 = (byte) 0x5A;
+	final byte I2CADDR2 = (byte) 0x5A;
+	final byte I2CADDR3 = (byte) 0x5A;
+	final byte I2CADDR4 = (byte) 0x5A;
+
+	//RAM
+	final byte RAWIR1 = (byte) 0x04;
+	final byte RAWIR2 = (byte) 0x05;
+	final byte TA = (byte) 0x06;
+	final byte TOBJ1 = (byte) 0x07;
+	final byte TOBJ2 = (byte) 0x08;
+	
+	//EEPROM
+	final byte TOMAX = (byte) 0x20;
+	final byte TOMIN = (byte) 0x21;
+	final byte PWMCTRL = (byte) 0x22;
+	final byte TARANGE = (byte) 0x23;
+	final byte EMISS = (byte) 0x24;
+	final byte CONFIG = (byte) 0x25;
+	final byte ADDR = (byte) 0x0E;
+	final byte ID1 = (byte) 0x3C;
+	final byte ID2 = (byte) 0x3D;
+	final byte ID3 = (byte) 0x3E;
+	final byte ID4 = (byte) 0x3F;
 	
 	//Set all pin shutdown options
 	public Pins() {
@@ -31,7 +58,28 @@ public class Pins {
 		for(GpioPinDigitalOutput pin : anticlockwisePins.values()) {
 			pin.setShutdownOptions(true, PinState.LOW);
 		}
+		for(GpioPinDigitalOutput pin : stepperPins.values()) {
+			pin.setShutdownOptions(true, PinState.LOW);
+		}
+		tiltPin.setShutdownOptions(true, PinState.LOW);
 	}
+		
+	//Initialise GpioController for the Pi4J Library
+	private final GpioController gpio = GpioFactory.getInstance();
+	
+	//Tilt Sensor OUT Pin
+	final GpioPinDigitalInput tiltPin = gpio.provisionDigitalInputPin(RaspiPin.GPIO_28);
+	
+	//Stepper Motor IN(1/2/3/4) Pins
+	final HashMap<String, GpioPinDigitalOutput> stepperPins = new HashMap<String, GpioPinDigitalOutput>() {
+		private static final long serialVersionUID = 1L;
+		{
+			put("IN1", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_21));
+			put("IN2", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_22));
+			put("IN3", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_25));
+			put("IN4", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_27));
+		}
+	};
 	
 	//Provision digital ultrasonic output (trig) pins and populate a hashmap with them based on their position on the robot
 	final HashMap<String, GpioPinDigitalOutput> sendPins = new HashMap<String, GpioPinDigitalOutput>() {
@@ -78,19 +126,20 @@ public class Pins {
 		}
 	};
 	
-	//Map motor directions to (EN(A/B)) pins based on their BCM numbering
-	final HashMap<String, Integer> speedPins = new HashMap<String, Integer>() {
-		private static final long serialVersionUID = 1L;
-		{
-			put("front_left", 18);
-			put("back_left", 19);
-			put("back_right", 12);
-			put("front_right", 13);
-		}
-	};
-	
 	//Method to set value for (EN(A/B)) pins
 	public final void setSpeedPins(int speed) {
+		
+		//Map motor directions to (EN(A/B)) pins based on their BCM numbering
+		final HashMap<String, Integer> speedPins = new HashMap<String, Integer>() {
+			private static final long serialVersionUID = 1L;
+			{
+				put("front_left", 18);
+				put("back_left", 19);
+				put("back_right", 12);
+				put("front_right", 13);
+			}
+		};
+		
 		try {
 			for(String direction : speedPins.keySet()) {
 				new ProcessBuilder("/bin/sh", "-c", "echo \"" + speedPins.get(direction) + "=" + ((float) speed / 100) + "\" > /dev/pi-blaster").start();

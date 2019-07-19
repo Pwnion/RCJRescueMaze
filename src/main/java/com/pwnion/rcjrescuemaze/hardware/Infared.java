@@ -19,5 +19,5 @@ public abstract class Infared {
 	}
 	
 	//Abstract implementation
-	public abstract void detectSurvivors(ArrayList<Boolean> walls);
+	public abstract void get(ArrayList<Boolean> walls);
 }

@@ -24,7 +24,7 @@ public class MoveToCoords extends Pathing {
 		ArrayList<String> path = super.generatePath(super.generateMap(), coords);
 		for(int i = path.size() - 1; i == 0; i--) {
 			//Move one tile in the correct direction determined
-			drivingMotors.move(path.get(i));
+			drivingMotors.go(path.get(i));
 			
 			//Update current position of the robot
 			Coords newPos = sharedData.getCurrentPos();

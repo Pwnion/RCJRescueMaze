@@ -13,7 +13,7 @@ import com.pwnion.rcjrescuemaze.hardware.Colour;
 import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
 import com.pwnion.rcjrescuemaze.hardware.FindSurvivors;
 import com.pwnion.rcjrescuemaze.hardware.FindWalls;
-import com.pwnion.rcjrescuemaze.hardware.ImplColour;
+import com.pwnion.rcjrescuemaze.hardware.FindColour;
 import com.pwnion.rcjrescuemaze.hardware.Infared;
 import com.pwnion.rcjrescuemaze.software.MoveToCoords;
 import com.pwnion.rcjrescuemaze.software.SharedData;
@@ -26,13 +26,13 @@ public class Main {
 	private static MoveToCoords pathing;
 	
 	@Inject
-	private static Colour colour;
+	private static Colour findColour;
 	
 	@Inject
 	private static FindWalls findWalls;
 	
 	@Inject
-	private static Infared infared;
+	private static Infared findSurvivors;
 	
 	@Inject
 	private static DrivingMotors drivingMotors;
@@ -72,7 +72,7 @@ public class Main {
     	}
 		
 		//Add current tile to visited
-		sharedData.appendVisited(new VisitedTileData(sharedData.getCurrentPos(), findWalls.get(), corner, colour.detectSilver()));
+		sharedData.appendVisited(new VisitedTileData(sharedData.getCurrentPos(), findWalls.get(), corner, findColour.get() == "silver" ? true : false));
 	}
 	
 	public static void main(String[] args) {
@@ -82,15 +82,15 @@ public class Main {
 		drivingMotors = injector.getInstance(DrivingMotors.class);
 		
 		//Setup
-		drivingMotors.move("up");
+		drivingMotors.go("up");
 		sharedData.setCurrentPos(0, 0);
 		manageTiles(true, injector.getInstance(FindWalls.class));
 		
 		//While there are unvisited tiles
 		while(sharedData.getUnvisited().size() > 0) {
-			colour = injector.getInstance(ImplColour.class);
+			findColour = injector.getInstance(FindColour.class);
 			findWalls = injector.getInstance(FindWalls.class);
-			infared = injector.getInstance(FindSurvivors.class);
+			findSurvivors = injector.getInstance(FindSurvivors.class);
 			pathing = injector.getInstance(MoveToCoords.class);
 		
 			//Call upon searching function to find and move to next tile
@@ -110,7 +110,7 @@ public class Main {
 			//Detect for any problems in orientation or position (Mainly checks any information that may have been logged during Pathing)
 
 			//Call upon Survivors function to search for any survivors and detect them
-			infared.detectSurvivors(findWalls.get());
+			findSurvivors.get(findWalls.get());
 		}
 		
 		if (true) {//If user interaction

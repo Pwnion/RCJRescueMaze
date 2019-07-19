@@ -14,6 +14,9 @@ public class SharedData {
 			
 	//LIST UNVISTED: (Location, Distance)
 	private ArrayList<UnvisitedTileData> unvisited = new ArrayList<UnvisitedTileData>();
+	
+	//LIST BLACK TILES
+	private ArrayList<Coords> blackTiles = new ArrayList<Coords>();
 			
 	//LAST SILVER TILE: (Location)
 	private Coords lastSilverTile = new Coords(0, 0);
@@ -27,6 +30,10 @@ public class SharedData {
 	
 	public ArrayList<UnvisitedTileData> getUnvisited() {
 		return unvisited;
+	}
+	
+	public ArrayList<Coords> getBlackTiles() {
+		return blackTiles;
 	}
 	
 	public Coords getLastSilverTile() {
@@ -123,6 +130,10 @@ public class SharedData {
 	
 	public void appendUnvisited(UnvisitedTileData unvisitedTileData) {
 		unvisited.add(unvisitedTileData);
+	}
+	
+	public void appendBlackTiles(Coords coord) {
+		blackTiles.add(coord);
 	}
 	
 	public void setUnvisited(Coords coords, int distance) {
