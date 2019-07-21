@@ -8,6 +8,7 @@ import com.pwnion.rcjrescuemaze.hardware.FindSurvivors;
 import com.pwnion.rcjrescuemaze.hardware.FindWalls;
 import com.pwnion.rcjrescuemaze.hardware.FindColour;
 import com.pwnion.rcjrescuemaze.hardware.Infared;
+import com.pwnion.rcjrescuemaze.hardware.Move;
 import com.pwnion.rcjrescuemaze.hardware.Pins;
 import com.pwnion.rcjrescuemaze.hardware.Ultrasonic;
 import com.pwnion.rcjrescuemaze.software.MoveToCoords;
@@ -22,11 +23,11 @@ public class MainBinder extends AbstractModule {
     	bind(Pins.class).asEagerSingleton();
     	bind(SharedData.class).asEagerSingleton();
     	bind(DispenserMotor.class).asEagerSingleton();
-    	bind(DrivingMotors.class).asEagerSingleton();
     	
     	bind(Ultrasonic.class).to(FindWalls.class).asEagerSingleton();
     	bind(Colour.class).to(FindColour.class).asEagerSingleton();
     	bind(Infared.class).to(FindSurvivors.class).asEagerSingleton();
+    	bind(DrivingMotors.class).to(Move.class).asEagerSingleton();
     	
     	bind(Pathing.class).to(MoveToCoords.class).asEagerSingleton();;
     }

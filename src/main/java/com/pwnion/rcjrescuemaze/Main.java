@@ -15,6 +15,7 @@ import com.pwnion.rcjrescuemaze.hardware.FindSurvivors;
 import com.pwnion.rcjrescuemaze.hardware.FindWalls;
 import com.pwnion.rcjrescuemaze.hardware.FindColour;
 import com.pwnion.rcjrescuemaze.hardware.Infared;
+import com.pwnion.rcjrescuemaze.hardware.Move;
 import com.pwnion.rcjrescuemaze.software.MoveToCoords;
 import com.pwnion.rcjrescuemaze.software.SharedData;
 
@@ -35,7 +36,7 @@ public class Main {
 	private static Infared findSurvivors;
 	
 	@Inject
-	private static DrivingMotors drivingMotors;
+	private static DrivingMotors move;
 	
 	private static final void manageTiles(boolean start, FindWalls findWalls) {
 		//Update the list of unvisited tiles with viable surrounding tiles
@@ -57,6 +58,7 @@ public class Main {
 					coords.addX(1);
 					break;
 				}
+				
 				if(!sharedData.getVisitedCoords().contains(coords) && !(i == 2 && start)) {
 					sharedData.appendUnvisited(new UnvisitedTileData(coords, 1));
 				}
@@ -79,10 +81,10 @@ public class Main {
 		Injector injector = Guice.createInjector(new MainBinder());
 
 		sharedData = injector.getInstance(SharedData.class);
-		drivingMotors = injector.getInstance(DrivingMotors.class);
+		move = injector.getInstance(Move.class);
 		
 		//Setup
-		drivingMotors.go("up");
+		move.go("up");
 		sharedData.setCurrentPos(0, 0);
 		manageTiles(true, injector.getInstance(FindWalls.class));
 		

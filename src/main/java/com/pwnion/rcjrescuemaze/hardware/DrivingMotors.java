@@ -3,10 +3,8 @@ package com.pwnion.rcjrescuemaze.hardware;
 import java.util.Optional;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
 
-@Singleton
 public abstract class DrivingMotors {
 	private final Pins pins;
 	

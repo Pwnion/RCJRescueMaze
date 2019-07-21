@@ -2,6 +2,8 @@ package com.pwnion.rcjrescuemaze.hardware;
 
 import java.util.ArrayList;
 
+import com.google.inject.Inject;
+
 public class FindWalls extends Ultrasonic {
 	private ArrayList<Boolean> walls;
 	
@@ -15,6 +17,7 @@ public class FindWalls extends Ultrasonic {
 		return walls;
 	}
 	
+	@Inject
 	public FindWalls(Pins pins) {
 		super(pins);
 		

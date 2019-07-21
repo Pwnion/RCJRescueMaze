@@ -4,10 +4,12 @@ import java.util.HashMap;
 import java.util.Optional;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.pi4j.wiringpi.Gpio;
 import com.pwnion.rcjrescuemaze.datatypes.Coords;
 import com.pwnion.rcjrescuemaze.software.SharedData;
 
+@Singleton
 public class Move extends DrivingMotors {
 	
 	private final Colour findColour;
@@ -41,6 +43,7 @@ public class Move extends DrivingMotors {
 		this.findColour = findColour;
 	}
 
+	@Override
 	public final void go(String direction) {
 		start(direction, Optional.empty());
 		
