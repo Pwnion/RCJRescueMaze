@@ -8,7 +8,7 @@ import com.pi4j.io.gpio.GpioPinDigitalOutput;
 public abstract class DrivingMotors {
 	private final Pins pins;
 	
-	protected long globalMoveDuration = 2000;
+	protected long globalMoveDuration = 1675;
 
 	@Inject
 	public DrivingMotors(Pins pins) {
@@ -16,23 +16,48 @@ public abstract class DrivingMotors {
 	}
 
 	//Moves the robot in the given direction using all 4 motors
-	protected final void start(String direction, Optional<Long> localMoveDuration) {
-		pins.setSpeedPins(100);
+	public final void start(String direction, Optional<Long> localMoveDuration) {
 		switch (direction) {
 		case "up":
-			pins.clockwisePins.get("front_left").pulse(localMoveDuration.orElse(globalMoveDuration));
-			pins.clockwisePins.get("back_left").pulse(localMoveDuration.orElse(globalMoveDuration));
-
 			pins.anticlockwisePins.get("front_right").pulse(localMoveDuration.orElse(globalMoveDuration));
 			pins.anticlockwisePins.get("back_right").pulse(localMoveDuration.orElse(globalMoveDuration));
+			
+			pins.clockwisePins.get("front_left").pulse(localMoveDuration.orElse(globalMoveDuration));
+			pins.clockwisePins.get("back_left").pulse(localMoveDuration.orElse(globalMoveDuration));
+			
+			/*
+			pins.clockwisePins.get("front_left").pulse(localMoveDuration.orElse(globalMoveDuration));
+			
+			try {
+				Thread.sleep(2500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			pins.anticlockwisePins.get("front_left").pulse(localMoveDuration.orElse(globalMoveDuration));
+			*/
 
 			break;
 		case "down":
 			pins.clockwisePins.get("front_right").pulse(localMoveDuration.orElse(globalMoveDuration));
-			pins.clockwisePins.get("back_right").pulse(localMoveDuration.orElse(globalMoveDuration));
-
-			pins.anticlockwisePins.get("front_left").pulse(localMoveDuration.orElse(globalMoveDuration));
 			pins.anticlockwisePins.get("back_left").pulse(localMoveDuration.orElse(globalMoveDuration));
+			
+			pins.anticlockwisePins.get("front_left").pulse(localMoveDuration.orElse(globalMoveDuration));
+			pins.clockwisePins.get("back_right").pulse(localMoveDuration.orElse(globalMoveDuration));
+			
+			/*
+			pins.clockwisePins.get("back_left").pulse(localMoveDuration.orElse(globalMoveDuration));
+			
+			try {
+				Thread.sleep(2500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			pins.anticlockwisePins.get("back_left").pulse(localMoveDuration.orElse(globalMoveDuration));
+			*/
 
 			break;
 		case "left":
@@ -42,6 +67,19 @@ public abstract class DrivingMotors {
 			pins.anticlockwisePins.get("front_left").pulse(localMoveDuration.orElse(globalMoveDuration));
 			pins.anticlockwisePins.get("front_right").pulse(localMoveDuration.orElse(globalMoveDuration));
 
+			/*
+			pins.clockwisePins.get("back_right").pulse(localMoveDuration.orElse(globalMoveDuration));
+			
+			try {
+				Thread.sleep(2500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			pins.anticlockwisePins.get("back_right").pulse(localMoveDuration.orElse(globalMoveDuration));
+			*/
+			
 			break;
 		case "right":
 			pins.clockwisePins.get("front_right").pulse(localMoveDuration.orElse(globalMoveDuration));
@@ -49,16 +87,31 @@ public abstract class DrivingMotors {
 
 			pins.anticlockwisePins.get("back_left").pulse(localMoveDuration.orElse(globalMoveDuration));
 			pins.anticlockwisePins.get("back_right").pulse(localMoveDuration.orElse(globalMoveDuration));
-
+			
+			/*
+			pins.clockwisePins.get("front_right").pulse(localMoveDuration.orElse(globalMoveDuration));
+			
+			try {
+				Thread.sleep(2500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			pins.anticlockwisePins.get("front_right").pulse(localMoveDuration.orElse(globalMoveDuration));
+			*/
+			
 			break;
 		}
+		pins.speedPin.setPwm(1024);
 	}
 	
-	protected final void stop() {
+	public final void stop() {
+		pins.speedPin.setPwm(0);
 		for(GpioPinDigitalOutput pin : pins.clockwisePins.values()) pin.low();
 		for(GpioPinDigitalOutput pin : pins.anticlockwisePins.values()) pin.low();
-		pins.setSpeedPins(0);
 	}
 	
 	public abstract void go(String direction);
+	public abstract void goUntil(String direction, float distanceToWall);
 }

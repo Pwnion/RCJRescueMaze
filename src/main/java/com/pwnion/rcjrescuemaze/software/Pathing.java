@@ -28,6 +28,8 @@ public abstract class Pathing {
 	private HashSet<Coords> viableSurroundingCoords(Coords coords) {
 		HashSet<Coords> viableSurroundingCoords = new HashSet<Coords>();
 		
+		System.out.println("Running viableSurroundingCoords(" + coords.getX() + ", " + coords.getY() + ")");
+		
 		//Directions mapped to relative coordinates for the surrounding tiles
 		HashMap<Integer, int[]> coordsToAdd = new HashMap<Integer, int[]>() {
 			private static final long serialVersionUID = 1L;
@@ -41,11 +43,19 @@ public abstract class Pathing {
 
 		//Adds the coords surrounding the given coords that don't have a wall obstruction
 		int visitedIndex = sharedData.getVisitedCoords().indexOf(coords);
+		System.out.println("Visited Coords, " + sharedData.getVisitedCoords());
+		
+		System.out.println("visitedIndex = " + visitedIndex);
+		
 		if(visitedIndex != -1) {
+			
+			System.out.println("visitedIndex != -1");
+			
 			Coords nextTile;
 			for(int i = 0; i < 4; i++) {
 				nextTile = new Coords(coords.getX() + coordsToAdd.get(i)[0], coords.getY() + coordsToAdd.get(i)[1]);
 				if(!sharedData.getVisitedWalls().get(visitedIndex).get(i) && !sharedData.getBlackTiles().contains(nextTile)) {
+					System.out.println("viableSurroundingCoords, Adding Next Tile");
 					viableSurroundingCoords.add(nextTile);
 				}
 			}
@@ -65,6 +75,8 @@ public abstract class Pathing {
 	public HashMap<Coords, Integer> generateMap() {
 		HashMap<Coords, Integer> map = new HashMap<Coords, Integer>();
 		HashSet<Coords> previousViableCoords = new HashSet<Coords>(Arrays.asList(sharedData.getCurrentPos()));
+		
+		System.out.println("Generating Map");
 
 		int counter = 1;
 		do {
@@ -82,11 +94,15 @@ public abstract class Pathing {
 			distances between the coords of the robot and the viable coord in question
 			*/ 
 			for(Coords coord : combinedCoords) {
+				System.out.println("MapCoord");
 				map.put(coord, counter);
 			}
 			
 			//When the set of unvisited coords becomes a subset of combined coords, return the map
-			if(combinedCoords.containsAll(sharedData.getUnvisitedCoords().stream().collect(Collectors.toSet()))) return map;
+			if(combinedCoords.containsAll(sharedData.getUnvisitedCoords().stream().collect(Collectors.toSet()))) {
+				System.out.println("map: " + map);
+				return map;
+			}
 			
 			previousViableCoords = combinedCoords;
 			

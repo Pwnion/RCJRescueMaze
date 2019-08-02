@@ -2,12 +2,10 @@ package com.pwnion.rcjrescuemaze.software;
 
 import java.util.ArrayList;
 
-import com.google.inject.Singleton;
 import com.pwnion.rcjrescuemaze.datatypes.Coords;
 import com.pwnion.rcjrescuemaze.datatypes.UnvisitedTileData;
 import com.pwnion.rcjrescuemaze.datatypes.VisitedTileData;
 
-@Singleton
 public class SharedData {
 	//LIST VISITED: (Location, 4 bits for walls, 1 bit for Corner, 1 bit for Silver)
 	private ArrayList<VisitedTileData> visited = new ArrayList<VisitedTileData>();
@@ -23,6 +21,10 @@ public class SharedData {
 			
 	//CURRENT POSITION: (Location)
 	private Coords currentPos = new Coords(0, 0);
+	
+	//LOCATION AND DIRECTION OF THE RAMP TILE
+	private Coords rampTile = new Coords(0, 0);
+	private String rampDir = "";
 	
 	public ArrayList<VisitedTileData> getVisited() {
 		return visited;
@@ -42,6 +44,14 @@ public class SharedData {
 	
 	public Coords getCurrentPos() {
 		return currentPos;
+	}
+	
+	public Coords getRampTile() {
+		return rampTile;
+	}
+	
+	public String getRampDir() {
+		return rampDir;
 	}
 
 	public int getVisitedIndex(Coords coords) {
@@ -174,7 +184,7 @@ public class SharedData {
 	}
 	
 	public void setLastSilverTile(Coords coords) {
-		lastSilverTile = coords;
+		lastSilverTile.set(coords);
 	}
 	
 	public void setLastSilverTile(int x, int y) {
@@ -182,10 +192,22 @@ public class SharedData {
 	}
 	
 	public void setCurrentPos(Coords coords) {
-		currentPos = coords;
+		currentPos.set(coords);
 	}
 	
 	public void setCurrentPos(int x, int y) {
 		currentPos.set(x, y);
+	}
+	
+	public void setRampTile(Coords coords) {
+		rampTile.set(coords);
+	}
+	
+	public void setRampTile(int x, int y) {
+		rampTile.set(x, y);
+	}
+	
+	public void setRampDir(String direction) {
+		rampDir = direction;
 	}
 }

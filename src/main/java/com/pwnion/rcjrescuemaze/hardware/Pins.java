@@ -1,6 +1,6 @@
 package com.pwnion.rcjrescuemaze.hardware;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.google.inject.Singleton;
@@ -8,6 +8,7 @@ import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
+import com.pi4j.io.gpio.GpioPinPwmOutput;
 import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiPin;
 
@@ -18,37 +19,42 @@ public class Pins {
 	 * IR TEMP PINS
 	 */
 	
-	//Slave Addresses
-	final byte I2CADDR1 = (byte) 0x5A;
-	final byte I2CADDR2 = (byte) 0x5A;
-	final byte I2CADDR3 = (byte) 0x5A;
-	final byte I2CADDR4 = (byte) 0x5A;
+	public final int I2CBUS = 1;
+
+	//Slave addresses
+	public final ArrayList<Byte> I2CADDRS = new ArrayList<Byte>() {
+		private static final long serialVersionUID = 1L;
+		{
+			add((byte) 0x5A); //1
+			add((byte) 0x5B); //2
+			add((byte) 0x5C); //3
+			add((byte) 0x5D); //4
+		}
+	};
 
 	//RAM
-	final byte RAWIR1 = (byte) 0x04;
-	final byte RAWIR2 = (byte) 0x05;
-	final byte TA = (byte) 0x06;
-	final byte TOBJ1 = (byte) 0x07;
-	final byte TOBJ2 = (byte) 0x08;
+	public final byte RAWIR1 = (byte) 0x04;
+	public final byte RAWIR2 = (byte) 0x05;
+	public final byte TA = (byte) 0x06;
+	public final byte TOBJ1 = (byte) 0x07;
+	public final byte TOBJ2 = (byte) 0x08;
 	
 	//EEPROM
-	final byte TOMAX = (byte) 0x20;
-	final byte TOMIN = (byte) 0x21;
-	final byte PWMCTRL = (byte) 0x22;
-	final byte TARANGE = (byte) 0x23;
-	final byte EMISS = (byte) 0x24;
-	final byte CONFIG = (byte) 0x25;
-	final byte ADDR = (byte) 0x0E;
-	final byte ID1 = (byte) 0x3C;
-	final byte ID2 = (byte) 0x3D;
-	final byte ID3 = (byte) 0x3E;
-	final byte ID4 = (byte) 0x3F;
+	public final byte TOMAX = (byte) 0x20;
+	public final byte TOMIN = (byte) 0x21;
+	public final byte PWMCTRL = (byte) 0x22;
+	public final byte TARANGE = (byte) 0x23;
+	public final byte EMISS = (byte) 0x24;
+	public final byte CONFIG = (byte) 0x25;
+	public final byte ADDR = (byte) 0x0E;
+	public final byte ID1 = (byte) 0x3C;
+	public final byte ID2 = (byte) 0x3D;
+	public final byte ID3 = (byte) 0x3E;
+	public final byte ID4 = (byte) 0x3F;
 	
 	//Set all pin shutdown options
 	public Pins() {
-		for(GpioPinDigitalOutput pin : sendPins.values()) {
-			pin.setShutdownOptions(true, PinState.LOW);
-		}
+		sendPin.setShutdownOptions(true, PinState.LOW);
 		for(GpioPinDigitalInput pin : receivePins.values()) {
 			pin.setShutdownOptions(true, PinState.LOW);
 		}
@@ -61,17 +67,22 @@ public class Pins {
 		for(GpioPinDigitalOutput pin : stepperPins.values()) {
 			pin.setShutdownOptions(true, PinState.LOW);
 		}
-		tiltPin.setShutdownOptions(true, PinState.LOW);
+		speedPin.setShutdownOptions(true, PinState.LOW);
+		
+		//tiltPin.setShutdownOptions(true, PinState.LOW);
+		
+		//gpio.provisionDigitalInputPin(RaspiPin.GPIO_23);
+		//gpio.provisionDigitalInputPin(RaspiPin.GPIO_24);
 	}
 		
 	//Initialise GpioController for the Pi4J Library
 	private final GpioController gpio = GpioFactory.getInstance();
 	
 	//Tilt Sensor OUT Pin
-	final GpioPinDigitalInput tiltPin = gpio.provisionDigitalInputPin(RaspiPin.GPIO_28);
+	//final GpioPinDigitalInput tiltPin = gpio.provisionDigitalInputPin(RaspiPin.GPIO_28);
 	
 	//Stepper Motor IN(1/2/3/4) Pins
-	final HashMap<String, GpioPinDigitalOutput> stepperPins = new HashMap<String, GpioPinDigitalOutput>() {
+	public final HashMap<String, GpioPinDigitalOutput> stepperPins = new HashMap<String, GpioPinDigitalOutput>() {
 		private static final long serialVersionUID = 1L;
 		{
 			put("IN1", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_21));
@@ -82,16 +93,7 @@ public class Pins {
 	};
 	
 	//Provision digital ultrasonic output (trig) pins and populate a hashmap with them based on their position on the robot
-	final HashMap<String, GpioPinDigitalOutput> sendPins = new HashMap<String, GpioPinDigitalOutput>() {
-		GpioPinDigitalOutput sharedTrigPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_12);
-		private static final long serialVersionUID = 1L;
-		{
-			put("front", sharedTrigPin);
-			put("left", sharedTrigPin);
-			put("back", sharedTrigPin);
-			put("right", sharedTrigPin);
-		}
-	};
+	public final GpioPinDigitalOutput sendPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_12);
 	
 	//Provision digital ultrasonic input (echo) pins and populate a hashmap with them based on their position on the robot
 	final HashMap<String, GpioPinDigitalInput> receivePins = new HashMap<String, GpioPinDigitalInput>() {
@@ -109,9 +111,9 @@ public class Pins {
 		private static final long serialVersionUID = 1L;
 		{
 			put("front_left", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_02));
-			put("back_left", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_06));
-			put("back_right", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_10));
-			put("front_right", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_04));
+			put("front_right", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_07));
+			put("back_right", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_11));
+			put("back_left", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_04));
 		}
 	};
 	
@@ -119,34 +121,13 @@ public class Pins {
 	final HashMap<String, GpioPinDigitalOutput> anticlockwisePins = new HashMap<String, GpioPinDigitalOutput>() {
 		private static final long serialVersionUID = 1L;
 		{
-			put("front_left", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_03));
-			put("back_left", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_07));
-			put("back_right", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_11));
-			put("front_right", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_05));
+			put("front_left", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00));
+			put("front_right", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_06));
+			put("back_right", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_10));
+			put("back_left", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_05));
 		}
 	};
 	
-	//Method to set value for (EN(A/B)) pins
-	public final void setSpeedPins(int speed) {
-		
-		//Map motor directions to (EN(A/B)) pins based on their BCM numbering
-		final HashMap<String, Integer> speedPins = new HashMap<String, Integer>() {
-			private static final long serialVersionUID = 1L;
-			{
-				put("front_left", 18);
-				put("back_left", 19);
-				put("back_right", 12);
-				put("front_right", 13);
-			}
-		};
-		
-		try {
-			for(String direction : speedPins.keySet()) {
-				new ProcessBuilder("/bin/sh", "-c", "echo \"" + speedPins.get(direction) + "=" + ((float) speed / 100) + "\" > /dev/pi-blaster").start();
-			}
-		} catch (IOException e) {
-			System.out.println("Couldn't set value for software PWM pin");
-			e.printStackTrace();
-		}
-	}
+	//Provision the pin that controls all EN(A/B) pins
+	final GpioPinPwmOutput speedPin = gpio.provisionPwmOutputPin(RaspiPin.GPIO_26);
 }

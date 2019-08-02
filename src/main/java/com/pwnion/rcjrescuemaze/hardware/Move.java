@@ -14,6 +14,7 @@ public class Move extends DrivingMotors {
 	
 	private final Colour findColour;
 	private final SharedData sharedData;
+	private final Ultrasonic ultrasonic;
 	
 	private final HashMap<String, String> oppDirections = new HashMap<String, String>() {
 		private static final long serialVersionUID = 1L;
@@ -35,22 +36,34 @@ public class Move extends DrivingMotors {
 		}
 	};
 	
+	private HashMap<String, String> dirToPos = new HashMap<String, String>() {
+		private static final long serialVersionUID = 1L;
+		{
+			put("up", "front");
+			put("left", "left");
+			put("down", "back");
+			put("right", "right");
+		}
+	};
+	
 	@Inject
-	public Move(Pins pins, SharedData sharedData, Colour findColour) {
+	public Move(Pins pins, SharedData sharedData, Colour findColour, Ultrasonic ultrasonic) {
 		super(pins);
 		
 		this.sharedData = sharedData;
 		this.findColour = findColour;
+		this.ultrasonic = ultrasonic;
 	}
-
+	
+	@SuppressWarnings("unused")
 	@Override
-	public final void go(String direction) {
+	public final void go(String direction) {	
 		start(direction, Optional.empty());
 		
 		long startTime = Gpio.millis();
 		long moveDuration;
 		while(Gpio.millis() - startTime < globalMoveDuration) {
-			if(findColour.get() == "black") {
+			if(findColour.get().equals("black")) {
 				stop();
 				moveDuration = Gpio.millis() - startTime;
 				start(oppDirections.get(direction), Optional.of(moveDuration));
@@ -66,8 +79,17 @@ public class Move extends DrivingMotors {
 				
 				sharedData.appendBlackTiles(blackCoords);
 				break;
-			} //else if(ramp) ramp stuff;
+			} else if(false /*ramp condition*/) {
+				
+			}
 		}
+		stop();
+	}
+	
+	@Override
+	public final void goUntil(String direction, float distanceToWall) {
+		start(direction, Optional.of((long) 100000));
+		while(ultrasonic.rawSensorOutput().get(dirToPos.get(direction)) > distanceToWall);
 		stop();
 	}
 }
