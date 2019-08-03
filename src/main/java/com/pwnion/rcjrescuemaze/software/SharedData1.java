@@ -187,23 +187,18 @@ public class SharedData1 {
 	}
 	
 	public boolean isSuperSetOfUnvisited(HashSet<Coords> superSet) {
-		ArrayList<Integer>
-		unvisitedX = new ArrayList<Integer>(),
-		unvisitedY = new ArrayList<Integer>(),
-		superSetX = new ArrayList<Integer>(),
-		superSetY = new ArrayList<Integer>();
+		ArrayList<String> unvisitedSigs = new ArrayList<String>();
+		ArrayList<String> superSetSigs = new ArrayList<String>();
 		
 		for(Coords coord : getUnvisitedCoords()) {
-			unvisitedX.add(coord.getX());
-			unvisitedY.add(coord.getY());
+			unvisitedSigs.add(coord.getSignature());
 		}
 		
 		for(Coords coord : superSet) {
-			superSetX.add(coord.getX());
-			superSetY.add(coord.getY());
+			superSetSigs.add(coord.getSignature());
 		}
 		
-		return superSetX.containsAll(unvisitedX) && superSetY.containsAll(unvisitedY);
+		return superSetSigs.containsAll(unvisitedSigs);
 	}
 	
 	public void setLastSilverTile(Coords coords) {

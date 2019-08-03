@@ -5,14 +5,17 @@ import java.util.ArrayList;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.pwnion.rcjrescuemaze.datatypes.Coords;
-import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
+import com.pwnion.rcjrescuemaze.hardware.Move;
 
 @Singleton
 public class MoveToCoords extends Pathing {
+	private final Move move;
 	
 	@Inject
-	public MoveToCoords(SharedData1 sharedData, DrivingMotors drivingMotors) {
-		super(sharedData, drivingMotors);
+	public MoveToCoords(SharedData1 sharedData, Move move) {
+		super(sharedData);
+		
+		this.move = move;
 	}
 	
 	/*
@@ -22,9 +25,13 @@ public class MoveToCoords extends Pathing {
 	@Override
 	public void moveToCoords(Coords coords) {
 		ArrayList<String> path = super.generatePath(super.generateMap(), coords);
-		for(int i = path.size() - 1; i == 0; i--) {
+		System.out.println("MAP: " + super.generateMap().values() + " Map Size = " + super.generateMap().size());
+		System.out.println("PATH TO STRING: " + path.toString() + " PATH SIZE: " + path.size());
+		for(int i = path.size() - 1; i <= 0; i--) {
 			//Move one tile in the correct direction determined
-			drivingMotors.go(path.get(i));
+			
+			System.out.println("************");
+			move.go(path.get(i));
 			
 			//Update current position of the robot
 			Coords newPos = sharedData.getCurrentPos();

@@ -7,17 +7,14 @@ import java.util.HashSet;
 
 import com.google.inject.Inject;
 import com.pwnion.rcjrescuemaze.datatypes.Coords;
-import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
 
 public abstract class Pathing {
 	
 	protected final SharedData1 sharedData;
-	protected final DrivingMotors drivingMotors;
 	
 	@Inject
-	protected Pathing(SharedData1 sharedData, DrivingMotors drivingMotors) {
+	protected Pathing(SharedData1 sharedData) {
 		this.sharedData = sharedData;
-		this.drivingMotors = drivingMotors;
 	}
 	
 	/*
@@ -72,13 +69,23 @@ public abstract class Pathing {
 	number that is lower than the one it is on currently
 	*/
 	public HashMap<Coords, Integer> generateMap() {
-		HashMap<Coords, Integer> map = new HashMap<Coords, Integer>();
+		HashMap<Coords, Integer> map = new HashMap<Coords, Integer>() {
+			private static final long serialVersionUID = 1L;
+
+			{
+				put(sharedData.getCurrentPos(), 0);
+			}
+		};
 		HashSet<Coords> previousViableCoords = new HashSet<Coords>(Arrays.asList(sharedData.getCurrentPos()));
 		
 		System.out.println("Generating Map");
 		
 		for(Coords coord : sharedData.getUnvisitedCoords()) {
-			System.out.println("Unvisited Coord: [" + coord.getX() + ", " + coord.getY() + "]");
+			System.out.println(" **Unvisited Coord: [" + coord.getX() + ", " + coord.getY() + "]");
+		}
+		
+		for(Coords coord : sharedData.getVisitedCoords()) {
+			System.out.println(" **Visited Coord: [" + coord.getX() + ", " + coord.getY() + "]");
 		}
 
 		int counter = 1;
@@ -97,14 +104,15 @@ public abstract class Pathing {
 			distances between the coords of the robot and the viable coord in question
 			*/ 
 			for(Coords coord : combinedCoords) {
-				System.out.println("Unvisited Coords Size = " + sharedData.getUnvisited().size());
+				System.out.println(" Unvisited Coords Size = " + sharedData.getUnvisited().size());
+				System.out.println("  Combined Coord, " + coord.getX() + "," + coord.getY());
 				map.put(coord, counter);
 			}
 			
 			
 			//When the set of unvisited coords becomes a subset of combined coords, return the map
 			if(sharedData.isSuperSetOfUnvisited(combinedCoords)) {
-				System.out.println("map: " + map.values() + " of size, " + map.values().size() + "  String:  " + map.toString());
+				System.out.println("map: " + map.values() + " of size, " + map.values().size());
 				return map;
 			}
 			
@@ -113,10 +121,18 @@ public abstract class Pathing {
 			counter++;
 		} while(true);
 	}
-
+	
 	protected ArrayList<String> generatePath(HashMap<Coords, Integer> map, Coords coords) {
+		HashMap<String, Integer> mapSig = new HashMap<String, Integer>();
+		
+		for(Coords coord : map.keySet()) {
+			mapSig.put(coord.getSignature(), map.get(coord));
+		}
+		
+		System.out.println("mapSig.get(coords.getSignature()): " + mapSig.get(coords.getSignature()));
 		ArrayList<String> path = new ArrayList<String>();
-		for(int i = 0; i == map.get(coords) - 1; i++) {
+		for(int i = 0; i == mapSig.get(coords.getSignature()) - 1; i++) {
+			
 			ArrayList<Coords> surroundingCoords = new ArrayList<Coords>() {
 				private static final long serialVersionUID = 1L;
 				{
@@ -137,16 +153,26 @@ public abstract class Pathing {
 				}
 			};
 			
+			System.out.println("Generating Path of [" + coords.getX() + "," + coords.getY() + "]");
+			
 			/*
 			From the coords surrounding the robot, obtain the tile that has
 			the largest distance value and interpret which direction that is in
 			*/
 			for(int j = 0; j < 4; j++) {
-				int tileValue = map.get(surroundingCoords.get(j));
-				if(tileValue == map.get(sharedData.getCurrentPos()) - 1) {
-					path.add(directions.get(j));
-					break;
-				}
+				
+				System.out.println("Map of [" + surroundingCoords.get(j).getX() + "," + surroundingCoords.get(j).getY() + "] = " + map.get(surroundingCoords.get(j)));
+				
+				if(mapSig.get(surroundingCoords.get(j).getSignature()) != null) {
+					int tileValue = mapSig.get(surroundingCoords.get(j).getSignature());
+					
+					System.out.println("tileValue: " + tileValue);
+					
+					if(tileValue == mapSig.get(coords.getSignature()) - 1) {
+						path.add(directions.get(j));
+						break;
+					}
+				} 
 			}
 		}
 		return path;

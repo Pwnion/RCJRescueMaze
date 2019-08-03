@@ -8,9 +8,18 @@ public class Coords {
 		return x == coord.getX() && y == coord.getY();
 	}
 	
+	public String getSignature() {
+		return Integer.toString(x) + Integer.toString(y);
+	}
+	
 	public Coords(int x, int y) {
 		this.x = x;
 		this.y = y;
+	}
+	
+	public Coords(Coords coords) {
+		this.x = coords.getX();
+		this.y = coords.getY();
 	}
 	
 	public int[] get() {
@@ -45,7 +54,7 @@ public class Coords {
 	
 	public void add(int x, int y) {
 		this.x += x;
-		this.y += y;
+		this.y += y; 
 	}
 	
 	public void add(Coords coords) {
