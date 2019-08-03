@@ -9,20 +9,18 @@ import com.pwnion.rcjrescuemaze.binders.MainBinder;
 import com.pwnion.rcjrescuemaze.datatypes.Coords;
 import com.pwnion.rcjrescuemaze.datatypes.UnvisitedTileData;
 import com.pwnion.rcjrescuemaze.datatypes.VisitedTileData;
-import com.pwnion.rcjrescuemaze.hardware.Colour;
 import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
 import com.pwnion.rcjrescuemaze.hardware.GetSurvivors;
 import com.pwnion.rcjrescuemaze.hardware.GetWalls;
 import com.pwnion.rcjrescuemaze.hardware.GetColour;
-import com.pwnion.rcjrescuemaze.hardware.Infrared;
 import com.pwnion.rcjrescuemaze.hardware.Move;
 import com.pwnion.rcjrescuemaze.hardware.SurvivorFactory;
 import com.pwnion.rcjrescuemaze.software.MoveToCoords;
-import com.pwnion.rcjrescuemaze.software.SharedData;
+import com.pwnion.rcjrescuemaze.software.SharedData1;
 
 public class Main {
 	@Inject
-	private static SharedData sharedData;
+	private static SharedData1 sharedData;
 	
 	@Inject
 	private static MoveToCoords pathing;
@@ -94,12 +92,14 @@ public class Main {
 		
 		//Add current tile to visited
 		sharedData.appendVisited(new VisitedTileData(sharedData.getCurrentPos(), getWalls.get(), corner, getColour.get() == "silver" ? true : false));
+		
+		System.out.println("Visited Coords, " + sharedData.getVisitedCoords() + " of Size, " + sharedData.getVisitedCoords().size());
 	}
 	
 	public static void main(String[] args) {
 		Injector injector = Guice.createInjector(new MainBinder());
 
-		sharedData = injector.getInstance(SharedData.class);
+		sharedData = injector.getInstance(SharedData1.class);
 		move = injector.getInstance(Move.class);
 		
 		getColour = injector.getInstance(GetColour.class);
@@ -148,6 +148,8 @@ public class Main {
 				manageTiles(false, injector.getInstance(GetWalls.class));
 			}
 		}
+		
+		System.exit(0);
 		
 		//pathing.moveToCoords(new Coords(0, 0));
 		//move.go("down");

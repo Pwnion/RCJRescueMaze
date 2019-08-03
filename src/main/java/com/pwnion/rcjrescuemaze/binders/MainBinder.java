@@ -16,6 +16,8 @@ import com.pwnion.rcjrescuemaze.hardware.SurvivorFactory;
 import com.pwnion.rcjrescuemaze.hardware.Ultrasonic;
 import com.pwnion.rcjrescuemaze.software.MoveToCoords;
 import com.pwnion.rcjrescuemaze.software.Pathing;
+import com.pwnion.rcjrescuemaze.software.SharedData1;
+import com.pwnion.rcjrescuemaze.software.SharedData2;
 
 public class MainBinder extends AbstractModule implements Module {
     
@@ -24,6 +26,9 @@ public class MainBinder extends AbstractModule implements Module {
     protected void configure() {
     	bind(Pins.class).asEagerSingleton();
     	bind(DispenserMotor.class).asEagerSingleton();
+    	
+    	bind(SharedData1.class).asEagerSingleton();
+    	bind(SharedData2.class).asEagerSingleton();
     	
     	bind(Ultrasonic.class).to(GetWalls.class);
     	bind(Colour.class).to(GetColour.class);

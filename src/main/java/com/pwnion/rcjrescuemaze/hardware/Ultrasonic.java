@@ -19,10 +19,10 @@ public abstract class Ultrasonic{
 	
 	//Triggers pulse of sound for sensor at specified position, records time and calculates/returns distance
 	private final float getDistance(String pos) {
-		pins.sendPin.pulse(100);
+		pins.sendPin.pulse(10);
 		
 		try {
-			Thread.sleep(100);
+			Thread.sleep(10);
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
@@ -44,11 +44,11 @@ public abstract class Ultrasonic{
 			e.printStackTrace();
 		}
 		
-		return (float) (time * 0.01715);  //0.01715 = (343/2)/10^6
+		return (float) (time);  //0.01715 = (343/2)/10^6
 	}
 	
 	//Runs getDistance() for all four sensors, associates them with a position in a hashmap and returns said hashmap
-	public final HashMap<String, Float> rawSensorOutput() {
+	protected HashMap<String, Float> rawSensorOutput() {
 		return new HashMap<String, Float>() {
 			private static final long serialVersionUID = 1L;
 			{

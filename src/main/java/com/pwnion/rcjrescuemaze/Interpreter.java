@@ -1,5 +1,6 @@
 package com.pwnion.rcjrescuemaze;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -8,31 +9,29 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.pwnion.rcjrescuemaze.binders.MainBinder;
 import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
-import com.pwnion.rcjrescuemaze.hardware.Ultrasonic;
+import com.pwnion.rcjrescuemaze.hardware.GetSurvivors;
+import com.pwnion.rcjrescuemaze.hardware.GetWalls;
+import com.pwnion.rcjrescuemaze.hardware.SurvivorFactory;
 
 public class Interpreter {
 	@Inject
 	private static DrivingMotors drivingMotors;
 	
 	@Inject
-	private static Ultrasonic ultrasonic;
+	private static GetWalls getWalls;
 	
-	/*
 	@Inject
 	private static SurvivorFactory survivorFactory;
 	
 	private static GetSurvivors getSurvivors;
-	*/
 	
 	public static void main(String[] args) throws NumberFormatException, InterruptedException {
 		Injector injector = Guice.createInjector(new MainBinder());
 		
 		drivingMotors = injector.getInstance(DrivingMotors.class);
-		ultrasonic = injector.getInstance(Ultrasonic.class);
-		//ultrasonic = injector.getInstance(Ultrasonic.class);
-		//survivorFactory = injector.getInstance(SurvivorFactory.class);
+		getWalls = injector.getInstance(GetWalls.class);
+		survivorFactory = injector.getInstance(SurvivorFactory.class);
 		
-		/*
 		ArrayList<Boolean> walls = new ArrayList<Boolean>() {
 			private static final long serialVersionUID = 1L;
 			{
@@ -42,9 +41,8 @@ public class Interpreter {
 				add(true);
 			}
 		};
-		*/
 		
-		//getSurvivors = survivorFactory.create(walls);
+		getSurvivors = survivorFactory.create(walls);
 		
 		System.out.println("**************************************");
 		
@@ -75,25 +73,24 @@ public class Interpreter {
 				break;
 			
 			case "Ultrasonic":
-				HashMap<String, Float> rawSensorOutput = ultrasonic.rawSensorOutput();
+				HashMap<String, Float> rawSensorOutput = getWalls.getRawSensorOutput();
 				if(args[1].equals("all")) {
+					//int counter = 0;
 					for(String pos : rawSensorOutput.keySet()) {
-						System.out.println(pos + ": " + rawSensorOutput.get(pos));
+						System.out.println("US " + pos.toUpperCase() + "\n    RAW: " + rawSensorOutput.get(pos)/* + "\n    PRESENT: " + getWalls.get(rawSensorOutput.keySet())*/);
+						//counter++;
 					}
-				} else {
-					System.out.println(args[1] + ": " + rawSensorOutput.get(args[1]));
 				}
 				break;
-			/*
 			case "Infrared":
 				while(true) {
-					System.out.println("front: " + getSurvivors.get(0));
-					System.out.println("left: " + getSurvivors.get(1));
-					System.out.println("back: " + getSurvivors.get(2));
-					System.out.println("right: " + getSurvivors.get(3));
+					System.out.println("*IR FRONT*\n    RAW: " + getSurvivors.getRawSensorOutput().get("front") + "\n    PRESENT: " + getSurvivors.get(0));
+					System.out.println("*IR LEFT*\n    RAW: " + getSurvivors.getRawSensorOutput().get("left") + "\n    PRESENT: " + getSurvivors.get(1));
+					System.out.println("*IR BACK*\n    RAW: " + getSurvivors.getRawSensorOutput().get("back") + "\n    PRESENT: " + getSurvivors.get(2));
+					System.out.println("*IR RIGHT*\n    RAW: " + getSurvivors.getRawSensorOutput().get("right") + "\n    PRESENT: " + getSurvivors.get(3));
 					
 					Thread.sleep(1000);
-				}*/
+				}
 			}
 		} catch(Exception e) {
 			System.out.println("Invalid input! Try again.");

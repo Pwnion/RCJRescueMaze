@@ -1,12 +1,15 @@
 package com.pwnion.rcjrescuemaze.software;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
+import com.google.inject.Singleton;
 import com.pwnion.rcjrescuemaze.datatypes.Coords;
 import com.pwnion.rcjrescuemaze.datatypes.UnvisitedTileData;
 import com.pwnion.rcjrescuemaze.datatypes.VisitedTileData;
 
-public class SharedData {
+@Singleton
+public class SharedData1 {
 	//LIST VISITED: (Location, 4 bits for walls, 1 bit for Corner, 1 bit for Silver)
 	private ArrayList<VisitedTileData> visited = new ArrayList<VisitedTileData>();
 			
@@ -181,6 +184,26 @@ public class SharedData {
 				return;
 			}
 		}
+	}
+	
+	public boolean isSuperSetOfUnvisited(HashSet<Coords> superSet) {
+		ArrayList<Integer>
+		unvisitedX = new ArrayList<Integer>(),
+		unvisitedY = new ArrayList<Integer>(),
+		superSetX = new ArrayList<Integer>(),
+		superSetY = new ArrayList<Integer>();
+		
+		for(Coords coord : getUnvisitedCoords()) {
+			unvisitedX.add(coord.getX());
+			unvisitedY.add(coord.getY());
+		}
+		
+		for(Coords coord : superSet) {
+			superSetX.add(coord.getX());
+			superSetY.add(coord.getY());
+		}
+		
+		return superSetX.containsAll(unvisitedX) && superSetY.containsAll(unvisitedY);
 	}
 	
 	public void setLastSilverTile(Coords coords) {

@@ -11,7 +11,7 @@ import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
 public class MoveToCoords extends Pathing {
 	
 	@Inject
-	public MoveToCoords(SharedData sharedData, DrivingMotors drivingMotors) {
+	public MoveToCoords(SharedData1 sharedData, DrivingMotors drivingMotors) {
 		super(sharedData, drivingMotors);
 	}
 	

@@ -8,6 +8,7 @@ import com.google.inject.assistedinject.Assisted;
 //import com.google.inject.assistedinject.Assisted;
 
 public class GetSurvivors extends Infrared {
+	private HashMap<String, Integer> rawSensorOutput;
 	private ArrayList<Boolean> survivors;
 	
 	private ArrayList<Boolean> getSurvivors(ArrayList<Boolean> walls) {
@@ -20,7 +21,7 @@ public class GetSurvivors extends Infrared {
 		}
 		
 		for(String pos : tempWalls.keySet()) {
-			output.add(super.rawSensorOutput().get(pos) > 50 ? true : false);
+			output.add(rawSensorOutput().get(pos) > 50 ? true : false);
 		}
 		
 		return output;
@@ -30,7 +31,12 @@ public class GetSurvivors extends Infrared {
 	protected GetSurvivors(@Assisted ArrayList<Boolean> walls, Pins pins) {
 		super(pins);
 		
+		this.rawSensorOutput = super.rawSensorOutput();
 		this.survivors = getSurvivors(walls);
+	}
+	
+	public HashMap<String, Integer> getRawSensorOutput() {
+		return rawSensorOutput;
 	}
 	
 	@Override

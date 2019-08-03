@@ -4,6 +4,10 @@ public class Coords {
 	private int x;
 	private int y;
 	
+	public boolean compare(Coords coord) {
+		return x == coord.getX() && y == coord.getY();
+	}
+	
 	public Coords(int x, int y) {
 		this.x = x;
 		this.y = y;

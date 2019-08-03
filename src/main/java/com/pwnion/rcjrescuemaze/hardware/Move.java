@@ -7,13 +7,13 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.pi4j.wiringpi.Gpio;
 import com.pwnion.rcjrescuemaze.datatypes.Coords;
-import com.pwnion.rcjrescuemaze.software.SharedData;
+import com.pwnion.rcjrescuemaze.software.SharedData1;
 
 @Singleton
 public class Move extends DrivingMotors {
 	
 	private final Colour findColour;
-	private final SharedData sharedData;
+	private final SharedData1 sharedData;
 	private final Ultrasonic ultrasonic;
 	
 	private final HashMap<String, String> oppDirections = new HashMap<String, String>() {
@@ -47,7 +47,7 @@ public class Move extends DrivingMotors {
 	};
 	
 	@Inject
-	public Move(Pins pins, SharedData sharedData, Colour findColour, Ultrasonic ultrasonic) {
+	public Move(Pins pins, SharedData1 sharedData, Colour findColour, Ultrasonic ultrasonic) {
 		super(pins);
 		
 		this.sharedData = sharedData;

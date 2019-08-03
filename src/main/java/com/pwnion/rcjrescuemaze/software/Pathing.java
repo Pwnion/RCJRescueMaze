@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.stream.Collectors;
 
 import com.google.inject.Inject;
 import com.pwnion.rcjrescuemaze.datatypes.Coords;
@@ -12,11 +11,11 @@ import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
 
 public abstract class Pathing {
 	
-	protected final SharedData sharedData;
+	protected final SharedData1 sharedData;
 	protected final DrivingMotors drivingMotors;
 	
 	@Inject
-	protected Pathing(SharedData sharedData, DrivingMotors drivingMotors) {
+	protected Pathing(SharedData1 sharedData, DrivingMotors drivingMotors) {
 		this.sharedData = sharedData;
 		this.drivingMotors = drivingMotors;
 	}
@@ -43,7 +42,7 @@ public abstract class Pathing {
 
 		//Adds the coords surrounding the given coords that don't have a wall obstruction
 		int visitedIndex = sharedData.getVisitedCoords().indexOf(coords);
-		System.out.println("Visited Coords, " + sharedData.getVisitedCoords());
+		System.out.println("Visited Coords, " + sharedData.getVisitedCoords() + " of Size, " + sharedData.getVisitedCoords().size());
 		
 		System.out.println("visitedIndex = " + visitedIndex);
 		
@@ -77,6 +76,10 @@ public abstract class Pathing {
 		HashSet<Coords> previousViableCoords = new HashSet<Coords>(Arrays.asList(sharedData.getCurrentPos()));
 		
 		System.out.println("Generating Map");
+		
+		for(Coords coord : sharedData.getUnvisitedCoords()) {
+			System.out.println("Unvisited Coord: [" + coord.getX() + ", " + coord.getY() + "]");
+		}
 
 		int counter = 1;
 		do {
@@ -94,13 +97,14 @@ public abstract class Pathing {
 			distances between the coords of the robot and the viable coord in question
 			*/ 
 			for(Coords coord : combinedCoords) {
-				System.out.println("MapCoord");
+				System.out.println("Unvisited Coords Size = " + sharedData.getUnvisited().size());
 				map.put(coord, counter);
 			}
 			
+			
 			//When the set of unvisited coords becomes a subset of combined coords, return the map
-			if(combinedCoords.containsAll(sharedData.getUnvisitedCoords().stream().collect(Collectors.toSet()))) {
-				System.out.println("map: " + map);
+			if(sharedData.isSuperSetOfUnvisited(combinedCoords)) {
+				System.out.println("map: " + map.values() + " of size, " + map.values().size() + "  String:  " + map.toString());
 				return map;
 			}
 			
