@@ -146,6 +146,7 @@ public class Main {
 
 			//Call upon Survivors function to search for any survivors and detect them
 			getSurvivors.get();
+			
 			//}
 			
 			/*

@@ -19,14 +19,14 @@ public class GetWalls {
 		ArrayList<String> file = new ArrayList<String>();
 		Coords pos = sharedData.getCurrentPos();
 		
-		try (Stream<String> stream = Files.lines(Paths.get(""))) {
+		try (Stream<String> stream = Files.lines(Paths.get("/home/pwnion/Documents/maze.txt"))) {
 	        stream.forEach(file::add);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 		for(String line : file) {
-			if(line.contains(Integer.toString(pos.getX()) + "," + Integer.toString(pos.getY()))) {
+			if(line.contains(Integer.toString(pos.getX()) + "," + Integer.toString(pos.getY()) + "|")) {
 				String locLine = line.substring(line.indexOf("|" + 1));
 				for(int i = 0; i < 8; i += 2) {
 					walls.add(locLine.toCharArray()[i] == 1 ? true : false);
