@@ -52,10 +52,10 @@ public class Main {
 				}
 		    }
 		
-		System.out.println(" Append Visited, (" + sharedData.getCurrentPos().getX() + "," + sharedData.getCurrentPos().getY() + " (coords), " + getWalls.get() + " (walls), " + corner + " (corner), " + getColour.get() + "(colour))");
+		System.out.println(" Append Visited, (" + sharedData.getCurrentPos().toString() + " (coords), " + getWalls.get() + " (walls), " + corner + " (corner), " + getColour.get() + "(colour))");
 		
 		//Add current tile to visited
-		sharedData.appendVisited(new VisitedTileData(sharedData.getCurrentPos(), getWalls.get(), corner, getColour.get() == "silver" ? true : false));
+		sharedData.appendVisited(new VisitedTileData(new Coords(sharedData.getCurrentPos()), getWalls.get(), corner, getColour.get() == "silver" ? true : false));
 		
 		System.out.println("Visited Coords, " + sharedData.getVisitedCoords() + " of Size, " + sharedData.getVisitedCoords().size());
 		
@@ -89,7 +89,7 @@ public class Main {
 				System.out.println(" Coords in Visited, " + sharedData.getVisitedCoords().contains(coords));
 				if(!sharedData.getVisitedCoords().contains(coords) && !(i == 2 && start)) {
 					sharedData.appendUnvisited(new UnvisitedTileData(coords, 1));
-					System.out.println("  Append Unvisted (" + coords.getX() + "," + coords.getY() + ")");
+					System.out.println("  Append Unvisted " + coords.toString());
 				}
 			} else {
 				System.out.print("\n");
@@ -134,14 +134,14 @@ public class Main {
 		
 			//Calculate distance to unvisited tiles and update each with new distance value (Uses Pathing.java functions)
 			HashMap<Coords, Integer> map = pathing.generateMap();
-			HashMap<String, Integer> mapSig = new HashMap<String, Integer>();
+			HashMap<String, Integer> mapStr = new HashMap<String, Integer>();
 			
 			for(Coords coord : map.keySet()) {
-				mapSig.put(coord.getSignature(), map.get(coord));
+				mapStr.put(coord.toString(), map.get(coord));
 			}
 			
 			for (UnvisitedTileData unvisitedTile : sharedData.getUnvisited()) {
-				unvisitedTile.setDistance(mapSig.get(unvisitedTile.getCoords().getSignature()));
+				unvisitedTile.setDistance(mapStr.get(unvisitedTile.getCoords().toString()));
 			}
 
 			//Call upon Survivors function to search for any survivors and detect them

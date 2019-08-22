@@ -1,15 +1,13 @@
 package com.pwnion.rcjrescuemaze.datatypes;
 
+import java.util.ArrayList;
+
 public class Coords {
 	private int x;
 	private int y;
 	
 	public boolean compare(Coords coord) {
 		return x == coord.getX() && y == coord.getY();
-	}
-	
-	public String getSignature() {
-		return Integer.toString(x) + Integer.toString(y);
 	}
 	
 	public Coords(int x, int y) {
@@ -32,6 +30,23 @@ public class Coords {
 	
 	public int getY() {
 		return y;
+	}
+
+	public String toString() {
+		return "(" + x + ", " + y + ")";
+	}
+	
+	public ArrayList<Coords> surrounding() {
+		ArrayList<Coords> surroundingCoords = new ArrayList<Coords>() {
+			private static final long serialVersionUID = 1L;
+			{
+				add(new Coords(x, y - 1));
+				add(new Coords(x + 1, y));
+				add(new Coords(x, y + 1));
+				add(new Coords(x - 1, y));
+			}
+		};
+		return surroundingCoords;
 	}
 	
 	public void set(Coords coords) {
@@ -68,5 +83,9 @@ public class Coords {
 	
 	public void addY(int y) {
 		this.y += y;
+	}
+
+	public Coords plus(Coords coords) {
+		return new Coords(coords.getX() + x, coords.getY() + y);
 	}
 }

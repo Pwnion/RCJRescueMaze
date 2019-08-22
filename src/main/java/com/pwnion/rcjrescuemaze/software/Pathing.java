@@ -24,39 +24,32 @@ public abstract class Pathing {
 	private HashSet<Coords> viableSurroundingCoords(Coords coords) {
 		HashSet<Coords> viableSurroundingCoords = new HashSet<Coords>();
 		
-		System.out.println("Running viableSurroundingCoords(" + coords.getX() + ", " + coords.getY() + ")");
-		
 		//Directions mapped to relative coordinates for the surrounding tiles
-		HashMap<Integer, int[]> coordsToAdd = new HashMap<Integer, int[]>() {
+		HashMap<Integer, Coords> coordsToAdd = new HashMap<Integer, Coords>() {
 			private static final long serialVersionUID = 1L;
 			{
-				put(0, new int[] {0, 1});
-				put(1, new int[] {-1, 0});
-				put(2, new int[] {0, -1});
-				put(3, new int[] {1, 0});
+				put(0, new Coords(0, 1));
+				put(1, new Coords(-1, 0));
+				put(2, new Coords(0, -1));
+				put(3, new Coords(1, 0));
 			}
 		};
 
 		//Adds the coords surrounding the given coords that don't have a wall obstruction
-		int visitedIndex = sharedData.getVisitedCoords().indexOf(coords);
-		System.out.println("Visited Coords, " + sharedData.getVisitedCoords() + " of Size, " + sharedData.getVisitedCoords().size());
-		
-		System.out.println("visitedIndex = " + visitedIndex);
+		int visitedIndex = sharedData.getVisitedIndex(coords);
 		
 		if(visitedIndex != -1) {
-			
-			System.out.println("visitedIndex != -1");
-			
 			Coords nextTile;
 			for(int i = 0; i < 4; i++) {
-				nextTile = new Coords(coords.getX() + coordsToAdd.get(i)[0], coords.getY() + coordsToAdd.get(i)[1]);
+				nextTile = coords.plus(coordsToAdd.get(i));
+				System.out.println("nextTile viableSurroundingCoords = " + nextTile);
 				if(!sharedData.getVisitedWalls().get(visitedIndex).get(i) && !sharedData.getBlackTiles().contains(nextTile)) {
-					System.out.println("viableSurroundingCoords, Adding Next Tile");
 					viableSurroundingCoords.add(nextTile);
 				}
 			}
 		}
-
+		
+		System.out.println("Adding viableSurroundingCoords: " + viableSurroundingCoords + " from " + coords);
 		//Return the coords surrounding the given coords that don't have a wall obstruction
 		return viableSurroundingCoords;
 	}
@@ -79,69 +72,61 @@ public abstract class Pathing {
 		HashSet<Coords> previousViableCoords = new HashSet<Coords>(Arrays.asList(sharedData.getCurrentPos()));
 		
 		System.out.println("Generating Map");
-		
-		for(Coords coord : sharedData.getUnvisitedCoords()) {
-			System.out.println(" **Unvisited Coord: [" + coord.getX() + ", " + coord.getY() + "]");
-		}
-		
-		for(Coords coord : sharedData.getVisitedCoords()) {
-			System.out.println(" **Visited Coord: [" + coord.getX() + ", " + coord.getY() + "]");
-		}
+		System.out.println(" **Unvisited Coords: " + sharedData.getUnvisitedCoords());
+		System.out.println(" **Visited Coords: " + sharedData.getVisitedCoords());
 
+		HashSet<Coords> combinedCoords = new HashSet<Coords>();
+		
 		int counter = 1;
 		do {
-			HashSet<Coords> combinedCoords = new HashSet<Coords>();
 			/*
 			Add all coords previously determined to be viable to a hashset,
 			beginning with the coords of the robot
 			*/
+			HashSet<Coords> viableCoords = new HashSet<Coords>();
 			for(Coords coord : previousViableCoords) {
-				combinedCoords.addAll(viableSurroundingCoords(coord));
+				
+				viableCoords.addAll(viableSurroundingCoords(coord));
 			}
+			
+			combinedCoords.addAll(viableCoords);
 			
 			/*
 			Put all viable coords as keys in a hashmap, where the values are the
 			distances between the coords of the robot and the viable coord in question
 			*/ 
-			for(Coords coord : combinedCoords) {
-				System.out.println(" Unvisited Coords Size = " + sharedData.getUnvisited().size());
-				System.out.println("  Combined Coord, " + coord.getX() + "," + coord.getY());
+			for(Coords coord : viableCoords) {
 				map.put(coord, counter);
 			}
 			
+			previousViableCoords = viableCoords;
 			
 			//When the set of unvisited coords becomes a subset of combined coords, return the map
 			if(sharedData.isSuperSetOfUnvisited(combinedCoords)) {
-				System.out.println("map: " + map.values() + " of size, " + map.values().size());
 				return map;
 			}
-			
-			previousViableCoords = combinedCoords;
-			
+
 			counter++;
 		} while(true);
 	}
 	
 	protected ArrayList<String> generatePath(HashMap<Coords, Integer> map, Coords coords) {
-		HashMap<String, Integer> mapSig = new HashMap<String, Integer>();
+		HashMap<String, Integer> mapStr = new HashMap<String, Integer>();
 		
 		for(Coords coord : map.keySet()) {
-			mapSig.put(coord.getSignature(), map.get(coord));
+			mapStr.put(coord.toString(), map.get(coord));
 		}
 		
-		System.out.println("mapSig.get(coords.getSignature()): " + mapSig.get(coords.getSignature()));
 		ArrayList<String> path = new ArrayList<String>();
-		for(int i = 0; i == mapSig.get(coords.getSignature()) - 1; i++) {
+		Coords currentCoords = new Coords(coords);
+		final int pathLength = mapStr.get(coords.toString());
+		
+		System.out.println("      GENERATING PATH TO " + coords.toString() + " estimated path length of: " + pathLength + "     *****************************");
+		
+		for(int i = 0; i < pathLength; i++) {
 			
-			ArrayList<Coords> surroundingCoords = new ArrayList<Coords>() {
-				private static final long serialVersionUID = 1L;
-				{
-					add(new Coords(coords.getX() + 1, coords.getY()));
-					add(new Coords(coords.getX() - 1, coords.getY()));
-					add(new Coords(coords.getX(), coords.getY() + 1));
-					add(new Coords(coords.getX(), coords.getY() - 1));
-				}
-			};
+			
+			ArrayList<Coords> surroundingCoords = currentCoords.surrounding();
 
 			ArrayList<String> directions = new ArrayList<String>() {
 				private static final long serialVersionUID = 1L;
@@ -153,7 +138,7 @@ public abstract class Pathing {
 				}
 			};
 			
-			System.out.println("Generating Path of [" + coords.getX() + "," + coords.getY() + "]");
+			System.out.println("Generating Path of " + currentCoords.toString());
 			
 			/*
 			From the coords surrounding the robot, obtain the tile that has
@@ -161,15 +146,16 @@ public abstract class Pathing {
 			*/
 			for(int j = 0; j < 4; j++) {
 				
-				System.out.println("Map of [" + surroundingCoords.get(j).getX() + "," + surroundingCoords.get(j).getY() + "] = " + map.get(surroundingCoords.get(j)));
+				System.out.println("Map of " + surroundingCoords.get(j).toString() + " = " + mapStr.get(surroundingCoords.get(j).toString()));
 				
-				if(mapSig.get(surroundingCoords.get(j).getSignature()) != null) {
-					int tileValue = mapSig.get(surroundingCoords.get(j).getSignature());
+				if(mapStr.get(surroundingCoords.get(j).toString()) != null) {
+					int tileValue = mapStr.get(surroundingCoords.get(j).toString());
 					
-					System.out.println("tileValue: " + tileValue);
+					System.out.println("Searching for tileValue: " + tileValue);
 					
-					if(tileValue == mapSig.get(coords.getSignature()) - 1) {
+					if(tileValue == mapStr.get(currentCoords.toString()) - 1) {
 						path.add(directions.get(j));
+						currentCoords = new Coords(surroundingCoords.get(j));
 						break;
 					}
 				} 

@@ -1,6 +1,7 @@
 package com.pwnion.rcjrescuemaze.software;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -24,14 +25,23 @@ public class MoveToCoords extends Pathing {
 	*/
 	@Override
 	public void moveToCoords(Coords coords) {
-		ArrayList<String> path = super.generatePath(super.generateMap(), coords);
-		System.out.println("MAP: " + super.generateMap().values() + " Map Size = " + super.generateMap().size());
+		HashMap<Coords, Integer> map = super.generateMap();
+		ArrayList<String> path = super.generatePath(map, coords);
+		System.out.println("MAP: " + map.keySet() + " Map Values: " + map.values() + " Map Size = " + map.size());
 		System.out.println("PATH TO STRING: " + path.toString() + " PATH SIZE: " + path.size());
-		for(int i = path.size() - 1; i <= 0; i--) {
+		for(int i = path.size() - 1; i >= 0; i--) {
 			//Move one tile in the correct direction determined
 			
-			System.out.println("************");
+			System.out.println("Path position " + i + "   ***********************");
 			move.go(path.get(i));
+			
+			//After moving 1 tile check for Silver tiles and update last visited silver (if required)
+			//(This process does not happen physically and just checks Silver tile list vs Current Position)
+			if(sharedData.getVisitedIndex(sharedData.getCurrentPos()) != - 1) {
+				if(sharedData.getVisited().get(sharedData.getVisitedIndex(sharedData.getCurrentPos())).getSilverTile()) {
+					sharedData.setLastSilverTile(sharedData.getCurrentPos());
+				}
+			}
 			
 			//Update current position of the robot
 			Coords newPos = sharedData.getCurrentPos();
@@ -54,11 +64,7 @@ public class MoveToCoords extends Pathing {
 			//Log any discrepancies with rotation or position 
 			//If over tolerance levels repathing may be required
 
-			//After moving 1 tile check for Silver tiles and update last visited silver (if required)
-			//(This process does not happen physically and just checks Silver tile list vs Current Position)
-			if(sharedData.getVisited().get(sharedData.getVisitedIndex(coords)).getSilverTile()) {
-				sharedData.setLastSilverTile(sharedData.getCurrentPos());
-			}
+			
 
 		}//Repeat until end of path
 	}

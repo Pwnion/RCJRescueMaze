@@ -59,7 +59,7 @@ public class SharedData1 {
 
 	public int getVisitedIndex(Coords coords) {
 		for(int i = 0; i < visited.size(); i++) {
-			if(visited.get(i).getCoords() == coords) {
+			if(visited.get(i).getCoords().toString().equals(coords.toString())) {
 				return i;
 			}
 		}
@@ -68,7 +68,7 @@ public class SharedData1 {
 
 	public int getUnvisitedIndex(Coords coords) {
 		for(int i = 0; i < unvisited.size(); i++) {
-			if(unvisited.get(i).getCoords() == coords) {
+			if(unvisited.get(i).getCoords().toString().equals(coords.toString())) {
 				return i;
 			}
 		}
@@ -138,11 +138,15 @@ public class SharedData1 {
 	}
 
 	public void appendVisited(VisitedTileData visitedTileData) {
-		visited.add(visitedTileData);
+		if(getVisitedIndex(visitedTileData.getCoords()) == -1) {
+			visited.add(visitedTileData);
+		}
 	}
 	
 	public void appendUnvisited(UnvisitedTileData unvisitedTileData) {
-		unvisited.add(unvisitedTileData);
+		if(getUnvisitedIndex(unvisitedTileData.getCoords()) == -1) {
+			unvisited.add(unvisitedTileData);
+		}
 	}
 	
 	public void appendBlackTiles(Coords coord) {
@@ -170,7 +174,7 @@ public class SharedData1 {
 	
 	public void removeUnvisited(Coords coords) {
 		for(UnvisitedTileData unvisitedTileData : unvisited) {
-			if(unvisitedTileData.getCoords().equals(coords)) {
+			if(unvisitedTileData.getCoords().toString().equals(coords.toString())) {
 				unvisited.remove(unvisitedTileData);
 				return;
 			}
@@ -179,7 +183,7 @@ public class SharedData1 {
 	
 	public void removeUnvisited(int x, int y) {
 		for(UnvisitedTileData unvisitedTileData : unvisited) {
-			if(unvisitedTileData.getCoords().equals(new Coords(x, y))) {
+			if(unvisitedTileData.getCoords().toString().equals(new Coords(x, y).toString())) {
 				unvisited.remove(unvisitedTileData);
 				return;
 			}
@@ -187,18 +191,18 @@ public class SharedData1 {
 	}
 	
 	public boolean isSuperSetOfUnvisited(HashSet<Coords> superSet) {
-		ArrayList<String> unvisitedSigs = new ArrayList<String>();
-		ArrayList<String> superSetSigs = new ArrayList<String>();
+		ArrayList<String> unvisitedStrs = new ArrayList<String>();
+		ArrayList<String> superSetStrs = new ArrayList<String>();
 		
 		for(Coords coord : getUnvisitedCoords()) {
-			unvisitedSigs.add(coord.getSignature());
+			unvisitedStrs.add(coord.toString());
 		}
 		
 		for(Coords coord : superSet) {
-			superSetSigs.add(coord.getSignature());
+			superSetStrs.add(coord.toString());
 		}
 		
-		return superSetSigs.containsAll(unvisitedSigs);
+		return superSetStrs.containsAll(unvisitedStrs);
 	}
 	
 	public void setLastSilverTile(Coords coords) {

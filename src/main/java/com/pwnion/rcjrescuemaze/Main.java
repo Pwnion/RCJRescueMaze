@@ -135,11 +135,11 @@ public class Main {
 			HashMap<String, Integer> mapSig = new HashMap<String, Integer>();
 			
 			for(Coords coord : map.keySet()) {
-				mapSig.put(coord.getSignature(), map.get(coord));
+				mapSig.put(coord.toString(), map.get(coord));
 			}
 			
 			for (UnvisitedTileData unvisitedTile : sharedData.getUnvisited()) {
-				unvisitedTile.setDistance(mapSig.get(unvisitedTile.getCoords().getSignature()));
+				unvisitedTile.setDistance(mapSig.get(unvisitedTile.getCoords().toString()));
 			}
 
 			//Call upon Survivors function to search for any survivors and detect them
