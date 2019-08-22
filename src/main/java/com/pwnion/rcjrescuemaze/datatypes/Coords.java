@@ -32,6 +32,7 @@ public class Coords {
 		return y;
 	}
 
+	@Override
 	public String toString() {
 		return "(" + x + ", " + y + ")";
 	}

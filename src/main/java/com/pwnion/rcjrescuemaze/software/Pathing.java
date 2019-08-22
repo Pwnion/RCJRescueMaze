@@ -124,8 +124,6 @@ public abstract class Pathing {
 		System.out.println("      GENERATING PATH TO " + coords.toString() + " estimated path length of: " + pathLength + "     *****************************");
 		
 		for(int i = 0; i < pathLength; i++) {
-			
-			
 			ArrayList<Coords> surroundingCoords = currentCoords.surrounding();
 
 			ArrayList<String> directions = new ArrayList<String>() {
