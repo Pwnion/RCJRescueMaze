@@ -91,6 +91,14 @@ public class SharedData1 {
 		return visitedWalls;
 	}
 	
+	public ArrayList<Boolean> getWallsFromVisited(Coords coord) {
+		ArrayList<ArrayList<Boolean>> visitedWalls = new ArrayList<ArrayList<Boolean>>();
+		for(VisitedTileData visitedTileData : visited) {
+			visitedWalls.add(visitedTileData.getWalls());
+		}
+		return visitedWalls.get(getVisitedIndex(coord));
+	}
+	
 	public ArrayList<Boolean> getVisitedCorners() {
 		ArrayList<Boolean> visitedCorners = new ArrayList<Boolean>();
 		for(VisitedTileData visitedTileData : visited) {

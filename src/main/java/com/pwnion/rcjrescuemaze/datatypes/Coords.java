@@ -10,6 +10,18 @@ public class Coords {
 		return x == coord.getX() && y == coord.getY();
 	}
 	
+	public boolean compare(int x, int y) {
+		return this.x == x && this.y == y;
+	}
+	
+	public boolean compare(String x, String y) {
+		return this.x == Integer.parseInt(x) && this.y == Integer.parseInt(y);
+	}
+	
+	public boolean contains(Coords coord) {
+		return x == coord.getX() && y == coord.getY();
+	}
+	
 	public Coords(int x, int y) {
 		this.x = x;
 		this.y = y;

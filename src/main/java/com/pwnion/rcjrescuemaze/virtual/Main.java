@@ -87,7 +87,7 @@ public class Main {
 				
 				
 				System.out.println(" Coords in Visited, " + sharedData.getVisitedCoords().contains(coords));
-				if(!sharedData.getVisitedCoords().contains(coords) && !(i == 2 && start)) {
+				if(!sharedData.getVisitedCoords().toString().contains(coords.toString()) && !(i == 2 && start)) {
 					sharedData.appendUnvisited(new UnvisitedTileData(coords, 1));
 					System.out.println("  Append Unvisted " + coords.toString());
 				}
@@ -108,7 +108,7 @@ public class Main {
 		getWalls = injector.getInstance(GetWalls.class);
 		
 		survivorFactory = injector.getInstance(SurvivorFactory.class);
-		getSurvivors = survivorFactory.create(getWalls.get());
+		getSurvivors = survivorFactory.create(new ArrayList<Boolean>(Collections.nCopies(4, false)));
 		
 		//Setup
 		move.go("up");
@@ -121,17 +121,7 @@ public class Main {
 			getWalls = injector.getInstance(GetWalls.class);
 			getSurvivors = survivorFactory.create(new ArrayList<Boolean>(Collections.nCopies(4, false)));
 			pathing = injector.getInstance(MoveToCoords.class);
-		
-			//Call upon searching function to find and move to next tile
-			System.out.println("Closest Tile, (" + sharedData.getClosestTile().getX() + ", " + sharedData.getClosestTile().getY() + ")");
 			
-			pathing.moveToCoords(sharedData.getClosestTile());
-		
-			//Remove current tile from unvisited
-			sharedData.removeUnvisited(sharedData.getCurrentPos());
-			
-			manageTiles(false, getWalls);
-		
 			//Calculate distance to unvisited tiles and update each with new distance value (Uses Pathing.java functions)
 			HashMap<Coords, Integer> map = pathing.generateMap();
 			HashMap<String, Integer> mapStr = new HashMap<String, Integer>();
@@ -143,6 +133,16 @@ public class Main {
 			for (UnvisitedTileData unvisitedTile : sharedData.getUnvisited()) {
 				unvisitedTile.setDistance(mapStr.get(unvisitedTile.getCoords().toString()));
 			}
+		
+			//Call upon searching function to find and move to next tile
+			System.out.println("Closest Tile, (" + sharedData.getClosestTile().getX() + ", " + sharedData.getClosestTile().getY() + ")");
+			
+			pathing.moveToCoords(sharedData.getClosestTile(), map);
+		
+			//Remove current tile from unvisited
+			sharedData.removeUnvisited(sharedData.getCurrentPos());
+			
+			manageTiles(false, getWalls);
 
 			//Call upon Survivors function to search for any survivors and detect them
 			getSurvivors.get();

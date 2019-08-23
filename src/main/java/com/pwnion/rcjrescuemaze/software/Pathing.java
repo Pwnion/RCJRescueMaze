@@ -43,7 +43,7 @@ public abstract class Pathing {
 			for(int i = 0; i < 4; i++) {
 				nextTile = coords.plus(coordsToAdd.get(i));
 				System.out.println("nextTile viableSurroundingCoords = " + nextTile);
-				if(!sharedData.getVisitedWalls().get(visitedIndex).get(i) && !sharedData.getBlackTiles().contains(nextTile)) {
+				if(!sharedData.getWallsFromVisited(coords).get(i) && !sharedData.getBlackTiles().contains(nextTile)) {
 					viableSurroundingCoords.add(nextTile);
 				}
 			}
@@ -85,7 +85,6 @@ public abstract class Pathing {
 			*/
 			HashSet<Coords> viableCoords = new HashSet<Coords>();
 			for(Coords coord : previousViableCoords) {
-				
 				viableCoords.addAll(viableSurroundingCoords(coord));
 			}
 			
@@ -163,5 +162,5 @@ public abstract class Pathing {
 	}
 
 	//Abstract implementation
-	public abstract void moveToCoords(Coords coords);
+	public abstract void moveToCoords(Coords coords, HashMap<Coords, Integer> map);
 }
