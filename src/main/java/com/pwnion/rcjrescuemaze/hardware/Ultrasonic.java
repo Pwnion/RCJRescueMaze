@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import com.google.inject.Inject;
-import com.pi4j.io.gpio.event.GpioPinListener;
 import com.pi4j.wiringpi.Gpio;
 
 public abstract class Ultrasonic{
