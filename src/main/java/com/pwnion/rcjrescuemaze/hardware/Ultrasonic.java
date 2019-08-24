@@ -2,6 +2,7 @@ package com.pwnion.rcjrescuemaze.hardware;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 import com.google.inject.Inject;
 import com.pi4j.wiringpi.Gpio;
@@ -19,25 +20,29 @@ public abstract class Ultrasonic{
 	
 	//Triggers pulse of sound for sensor at specified position, records time and calculates/returns distance
 	private final float getDistance(String pos) {
-		pins.sendPin.pulse(10);
+		int pulseTime = 20;
+		pins.sendPin.pulse(pulseTime, TimeUnit.MICROSECONDS);
+		Gpio.delayMicroseconds(pulseTime);
 		
+		/*
 		try {
 			Thread.sleep(10);
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
-		}
+		}*/
 		
-		long startTime = Gpio.micros();
+		long startTime = System.nanoTime();;
 		long time = 0;
 		
+		
 		while(pins.receivePins.get(pos).isLow()) {
-			time = Gpio.micros() - startTime;
-			if(time > 1282) return -1;
+			time = System.nanoTime() - startTime;
+			if(time > 12820000) return -1;
 		}
 		while(pins.receivePins.get(pos).isHigh()) {
-			time = Gpio.micros() - startTime;
+			time = System.nanoTime() - startTime;
 		}
-		
+
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
