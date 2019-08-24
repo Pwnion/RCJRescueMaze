@@ -9,6 +9,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.pwnion.rcjrescuemaze.binders.MainBinder;
 import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
+import com.pwnion.rcjrescuemaze.hardware.GetColour;
 import com.pwnion.rcjrescuemaze.hardware.GetSurvivors;
 import com.pwnion.rcjrescuemaze.hardware.GetWalls;
 import com.pwnion.rcjrescuemaze.hardware.SurvivorFactory;
@@ -22,6 +23,9 @@ public class Interpreter {
 	
 	@Inject
 	private static SurvivorFactory survivorFactory;
+	
+	@Inject
+	private static GetColour getColour;
 	
 	private static GetSurvivors getSurvivors;
 	
@@ -91,6 +95,8 @@ public class Interpreter {
 					
 					Thread.sleep(1000);
 				}
+			case "Colour":
+				System.out.println(getColour.get());
 			}
 		} catch(Exception e) {
 			System.out.println("Invalid input! Try again.");
