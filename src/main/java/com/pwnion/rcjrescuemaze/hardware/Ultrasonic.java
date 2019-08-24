@@ -20,27 +20,27 @@ public abstract class Ultrasonic{
 	
 	//Triggers pulse of sound for sensor at specified position, records time and calculates/returns distance
 	private final float getDistance(String pos) {
-		int pulseTime = 20;
-		pins.sendPin.pulse(pulseTime, TimeUnit.MICROSECONDS);
-		Gpio.delayMicroseconds(pulseTime);
+		int pulseTime = 10;
+		pins.sendPin.pulse(pulseTime);
+		//Gpio.delayMicroseconds(pulseTime);
 		
-		/*
 		try {
-			Thread.sleep(10);
+			Thread.sleep(pulseTime);
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
-		}*/
+		}
 		
 		long startTime = System.nanoTime();;
 		long time = 0;
 		
 		
 		while(pins.receivePins.get(pos).isLow()) {
-			time = System.nanoTime() - startTime;
-			if(time > 12820000) return -1;
+			time = (System.nanoTime() - startTime) / 1000;
+			System.out.println(time);
+			if(time > 1282) return -1;
 		}
 		while(pins.receivePins.get(pos).isHigh()) {
-			time = System.nanoTime() - startTime;
+			time = (System.nanoTime() - startTime) / 1000;
 		}
 
 		try {
