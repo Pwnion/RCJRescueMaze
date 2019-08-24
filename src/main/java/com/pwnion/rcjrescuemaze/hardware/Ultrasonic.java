@@ -40,7 +40,7 @@ public abstract class Ultrasonic {
 					break;
 				}
 			}
-			if(continueCondition == true) {
+			if(continueCondition) {
 				continueCondition = false;
 				continue;
 			}
@@ -55,7 +55,7 @@ public abstract class Ultrasonic {
 					break;
 				}
 			}
-			if(continueCondition == true) {
+			if(continueCondition) {
 				continueCondition = false;
 				continue;
 			}
