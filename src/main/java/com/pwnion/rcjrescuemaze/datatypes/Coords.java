@@ -6,11 +6,11 @@ public class Coords {
 	private int x;
 	private int y;
 	
-	public boolean compare(Coords coord) {
+	public boolean equals(Coords coord) {
 		return x == coord.getX() && y == coord.getY();
 	}
 	
-	public boolean compare(int x, int y) {
+	public boolean equals(int x, int y) {
 		return this.x == x && this.y == y;
 	}
 	

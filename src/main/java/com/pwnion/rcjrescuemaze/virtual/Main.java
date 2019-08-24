@@ -29,10 +29,7 @@ public class Main {
 	
 	@Inject
 	private static GetColour getColour;
-	
-	@Inject
-	private static GetWalls getWalls;
-	
+
 	@Inject
 	private static GetSurvivors getSurvivors;
 	
@@ -86,8 +83,8 @@ public class Main {
 				}
 				
 				
-				System.out.println(" Coords in Visited, " + sharedData.getVisitedCoords().contains(coords));
-				if(!sharedData.getVisitedCoords().toString().contains(coords.toString()) && !(i == 2 && start)) {
+				System.out.println(" Coords in Visited, " + sharedData.visitedCoordsContains(coords));
+				if(!(i == 2 && start)) {
 					sharedData.appendUnvisited(new UnvisitedTileData(coords, 1));
 					System.out.println("  Append Unvisted " + coords.toString());
 				}
@@ -103,10 +100,7 @@ public class Main {
 
 		sharedData = injector.getInstance(SharedData1.class);
 		move = injector.getInstance(Move.class);
-		
-		getColour = injector.getInstance(GetColour.class);
-		getWalls = injector.getInstance(GetWalls.class);
-		
+		getColour = injector.getInstance(GetColour.class);		
 		survivorFactory = injector.getInstance(SurvivorFactory.class);
 		getSurvivors = survivorFactory.create(new ArrayList<Boolean>(Collections.nCopies(4, false)));
 		
@@ -118,7 +112,6 @@ public class Main {
 		//for(int i = 0; i < 2; i++) {
 		while(sharedData.getUnvisited().size() > 0) {
 			getColour = injector.getInstance(GetColour.class);
-			getWalls = injector.getInstance(GetWalls.class);
 			getSurvivors = survivorFactory.create(new ArrayList<Boolean>(Collections.nCopies(4, false)));
 			pathing = injector.getInstance(MoveToCoords.class);
 			
@@ -135,14 +128,14 @@ public class Main {
 			}
 		
 			//Call upon searching function to find and move to next tile
-			System.out.println("Closest Tile, (" + sharedData.getClosestTile().getX() + ", " + sharedData.getClosestTile().getY() + ")");
+			System.out.println("Closest Tile, " + sharedData.getClosestTile());
 			
 			pathing.moveToCoords(sharedData.getClosestTile(), map);
 		
 			//Remove current tile from unvisited
 			sharedData.removeUnvisited(sharedData.getCurrentPos());
 			
-			manageTiles(false, getWalls);
+			manageTiles(false, injector.getInstance(GetWalls.class));
 
 			//Call upon Survivors function to search for any survivors and detect them
 			getSurvivors.get();
@@ -159,6 +152,8 @@ public class Main {
 			}*/
 		}
 		
+		System.out.println("\n\n Finished in " + sharedData.getTime() + "sec, Moved " + (sharedData.getTime() / 3) + " tiles or " + (sharedData.getTime() * 10) + "cm");
+		System.out.println("Full Path: " + sharedData.getFullPath());
 		System.exit(0);
 		
 		//pathing.moveToCoords(new Coords(0, 0));

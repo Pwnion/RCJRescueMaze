@@ -42,14 +42,12 @@ public abstract class Pathing {
 			Coords nextTile;
 			for(int i = 0; i < 4; i++) {
 				nextTile = coords.plus(coordsToAdd.get(i));
-				System.out.println("nextTile viableSurroundingCoords = " + nextTile);
 				if(!sharedData.getWallsFromVisited(coords).get(i) && !sharedData.getBlackTiles().contains(nextTile)) {
 					viableSurroundingCoords.add(nextTile);
 				}
 			}
 		}
 		
-		System.out.println("Adding viableSurroundingCoords: " + viableSurroundingCoords + " from " + coords);
 		//Return the coords surrounding the given coords that don't have a wall obstruction
 		return viableSurroundingCoords;
 	}
@@ -95,7 +93,17 @@ public abstract class Pathing {
 			distances between the coords of the robot and the viable coord in question
 			*/ 
 			for(Coords coord : viableCoords) {
-				map.put(coord, counter);
+				boolean coordInMap = false;
+				for(Coords coordKey : map.keySet()) {
+					if(coordKey.equals(coord)) {
+						coordInMap = true;
+						break;
+					}
+				}
+				if(coordInMap == false) {
+					System.out.println("MAP of " + coord + " = " + counter);
+					map.put(coord, counter);
+				}
 			}
 			
 			previousViableCoords = viableCoords;
@@ -142,15 +150,16 @@ public abstract class Pathing {
 			the largest distance value and interpret which direction that is in
 			*/
 			for(int j = 0; j < 4; j++) {
-				
-				System.out.println("Map of " + surroundingCoords.get(j).toString() + " = " + mapStr.get(surroundingCoords.get(j).toString()));
-				
 				if(mapStr.get(surroundingCoords.get(j).toString()) != null) {
+					
+					System.out.println("Map of " + surroundingCoords.get(j).toString() + " = " + mapStr.get(surroundingCoords.get(j).toString()));
+					
 					int tileValue = mapStr.get(surroundingCoords.get(j).toString());
 					
-					System.out.println("Searching for tileValue: " + tileValue);
+					System.out.println("Searching for tileValue: " + tileValue + " Currently " + (mapStr.get(currentCoords.toString()) - 1));
 					
 					if(tileValue == mapStr.get(currentCoords.toString()) - 1) {
+						System.out.println("^ True");
 						path.add(directions.get(j));
 						currentCoords = new Coords(surroundingCoords.get(j));
 						break;

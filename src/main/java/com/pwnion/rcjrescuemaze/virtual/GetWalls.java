@@ -19,7 +19,7 @@ public class GetWalls {
 		ArrayList<String> file = new ArrayList<String>();
 		Coords pos = sharedData.getCurrentPos();
 		
-		try (Stream<String> stream = Files.lines(Paths.get("/home/pi/Maze.txt"))) {
+		try (Stream<String> stream = Files.lines(Paths.get("/home/pi/Advanced.txt"))) {
 	        stream.forEach(file::add);
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -27,11 +27,15 @@ public class MoveToCoords extends Pathing {
 	public void moveToCoords(Coords coords, HashMap<Coords, Integer> map) {
 		ArrayList<String> path = super.generatePath(map, coords);
 		System.out.println("MAP: " + map.keySet() + " Map Values: " + map.values() + " Map Size = " + map.size());
-		System.out.println("PATH TO STRING: " + path.toString() + " PATH SIZE: " + path.size());
+		System.out.println("PATH TO STRING: " + path.toString() + " PATH SIZE: " + path.size() + " Current Position: " + sharedData.getCurrentPos());
+		
 		for(int i = path.size() - 1; i >= 0; i--) {
 			//Move one tile in the correct direction determined
 			
 			System.out.println("Path position " + i + "   ***********************");
+			sharedData.timeAdd(3);
+			sharedData.pathAppend(path.get(i));
+			
 			move.go(path.get(i));
 			
 			//After moving 1 tile check for Silver tiles and update last visited silver (if required)

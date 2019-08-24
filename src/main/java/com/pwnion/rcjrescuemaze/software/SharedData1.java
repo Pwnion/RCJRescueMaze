@@ -29,6 +29,9 @@ public class SharedData1 {
 	private Coords rampTile = new Coords(0, 0);
 	private String rampDir = "";
 	
+	private int time = 0;
+	ArrayList<String> fullPath = new ArrayList<String>();
+	
 	public ArrayList<VisitedTileData> getVisited() {
 		return visited;
 	}
@@ -81,6 +84,15 @@ public class SharedData1 {
 			visitedCoords.add(visitedTileData.getCoords());
 		}
 		return visitedCoords;
+	}
+	
+	public boolean visitedCoordsContains(Coords coord) {
+		for(Coords coords : getVisitedCoords()) {
+			if(coords.equals(coord)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public ArrayList<ArrayList<Boolean>> getVisitedWalls() {
@@ -139,7 +151,6 @@ public class SharedData1 {
 		for(UnvisitedTileData unvisitedTileData : getUnvisited()) {
 			if(unvisitedTileData.getDistance() < closestTile.getDistance()) {
 				closestTile = unvisitedTileData;
-				break;
 			}	
 		}
 		return closestTile.getCoords();
@@ -152,7 +163,7 @@ public class SharedData1 {
 	}
 	
 	public void appendUnvisited(UnvisitedTileData unvisitedTileData) {
-		if(getUnvisitedIndex(unvisitedTileData.getCoords()) == -1) {
+		if(getUnvisitedIndex(unvisitedTileData.getCoords()) == -1 && getVisitedIndex(unvisitedTileData.getCoords()) == -1) {
 			unvisited.add(unvisitedTileData);
 		}
 	}
@@ -240,4 +251,25 @@ public class SharedData1 {
 	public void setRampDir(String direction) {
 		rampDir = direction;
 	}
+
+	public int getTime() {
+		return time;
+	}
+
+	public void setTime(int time) {
+		this.time = time;
+	}
+	
+	public void timeAdd(int time) {
+		this.time += time;
+	}
+	
+	public ArrayList<String> getFullPath() {
+		return fullPath;
+	}
+	
+	public void pathAppend(String direction) {
+		fullPath.add(direction);
+	}
+	
 }
