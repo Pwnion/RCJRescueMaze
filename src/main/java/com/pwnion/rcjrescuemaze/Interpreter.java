@@ -13,6 +13,7 @@ import com.pwnion.rcjrescuemaze.binders.MainBinder;
 import com.pwnion.rcjrescuemaze.hardware.GetColour;
 import com.pwnion.rcjrescuemaze.hardware.GetSurvivors;
 import com.pwnion.rcjrescuemaze.hardware.GetWalls;
+import com.pwnion.rcjrescuemaze.hardware.Pins;
 import com.pwnion.rcjrescuemaze.hardware.SurvivorFactory;
 
 public class Interpreter {
@@ -25,6 +26,9 @@ public class Interpreter {
 	@Inject
 	private static SurvivorFactory survivorFactory;
 	
+	@Inject
+	private static Pins pins;
+	
 	private static GetSurvivors getSurvivors;
 	
 	public static void main(String[] args) throws NumberFormatException, InterruptedException {
@@ -33,6 +37,7 @@ public class Interpreter {
 		//drivingMotors = injector.getInstance(DrivingMotors.class);
 		getWalls = injector.getInstance(GetWalls.class);
 		survivorFactory = injector.getInstance(SurvivorFactory.class);
+		pins = injector.getInstance(Pins.class);
 		//drivingMotors = injector.getInstance(DrivingMotors.class);
 		
 		ArrayList<Boolean> walls = new ArrayList<Boolean>() {
@@ -77,13 +82,25 @@ public class Interpreter {
 				break;
 				*/
 			case "Ultrasonic":
-				HashMap<String, Float> rawSensorOutput = getWalls.getRawSensorOutput();
+				//HashMap<String, Float> rawSensorOutput = getWalls.rawSensorOutput();
 				if(args[1].equals("all")) {
 					//int counter = 0;
+					
+					/*
 					for(String pos : rawSensorOutput.keySet()) {
-						System.out.println("US " + pos.toUpperCase() + "\n    RAW: " + rawSensorOutput.get(pos)/* + "\n    PRESENT: " + getWalls.get(rawSensorOutput.keySet())*/);
+						System.out.println("US " + pos.toUpperCase() + "\n    RAW: " + rawSensorOutput.get(pos)/* + "\n    PRESENT: " + getWalls.get(rawSensorOutput.keySet()));
 						//counter++;
 					}
+					*/
+					
+					pins.sendPin.high();
+					Thread.sleep(2000);
+					for(int i = 0; i < 10000; i++) {
+						pins.receivePins.values().forEach((pin) -> {
+							if(pin.isHigh()) System.out.print("OH MY FUCKING GOD ONE OF THE PINS IS HIGH!");
+						});
+					}
+					pins.sendPin.low();
 				}
 				break;
 			case "Infrared":

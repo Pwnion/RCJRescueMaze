@@ -96,7 +96,7 @@ public class Pins {
 	public final GpioPinDigitalOutput sendPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_12);
 	
 	//Provision digital ultrasonic input (echo) pins and populate a hashmap with them based on their position on the robot
-	final HashMap<String, GpioPinDigitalInput> receivePins = new HashMap<String, GpioPinDigitalInput>() {
+	public final HashMap<String, GpioPinDigitalInput> receivePins = new HashMap<String, GpioPinDigitalInput>() {
 		private static final long serialVersionUID = 1L;
 		{
 			put("front", gpio.provisionDigitalInputPin(RaspiPin.GPIO_13));
@@ -107,7 +107,7 @@ public class Pins {
 	};
 	
 	//Provision digital motor output (IN(1/3)) pins and populate a hashmap with them based on their position on the robot
-	final HashMap<String, GpioPinDigitalOutput> clockwisePins = new HashMap<String, GpioPinDigitalOutput>() {
+	public final HashMap<String, GpioPinDigitalOutput> clockwisePins = new HashMap<String, GpioPinDigitalOutput>() {
 		private static final long serialVersionUID = 1L;
 		{
 			put("front_left", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_02));
@@ -118,7 +118,7 @@ public class Pins {
 	};
 	
 	//Provision digital motor output (IN(2/4)) pins and populate a hashmap with them based on their position on the robot
-	final HashMap<String, GpioPinDigitalOutput> anticlockwisePins = new HashMap<String, GpioPinDigitalOutput>() {
+	public final HashMap<String, GpioPinDigitalOutput> anticlockwisePins = new HashMap<String, GpioPinDigitalOutput>() {
 		private static final long serialVersionUID = 1L;
 		{
 			put("front_left", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00));
@@ -129,5 +129,5 @@ public class Pins {
 	};
 	
 	//Provision the pin that controls all EN(A/B) pins
-	final GpioPinPwmOutput speedPin = gpio.provisionPwmOutputPin(RaspiPin.GPIO_26);
+	public final GpioPinPwmOutput speedPin = gpio.provisionPwmOutputPin(RaspiPin.GPIO_26);
 }

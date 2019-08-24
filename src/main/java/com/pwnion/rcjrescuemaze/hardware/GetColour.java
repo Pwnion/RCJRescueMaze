@@ -1,8 +1,8 @@
 package com.pwnion.rcjrescuemaze.hardware;
 
-import com.google.inject.Inject;
+import java.io.IOException;
 
-import java.io.*;
+import com.google.inject.Inject;
 
 public class GetColour extends Camera {
 	int avgColours[];

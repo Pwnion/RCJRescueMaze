@@ -27,7 +27,8 @@ public class GetWalls extends Ultrasonic {
 		this.walls = getWalls();
 	}
 	
-	public HashMap<String, Float> getRawSensorOutput() {
+	@Override
+	public HashMap<String, Float> rawSensorOutput() {
 		return rawSensorOutput;
 	}
 	
