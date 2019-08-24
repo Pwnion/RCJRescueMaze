@@ -19,21 +19,38 @@ public class GetWalls {
 		ArrayList<String> file = new ArrayList<String>();
 		Coords pos = sharedData.getCurrentPos();
 		
-		try (Stream<String> stream = Files.lines(Paths.get("/home/pi/maze.txt"))) {
+		try (Stream<String> stream = Files.lines(Paths.get("/home/pi/Maze.txt"))) {
 	        stream.forEach(file::add);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 		for(String line : file) {
-			if(line.contains(Integer.toString(pos.getX()) + "," + Integer.toString(pos.getY()) + "|")) {
-				String locLine = line.substring(line.indexOf("|") + 1);
-				for(int i = 0; i < 8; i += 2) {
-					walls.add(locLine.toCharArray()[i] == "1".toCharArray()[0] ? true : false);
-				}
-				System.out.println(line + " locline = " + locLine);
-				this.walls = walls;
+			int pipe = line.indexOf("|");
+			if(pipe == -1) {
+				continue;
 			}
+			String X = "";
+			String Y = "";
+			int comma = line.indexOf(",");
+			for(int i = 0; i < line.indexOf("|"); i++) {
+				if(comma > i) {
+					X += line.toCharArray()[i];
+				} else if(comma < i) {
+					Y += line.toCharArray()[i];
+				}
+			}
+			if(!X.isEmpty() && !Y.isEmpty()) {
+				if(pos.compare(X, Y)) {
+					String locLine = line.substring(pipe + 1);
+					for(int i = 0; i < 8; i += 2) {
+						walls.add(locLine.toCharArray()[i] == "1".toCharArray()[0] ? true : false);
+					}
+					System.out.println(line + " locline = " + locLine);
+					this.walls = walls;
+				}
+			}
+
 		}
 		
 		//this.walls = walls;

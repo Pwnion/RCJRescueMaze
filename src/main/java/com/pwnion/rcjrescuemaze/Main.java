@@ -1,5 +1,7 @@
 package com.pwnion.rcjrescuemaze;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import com.google.inject.Guice;
@@ -50,10 +52,10 @@ public class Main {
 				}
 		    }
 		
-		System.out.println(" Append Visited, (" + sharedData.getCurrentPos().getX() + "," + sharedData.getCurrentPos().getY() + " (coords), " + getWalls.get() + " (walls), " + corner + " (corner), " + getColour.get() + "(colour))");
+		System.out.println(" Append Visited, (" + sharedData.getCurrentPos().toString() + " (coords), " + getWalls.get() + " (walls), " + corner + " (corner), " + getColour.get() + "(colour))");
 		
 		//Add current tile to visited
-		sharedData.appendVisited(new VisitedTileData(sharedData.getCurrentPos(), getWalls.get(), corner, getColour.get() == "silver" ? true : false));
+		sharedData.appendVisited(new VisitedTileData(new Coords(sharedData.getCurrentPos()), getWalls.get(), corner, getColour.get().equals("silver") ? true : false));
 		
 		System.out.println("Visited Coords, " + sharedData.getVisitedCoords() + " of Size, " + sharedData.getVisitedCoords().size());
 		
@@ -87,7 +89,7 @@ public class Main {
 				System.out.println(" Coords in Visited, " + sharedData.getVisitedCoords().contains(coords));
 				if(!sharedData.getVisitedCoords().contains(coords) && !(i == 2 && start)) {
 					sharedData.appendUnvisited(new UnvisitedTileData(coords, 1));
-					System.out.println("  Append Unvisted (" + coords.getX() + "," + coords.getY() + ")");
+					System.out.println("  Append Unvisted " + coords.toString());
 				}
 			} else {
 				System.out.print("\n");
@@ -117,33 +119,34 @@ public class Main {
 		while(sharedData.getUnvisited().size() > 0) {
 			getColour = injector.getInstance(GetColour.class);
 			getWalls = injector.getInstance(GetWalls.class);
-			getSurvivors = survivorFactory.create(getWalls.get());
+			getSurvivors = survivorFactory.create(new ArrayList<Boolean>(Collections.nCopies(4, false)));
 			pathing = injector.getInstance(MoveToCoords.class);
+			
+			//Calculate distance to unvisited tiles and update each with new distance value (Uses Pathing.java functions)
+			HashMap<Coords, Integer> map = pathing.generateMap();
+			HashMap<String, Integer> mapStr = new HashMap<String, Integer>();
+			
+			for(Coords coord : map.keySet()) {
+				mapStr.put(coord.toString(), map.get(coord));
+			}
+			
+			for (UnvisitedTileData unvisitedTile : sharedData.getUnvisited()) {
+				unvisitedTile.setDistance(mapStr.get(unvisitedTile.getCoords().toString()));
+			}
 		
 			//Call upon searching function to find and move to next tile
 			System.out.println("Closest Tile, (" + sharedData.getClosestTile().getX() + ", " + sharedData.getClosestTile().getY() + ")");
 			
-			pathing.moveToCoords(sharedData.getClosestTile());
+			pathing.moveToCoords(sharedData.getClosestTile(), map);
 		
 			//Remove current tile from unvisited
 			sharedData.removeUnvisited(sharedData.getCurrentPos());
 			
 			manageTiles(false, getWalls);
-		
-			//Calculate distance to unvisited tiles and update each with new distance value (Uses Pathing.java functions)
-			HashMap<Coords, Integer> map = pathing.generateMap();
-			HashMap<String, Integer> mapSig = new HashMap<String, Integer>();
-			
-			for(Coords coord : map.keySet()) {
-				mapSig.put(coord.toString(), map.get(coord));
-			}
-			
-			for (UnvisitedTileData unvisitedTile : sharedData.getUnvisited()) {
-				unvisitedTile.setDistance(mapSig.get(unvisitedTile.getCoords().toString()));
-			}
 
 			//Call upon Survivors function to search for any survivors and detect them
 			getSurvivors.get();
+			
 			//}
 			
 			/*

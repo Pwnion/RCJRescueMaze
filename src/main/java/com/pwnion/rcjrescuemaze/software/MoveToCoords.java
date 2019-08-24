@@ -24,8 +24,7 @@ public class MoveToCoords extends Pathing {
 	terminates when the robot gets to the given coords
 	*/
 	@Override
-	public void moveToCoords(Coords coords) {
-		HashMap<Coords, Integer> map = super.generateMap();
+	public void moveToCoords(Coords coords, HashMap<Coords, Integer> map) {
 		ArrayList<String> path = super.generatePath(map, coords);
 		System.out.println("MAP: " + map.keySet() + " Map Values: " + map.values() + " Map Size = " + map.size());
 		System.out.println("PATH TO STRING: " + path.toString() + " PATH SIZE: " + path.size());
