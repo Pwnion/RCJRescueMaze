@@ -2,6 +2,7 @@ package com.pwnion.rcjrescuemaze.hardware;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 import com.google.inject.Inject;
 
@@ -20,7 +21,7 @@ public class GetWalls extends Ultrasonic {
 	}
 	
 	@Inject
-	public GetWalls(Pins pins) {
+	public GetWalls(Pins pins) throws InterruptedException, ExecutionException {
 		super(pins);
 		
 		this.rawSensorOutput = super.rawSensorOutput();

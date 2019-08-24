@@ -1,6 +1,7 @@
 package com.pwnion.rcjrescuemaze.hardware;
 
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 import com.google.inject.Inject;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
@@ -113,5 +114,5 @@ public abstract class DrivingMotors {
 	}
 	
 	public abstract void go(String direction);
-	public abstract void goUntil(String direction, float distanceToWall);
+	public abstract void goUntil(String direction, float distanceToWall) throws InterruptedException, ExecutionException;
 }

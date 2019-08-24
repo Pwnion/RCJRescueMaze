@@ -19,10 +19,7 @@ import com.pwnion.rcjrescuemaze.hardware.SurvivorFactory;
 public class Interpreter {
 	//@Inject
 	//private static DrivingMotors drivingMotors;
-	
-	@Inject
-	private static GetWalls getWalls;
-	
+
 	@Inject
 	private static SurvivorFactory survivorFactory;
 	
@@ -35,7 +32,6 @@ public class Interpreter {
 		Injector injector = Guice.createInjector(new MainBinder());
 		
 		//drivingMotors = injector.getInstance(DrivingMotors.class);
-		getWalls = injector.getInstance(GetWalls.class);
 		survivorFactory = injector.getInstance(SurvivorFactory.class);
 		pins = injector.getInstance(Pins.class);
 		//drivingMotors = injector.getInstance(DrivingMotors.class);
@@ -82,17 +78,18 @@ public class Interpreter {
 				break;
 				*/
 			case "Ultrasonic":
-				//HashMap<String, Float> rawSensorOutput = getWalls.rawSensorOutput();
+				
 				if(args[1].equals("all")) {
-					//int counter = 0;
+					for(int i = 0; i < 10; i++) {
+						HashMap<String, Float> rawSensorOutput = injector.getInstance(GetWalls.class).rawSensorOutput();
+						for(String pos : rawSensorOutput.keySet()) {
+							System.out.println("US " + pos.toUpperCase() + "\n    RAW: " + rawSensorOutput.get(pos)/* + "\n    PRESENT: " + getWalls.get(rawSensorOutput.keySet())*/);
+							//counter++;
+						}
+					}
+					
 					
 					/*
-					for(String pos : rawSensorOutput.keySet()) {
-						System.out.println("US " + pos.toUpperCase() + "\n    RAW: " + rawSensorOutput.get(pos)/* + "\n    PRESENT: " + getWalls.get(rawSensorOutput.keySet()));
-						//counter++;
-					}
-					*/
-					
 					pins.sendPin.high();
 					Thread.sleep(2000);
 					for(int i = 0; i < 10000; i++) {
@@ -101,6 +98,7 @@ public class Interpreter {
 						});
 					}
 					pins.sendPin.low();
+					*/
 				}
 				break;
 			case "Infrared":

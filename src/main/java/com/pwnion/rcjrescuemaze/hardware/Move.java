@@ -2,6 +2,7 @@ package com.pwnion.rcjrescuemaze.hardware;
 
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -87,7 +88,7 @@ public class Move extends DrivingMotors {
 	}
 	
 	@Override
-	public final void goUntil(String direction, float distanceToWall) {
+	public final void goUntil(String direction, float distanceToWall) throws InterruptedException, ExecutionException {
 		start(direction, Optional.of((long) 100000));
 		while(ultrasonic.rawSensorOutput().get(dirToPos.get(direction)) > distanceToWall);
 		stop();
