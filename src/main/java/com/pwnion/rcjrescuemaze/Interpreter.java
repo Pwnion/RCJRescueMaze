@@ -24,17 +24,15 @@ public class Interpreter {
 	@Inject
 	private static SurvivorFactory survivorFactory;
 	
-	@Inject
-	private static GetColour getColour;
-	
 	private static GetSurvivors getSurvivors;
 	
 	public static void main(String[] args) throws NumberFormatException, InterruptedException {
 		Injector injector = Guice.createInjector(new MainBinder());
 		
-		drivingMotors = injector.getInstance(DrivingMotors.class);
+		//drivingMotors = injector.getInstance(DrivingMotors.class);
 		getWalls = injector.getInstance(GetWalls.class);
 		survivorFactory = injector.getInstance(SurvivorFactory.class);
+		drivingMotors = injector.getInstance(DrivingMotors.class);
 		
 		ArrayList<Boolean> walls = new ArrayList<Boolean>() {
 			private static final long serialVersionUID = 1L;
@@ -75,7 +73,6 @@ public class Interpreter {
 					drivingMotors.stop();
 				}
 				break;
-			
 			case "Ultrasonic":
 				HashMap<String, Float> rawSensorOutput = getWalls.getRawSensorOutput();
 				if(args[1].equals("all")) {
@@ -96,7 +93,9 @@ public class Interpreter {
 					Thread.sleep(1000);
 				}
 			case "Colour":
-				System.out.println(getColour.get());
+				for(int i = 0; i < 10; i++) {
+					System.out.println(injector.getInstance(GetColour.class).get());
+				}
 			}
 		} catch(Exception e) {
 			System.out.println("Invalid input! Try again.");

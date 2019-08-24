@@ -1,20 +1,27 @@
 package com.pwnion.rcjrescuemaze.hardware;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import java.io.*;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 
-@Singleton
 public class GetColour extends Colour {
 	private String colour;
-	private int imgX = 400;
-	private int imgY = 400;
-	
+	private int imgX = 32;
+	private int imgY = 32;
+
 	private String getColour() throws IOException {
-		File file = new File("");
+		new ProcessBuilder("raspistill", "-o", "/home/pi/cam/%d.jpg", "-w", "32", "-h", "32", "-t", "100").start();
+		
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		File file = new File("/home/pi/cam_tmp");
 		BufferedImage image = ImageIO.read(file);
 		
 		int avgRed = 0;
@@ -31,7 +38,7 @@ public class GetColour extends Colour {
 		
 		int avgColour[] = {avgRed / (imgX * imgY), avgGreen / (imgX * imgY), avgBlue / (imgX * imgY)};
 		
-		return "Average Red: " + avgColour[0] + "\nAverage Green: " + avgColour[1] + "\nAverageBlue " + avgColour[2];
+		return "Average Red: " + avgColour[0] + "\nAverage Green: " + avgColour[1] + "\nAverage Blue: " + avgColour[2];
 	}
 	
 	@Inject
