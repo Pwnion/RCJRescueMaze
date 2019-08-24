@@ -35,7 +35,8 @@ public class GetSurvivors extends Infrared {
 		this.survivors = getSurvivors(walls);
 	}
 	
-	public HashMap<String, Integer> getRawSensorOutput() {
+	@Override
+	public HashMap<String, Integer> rawSensorOutput() {
 		return rawSensorOutput;
 	}
 	

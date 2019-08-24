@@ -1,22 +1,23 @@
 package com.pwnion.rcjrescuemaze;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Optional;
+//import java.util.Optional;
 
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.pwnion.rcjrescuemaze.binders.MainBinder;
-import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
+//import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
 import com.pwnion.rcjrescuemaze.hardware.GetColour;
 import com.pwnion.rcjrescuemaze.hardware.GetSurvivors;
 import com.pwnion.rcjrescuemaze.hardware.GetWalls;
 import com.pwnion.rcjrescuemaze.hardware.SurvivorFactory;
 
 public class Interpreter {
-	@Inject
-	private static DrivingMotors drivingMotors;
+	//@Inject
+	//private static DrivingMotors drivingMotors;
 	
 	@Inject
 	private static GetWalls getWalls;
@@ -32,7 +33,7 @@ public class Interpreter {
 		//drivingMotors = injector.getInstance(DrivingMotors.class);
 		getWalls = injector.getInstance(GetWalls.class);
 		survivorFactory = injector.getInstance(SurvivorFactory.class);
-		drivingMotors = injector.getInstance(DrivingMotors.class);
+		//drivingMotors = injector.getInstance(DrivingMotors.class);
 		
 		ArrayList<Boolean> walls = new ArrayList<Boolean>() {
 			private static final long serialVersionUID = 1L;
@@ -50,6 +51,7 @@ public class Interpreter {
 		
 		try {
 			switch(args[0]) {
+			/*
 			case "DrivingMotors":
 				if(args[1].equals("all")) {
 					drivingMotors.start("up", Optional.of(Long.parseLong(args[2])));
@@ -73,6 +75,7 @@ public class Interpreter {
 					drivingMotors.stop();
 				}
 				break;
+				*/
 			case "Ultrasonic":
 				HashMap<String, Float> rawSensorOutput = getWalls.getRawSensorOutput();
 				if(args[1].equals("all")) {
@@ -85,17 +88,33 @@ public class Interpreter {
 				break;
 			case "Infrared":
 				while(true) {
-					System.out.println("*IR FRONT*\n    RAW: " + getSurvivors.getRawSensorOutput().get("front") + "\n    PRESENT: " + getSurvivors.get(0));
-					System.out.println("*IR LEFT*\n    RAW: " + getSurvivors.getRawSensorOutput().get("left") + "\n    PRESENT: " + getSurvivors.get(1));
-					System.out.println("*IR BACK*\n    RAW: " + getSurvivors.getRawSensorOutput().get("back") + "\n    PRESENT: " + getSurvivors.get(2));
-					System.out.println("*IR RIGHT*\n    RAW: " + getSurvivors.getRawSensorOutput().get("right") + "\n    PRESENT: " + getSurvivors.get(3));
+					System.out.println("*IR FRONT*\n    RAW: " + getSurvivors.rawSensorOutput().get("front") + "\n    PRESENT: " + getSurvivors.get(0));
+					System.out.println("*IR LEFT*\n    RAW: " + getSurvivors.rawSensorOutput().get("left") + "\n    PRESENT: " + getSurvivors.get(1));
+					System.out.println("*IR BACK*\n    RAW: " + getSurvivors.rawSensorOutput().get("back") + "\n    PRESENT: " + getSurvivors.get(2));
+					System.out.println("*IR RIGHT*\n    RAW: " + getSurvivors.rawSensorOutput().get("right") + "\n    PRESENT: " + getSurvivors.get(3));
 					
 					Thread.sleep(1000);
 				}
 			case "Colour":
-				for(int i = 0; i < 10; i++) {
-					System.out.println(injector.getInstance(GetColour.class).get());
+				ProcessBuilder pb = new ProcessBuilder("raspistill", "-o", "/home/pi/cam.jpg", "-w", "32", "-h", "32", "-t", "0", "-tl", "0");
+				Process p = pb.start();
+				
+				long modBefore = new File("/home/pi/cam.jpg").lastModified();
+				long modAfter = modBefore;
+				
+				for(int i = 0; i < 20; i++) {
+					int colours[] = injector.getInstance(GetColour.class).getAvgColours();
+					System.out.println("RED: " + colours[0]);
+					System.out.println("GREEN: " + colours[1]);
+					System.out.println("BLUE: " + colours[2]);
+					
+					while(modBefore == modAfter) {
+						modAfter = new File("/home/pi/cam.jpg").lastModified();
+					}
+					modBefore = modAfter;
 				}
+				
+				p.destroy();
 			}
 		} catch(Exception e) {
 			System.out.println("Invalid input! Try again.");

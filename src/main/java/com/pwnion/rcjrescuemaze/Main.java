@@ -1,5 +1,6 @@
 package com.pwnion.rcjrescuemaze;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -82,7 +83,6 @@ public class Main {
 						
 				}
 				
-				
 				System.out.println(" Coords in Visited, " + sharedData.visitedCoordsContains(coords));
 				if(!(i == 2 && start)) {
 					sharedData.appendUnvisited(new UnvisitedTileData(coords, 1));
@@ -95,8 +95,11 @@ public class Main {
 		
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		Injector injector = Guice.createInjector(new MainBinder());
+		
+		ProcessBuilder pb = new ProcessBuilder("raspistill", "-o", "/home/pi/cam.jpg", "-w", "32", "-h", "32", "-t", "0", "-tl", "0");
+		Process p = pb.start();
 
 		sharedData = injector.getInstance(SharedData1.class);
 		move = injector.getInstance(Move.class);
@@ -154,6 +157,9 @@ public class Main {
 		
 		System.out.println("\n\n Finished in " + sharedData.getTime() + "sec, Moved " + (sharedData.getTime() / 3) + " tiles or " + (sharedData.getTime() * 10) + "cm");
 		System.out.println("Full Path: " + sharedData.getFullPath());
+		
+		p.destroy();
+		
 		System.exit(0);
 		
 		//pathing.moveToCoords(new Coords(0, 0));
