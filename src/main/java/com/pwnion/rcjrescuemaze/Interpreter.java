@@ -80,12 +80,10 @@ public class Interpreter {
 			case "Ultrasonic":
 				
 				if(args[1].equals("all")) {
-					for(int i = 0; i < 10; i++) {
-						HashMap<String, Float> rawSensorOutput = injector.getInstance(GetWalls.class).rawSensorOutput();
-						for(String pos : rawSensorOutput.keySet()) {
-							System.out.println("US " + pos.toUpperCase() + "\n    RAW: " + rawSensorOutput.get(pos)/* + "\n    PRESENT: " + getWalls.get(rawSensorOutput.keySet())*/);
-							//counter++;
-						}
+					HashMap<String, Float> rawSensorOutput = injector.getInstance(GetWalls.class).rawSensorOutput();
+					for(String pos : rawSensorOutput.keySet()) {
+						System.out.println("US " + pos.toUpperCase() + "\n    RAW: " + rawSensorOutput.get(pos)/* + "\n    PRESENT: " + getWalls.get(rawSensorOutput.keySet())*/);
+						//counter++;
 					}
 					
 					
