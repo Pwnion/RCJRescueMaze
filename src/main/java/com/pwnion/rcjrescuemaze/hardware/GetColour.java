@@ -9,12 +9,12 @@ public class GetColour extends Camera {
 	
 	@Inject
 	public GetColour() throws IOException {
-		this.avgColours = getAvgColours();
+		this.avgColours = super.getAvgColours();
 	}
 	
 	@Override
 	public int[] getAvgColours() {
-		return getAvgColours();
+		return avgColours;
 	}
 	
 	@Override
