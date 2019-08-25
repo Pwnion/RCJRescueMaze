@@ -28,8 +28,8 @@ public class Main {
 	@Inject
 	private static MoveToCoords pathing;
 	
-	//@Inject
-	//private static GetColour getColour;
+	@Inject
+	private static GetColour getColour;
 
 	@Inject
 	private static GetSurvivors getSurvivors;
