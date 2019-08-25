@@ -9,11 +9,10 @@ import com.google.inject.assistedinject.Assisted;
 
 public class GetSurvivors extends Infrared {
 	private HashMap<String, Integer> rawSensorOutput;
-	private ArrayList<Boolean> survivors;
+	private HashMap<String, Boolean> survivors;
 	
-	private ArrayList<Boolean> getSurvivors(ArrayList<Boolean> walls) {
-		ArrayList<Boolean> output = new ArrayList<Boolean>();
-		
+	private HashMap<String, Boolean> getSurvivors(ArrayList<Boolean> walls) {
+		HashMap<String, Boolean> output = new HashMap<String, Boolean>();
 		HashMap<String, Boolean> tempWalls = new HashMap<String, Boolean>();
 		
 		for(int i = 0; i < 4; i++) {
@@ -21,7 +20,11 @@ public class GetSurvivors extends Infrared {
 		}
 		
 		for(String pos : tempWalls.keySet()) {
-			output.add(rawSensorOutput().get(pos) > 50 ? true : false);
+			if(tempWalls.get(pos) == false) {
+				output.put(pos, false);
+			} else {
+				output.put(pos, rawSensorOutput().get(pos) > 50 ? true : false);
+			}
 		}
 		
 		return output;
@@ -42,11 +45,15 @@ public class GetSurvivors extends Infrared {
 	
 	@Override
 	public ArrayList<Boolean> get() {
-		return survivors;
+		ArrayList<Boolean> output = new ArrayList<Boolean>();
+		for(boolean value : survivors.values()) {
+			output.add(value);
+		}
+		return output;
 	}
 	
 	@Override
-	public boolean get(int i) {
-		return survivors.get(i);
+	public boolean get(String key) {
+		return survivors.get(key);
 	}
 }

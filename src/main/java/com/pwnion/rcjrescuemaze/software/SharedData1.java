@@ -1,6 +1,7 @@
 package com.pwnion.rcjrescuemaze.software;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import com.google.inject.Singleton;
@@ -29,8 +30,20 @@ public class SharedData1 {
 	private Coords rampTile = new Coords(0, 0);
 	private String rampDir = "";
 	
+	private String lastMoveWallLocation = "back";
+	
 	private int time = 0;
 	ArrayList<String> fullPath = new ArrayList<String>();
+	
+	ArrayList<String> positions = new ArrayList<String>() {
+		private static final long serialVersionUID = 1L;
+		{
+			add("front");
+			add("left");
+			add("back");
+			add("right");
+		}
+	};
 	
 	public ArrayList<VisitedTileData> getVisited() {
 		return visited;
@@ -42,6 +55,13 @@ public class SharedData1 {
 	
 	public ArrayList<Coords> getBlackTiles() {
 		return blackTiles;
+	}
+	
+	public boolean blackTilesContains(Coords coord) {
+		if(blackTiles.contains(coord)) {
+			return true;
+		}
+		return false;
 	}
 	
 	public Coords getLastSilverTile() {
@@ -95,20 +115,20 @@ public class SharedData1 {
 		return false;
 	}
 	
-	public ArrayList<ArrayList<Boolean>> getVisitedWalls() {
-		ArrayList<ArrayList<Boolean>> visitedWalls = new ArrayList<ArrayList<Boolean>>();
+	public ArrayList<HashMap<String, Boolean>> getVisitedWalls() {
+		ArrayList<HashMap<String, Boolean>> visitedWalls = new ArrayList<HashMap<String, Boolean>>();
 		for(VisitedTileData visitedTileData : visited) {
 			visitedWalls.add(visitedTileData.getWalls());
 		}
 		return visitedWalls;
 	}
 	
-	public ArrayList<Boolean> getWallsFromVisited(Coords coord) {
-		ArrayList<ArrayList<Boolean>> visitedWalls = new ArrayList<ArrayList<Boolean>>();
-		for(VisitedTileData visitedTileData : visited) {
-			visitedWalls.add(visitedTileData.getWalls());
-		}
-		return visitedWalls.get(getVisitedIndex(coord));
+	public HashMap<String, Boolean> getWallsFromVisited(Coords coord) {
+		return getVisitedWalls().get(getVisitedIndex(coord));
+	}
+	
+	public boolean getWallsFromVisited(Coords coord, String position) {
+		return getWallsFromVisited(coord).get(position);
 	}
 	
 	public ArrayList<Boolean> getVisitedCorners() {
@@ -255,10 +275,6 @@ public class SharedData1 {
 	public int getTime() {
 		return time;
 	}
-
-	public void setTime(int time) {
-		this.time = time;
-	}
 	
 	public void timeAdd(int time) {
 		this.time += time;
@@ -270,6 +286,35 @@ public class SharedData1 {
 	
 	public void pathAppend(String direction) {
 		fullPath.add(direction);
+	}
+	
+	public ArrayList<String> getPositions() {
+		return positions;
+	}
+	
+	public String getPositions(int i) {
+		return positions.get(i);
+	}
+	
+	public void updateLastMoveWallLocation(String direction) {
+		switch (direction) {
+			case "up":
+				lastMoveWallLocation = "back";
+				break;
+			case "left":
+				lastMoveWallLocation = "right";
+				break;
+			case "down":
+				lastMoveWallLocation = "front";
+				break;
+			case "right":
+				lastMoveWallLocation = "left";
+				break;
+		}
+	}
+	
+	public String getLastMoveWallLocation() {
+		return lastMoveWallLocation;
 	}
 	
 }

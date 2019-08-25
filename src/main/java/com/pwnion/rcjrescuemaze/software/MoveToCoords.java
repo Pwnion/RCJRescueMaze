@@ -35,6 +35,7 @@ public class MoveToCoords extends Pathing {
 			System.out.println("Path position " + i + "   ***********************");
 			sharedData.timeAdd(3);
 			sharedData.pathAppend(path.get(i));
+			sharedData.updateLastMoveWallLocation(path.get(i));
 			
 			move.go(path.get(i));
 			

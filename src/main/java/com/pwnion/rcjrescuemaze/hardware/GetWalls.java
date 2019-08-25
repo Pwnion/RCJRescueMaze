@@ -1,6 +1,5 @@
 package com.pwnion.rcjrescuemaze.hardware;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
@@ -8,13 +7,14 @@ import com.google.inject.Inject;
 
 public class GetWalls extends Ultrasonic {
 	private HashMap<String, Float> rawSensorOutput;
-	private ArrayList<Boolean> walls;
+	private HashMap<String, Boolean> walls;
 	
-	private ArrayList<Boolean> getWalls() {
-		ArrayList<Boolean> walls = new ArrayList<Boolean>();
+	private HashMap<String, Boolean> getWalls() {
+		HashMap<String, Boolean> walls = new HashMap<String, Boolean>();
 		
 		for(String position : rawSensorOutput.keySet()) {
-			walls.add(rawSensorOutput.get(position) != -1 && rawSensorOutput.get(position) < 22.5 ? true : false);
+			boolean isWall = rawSensorOutput.get(position) != -1 && rawSensorOutput.get(position) < 10 ? true : false;
+			walls.put(position, isWall);
 		}
 		
 		return walls;
@@ -34,9 +34,15 @@ public class GetWalls extends Ultrasonic {
 	}
 	
 	@Override
-	public ArrayList<Boolean> get() { return walls; }
+	public HashMap<String, Boolean> get() {
+		return walls; 
+	}
+	
+	public void set(String position, boolean wall) { 
+		walls.put(position, wall);
+	}
 	
 	@Override
-	public boolean get(int i) { return walls.get(i); };
+	public boolean get(String position) { return walls.get(position); };
 	
 }

@@ -28,8 +28,8 @@ public class Main {
 	@Inject
 	private static MoveToCoords pathing;
 	
-	@Inject
-	private static GetColour getColour;
+	//@Inject
+	//private static GetColour getColour;
 
 	@Inject
 	private static GetSurvivors getSurvivors;
@@ -40,51 +40,59 @@ public class Main {
 	@Inject
 	private static DrivingMotors move;
 	
-	private static final void manageTiles(boolean start, GetWalls getWalls) {
+	private static boolean start = false;
+	
+	private static final void manageTiles(GetWalls getWalls) {
+		if(start == true) {
+			getWalls.set(sharedData.getLastMoveWallLocation(), true); //Generates artificial wall at start
+			start = false;
+		} else {
+			getWalls.set(sharedData.getLastMoveWallLocation(), false);
+		}
+		
 		
 		//Calculate any new corners found and add to list
-			boolean corner = false;
-			for (int i = 0; i < 4; i++) {
-				if (getWalls.get(i) && getWalls.get(i == 3 ? 0 : i + 1)) {
-					corner = true;
-				}
-		    }
+		boolean corner = false;
+		for (int i = 0; i < 4; i++) {
+			int j = i + 1;
+			if(j == 4) { j = 0; }
+			if (getWalls.get(sharedData.getPositions(i)) && getWalls.get(sharedData.getPositions(i))) {
+				corner = true;
+			}
+		}
 		
-		System.out.println(" Append Visited, (" + sharedData.getCurrentPos().toString() + " (coords), " + getWalls.get() + " (walls), " + corner + " (corner), " + getColour.get() + "(colour))");
+		System.out.println(" Append Visited, (" + sharedData.getCurrentPos() + " (coords), " + getWalls.get() + " (walls), " + corner + " (corner), " + true + "(colour))");
 		
 		//Add current tile to visited
-		sharedData.appendVisited(new VisitedTileData(new Coords(sharedData.getCurrentPos()), getWalls.get(), corner, getColour.get().equals("silver") ? true : false));
+		sharedData.appendVisited(new VisitedTileData(new Coords(sharedData.getCurrentPos()), getWalls.get(), corner, true/*getColour.get().equals("silver") ? true : false*/));
 		
 		System.out.println("Visited Coords, " + sharedData.getVisitedCoords() + " of Size, " + sharedData.getVisitedCoords().size());
 		
 		//Update the list of unvisited tiles with viable surrounding tiles
-		for(int i = 0; i < 4; i++) {
+		for(String position : sharedData.getPositions()) {
 			Coords coords = new Coords(sharedData.getCurrentPos());
-			System.out.print("walls: " + getWalls.get(i));
+			System.out.print("walls: " + getWalls.get(position) + " (" + position + ")");
+			
 
-			if(!getWalls.get(i)) {
-				switch(i) {
-				case 0: //Front
+			if(!getWalls.get(position)) {
+				switch(position) {
+				case "front": 
 					coords.addY(1);
-					System.out.print(" (Front) \n");
 					break;
-				case 1: //Left
+				case "left":
 					coords.addX(-1);
-					System.out.print(" (Left) \n");
 					break;
-				case 2: //Back
+				case "back": 
 					coords.addY(-1);
-					System.out.print(" (Back) \n");
 					break;
-				case 3: //Right
+				case "right": 
 					coords.addX(1);
-					System.out.print(" (Right) \n");
 					break;
 						
 				}
 				
 				System.out.println(" Coords in Visited, " + sharedData.visitedCoordsContains(coords));
-				if(!(i == 2 && start)) {
+				if(!(position == "back")) {
 					sharedData.appendUnvisited(new UnvisitedTileData(coords, 1));
 					System.out.println("  Append Unvisted " + coords.toString());
 				}
@@ -94,27 +102,27 @@ public class Main {
 		}
 		
 	}
-	
+
 	public static void main(String[] args) throws IOException {
 		Injector injector = Guice.createInjector(new MainBinder());
 		
-		ProcessBuilder pb = new ProcessBuilder("raspistill", "-o", "/home/pi/cam.jpg", "-w", "32", "-h", "32", "-t", "0", "-tl", "0");
-		Process p = pb.start();
+		//ProcessBuilder pb = new ProcessBuilder("raspistill", "-o", "/home/pi/cam.jpg", "-w", "32", "-h", "32", "-t", "0", "-tl", "0");
+		//Process p = pb.start();
 
 		sharedData = injector.getInstance(SharedData1.class);
 		move = injector.getInstance(Move.class);
-		getColour = injector.getInstance(GetColour.class);		
+		//getColour = injector.getInstance(GetColour.class);		
 		survivorFactory = injector.getInstance(SurvivorFactory.class);
 		getSurvivors = survivorFactory.create(new ArrayList<Boolean>(Collections.nCopies(4, false)));
 		
 		//Setup
 		move.go("up");
 		sharedData.setCurrentPos(0, 0);
-		manageTiles(true, injector.getInstance(GetWalls.class));
+		manageTiles(injector.getInstance(GetWalls.class));
 		
 		//for(int i = 0; i < 2; i++) {
 		while(sharedData.getUnvisited().size() > 0) {
-			getColour = injector.getInstance(GetColour.class);
+			//getColour = injector.getInstance(GetColour.class);
 			getSurvivors = survivorFactory.create(new ArrayList<Boolean>(Collections.nCopies(4, false)));
 			pathing = injector.getInstance(MoveToCoords.class);
 			
@@ -138,7 +146,7 @@ public class Main {
 			//Remove current tile from unvisited
 			sharedData.removeUnvisited(sharedData.getCurrentPos());
 			
-			manageTiles(false, injector.getInstance(GetWalls.class));
+			manageTiles(injector.getInstance(GetWalls.class));
 
 			//Call upon Survivors function to search for any survivors and detect them
 			getSurvivors.get();
@@ -158,7 +166,7 @@ public class Main {
 		System.out.println("\n\n Finished in " + sharedData.getTime() + "sec, Moved " + (sharedData.getTime() / 3) + " tiles or " + (sharedData.getTime() * 10) + "cm");
 		System.out.println("Full Path: " + sharedData.getFullPath());
 		
-		p.destroy();
+		//p.destroy();
 		
 		System.exit(0);
 		
