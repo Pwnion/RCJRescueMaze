@@ -1,14 +1,14 @@
 package com.pwnion.rcjrescuemaze.datatypes;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class VisitedTileData {
 	private final Coords coords;
-	private final ArrayList<Boolean> walls;
+	private final HashMap<String, Boolean> walls;
 	private final boolean corner;
 	private final boolean silverTile;
 	
-	public VisitedTileData(Coords coords, ArrayList<Boolean> walls, boolean corner, boolean silverTile) {
+	public VisitedTileData(Coords coords, HashMap<String, Boolean> walls, boolean corner, boolean silverTile) {
 		this.coords = coords;
 		this.walls = walls;
 		this.corner = corner;
@@ -19,8 +19,12 @@ public class VisitedTileData {
 		return coords;
 	}
 	
-	public ArrayList<Boolean> getWalls() {
+	public HashMap<String, Boolean> getWalls() {
 		return walls;
+	}
+	
+	public boolean getWalls(String position) {
+		return walls.get(position);
 	}
 	
 	public boolean getCorner() {

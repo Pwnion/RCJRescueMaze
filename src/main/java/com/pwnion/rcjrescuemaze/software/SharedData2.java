@@ -1,6 +1,8 @@
 package com.pwnion.rcjrescuemaze.software;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import com.google.inject.Singleton;
 import com.pwnion.rcjrescuemaze.datatypes.Coords;
@@ -27,6 +29,9 @@ public class SharedData2 {
 	//LOCATION AND DIRECTION OF THE RAMP TILE
 	private Coords rampTile = new Coords(0, 0);
 	private String rampDir = "";
+	
+	private int time = 0;
+	ArrayList<String> fullPath = new ArrayList<String>();
 	
 	public ArrayList<VisitedTileData> getVisited() {
 		return visited;
@@ -58,7 +63,7 @@ public class SharedData2 {
 
 	public int getVisitedIndex(Coords coords) {
 		for(int i = 0; i < visited.size(); i++) {
-			if(visited.get(i).getCoords() == coords) {
+			if(visited.get(i).getCoords().toString().equals(coords.toString())) {
 				return i;
 			}
 		}
@@ -67,7 +72,7 @@ public class SharedData2 {
 
 	public int getUnvisitedIndex(Coords coords) {
 		for(int i = 0; i < unvisited.size(); i++) {
-			if(unvisited.get(i).getCoords() == coords) {
+			if(unvisited.get(i).getCoords().toString().equals(coords.toString())) {
 				return i;
 			}
 		}
@@ -82,12 +87,25 @@ public class SharedData2 {
 		return visitedCoords;
 	}
 	
-	public ArrayList<ArrayList<Boolean>> getVisitedWalls() {
-		ArrayList<ArrayList<Boolean>> visitedWalls = new ArrayList<ArrayList<Boolean>>();
+	public boolean visitedCoordsContains(Coords coord) {
+		for(Coords coords : getVisitedCoords()) {
+			if(coords.equals(coord)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public ArrayList<HashMap<String, Boolean>> getVisitedWalls() {
+		ArrayList<HashMap<String, Boolean>> visitedWalls = new ArrayList<HashMap<String, Boolean>>();
 		for(VisitedTileData visitedTileData : visited) {
 			visitedWalls.add(visitedTileData.getWalls());
 		}
 		return visitedWalls;
+	}
+	
+	public HashMap<String, Boolean> getWallsFromVisited(Coords coord) {
+		return getVisitedWalls().get(getVisitedIndex(coord));
 	}
 	
 	public ArrayList<Boolean> getVisitedCorners() {
@@ -130,18 +148,21 @@ public class SharedData2 {
 		for(UnvisitedTileData unvisitedTileData : getUnvisited()) {
 			if(unvisitedTileData.getDistance() < closestTile.getDistance()) {
 				closestTile = unvisitedTileData;
-				break;
 			}	
 		}
 		return closestTile.getCoords();
 	}
 
 	public void appendVisited(VisitedTileData visitedTileData) {
-		visited.add(visitedTileData);
+		if(getVisitedIndex(visitedTileData.getCoords()) == -1) {
+			visited.add(visitedTileData);
+		}
 	}
 	
 	public void appendUnvisited(UnvisitedTileData unvisitedTileData) {
-		unvisited.add(unvisitedTileData);
+		if(getUnvisitedIndex(unvisitedTileData.getCoords()) == -1 && getVisitedIndex(unvisitedTileData.getCoords()) == -1) {
+			unvisited.add(unvisitedTileData);
+		}
 	}
 	
 	public void appendBlackTiles(Coords coord) {
@@ -169,7 +190,7 @@ public class SharedData2 {
 	
 	public void removeUnvisited(Coords coords) {
 		for(UnvisitedTileData unvisitedTileData : unvisited) {
-			if(unvisitedTileData.getCoords().equals(coords)) {
+			if(unvisitedTileData.getCoords().toString().equals(coords.toString())) {
 				unvisited.remove(unvisitedTileData);
 				return;
 			}
@@ -178,11 +199,26 @@ public class SharedData2 {
 	
 	public void removeUnvisited(int x, int y) {
 		for(UnvisitedTileData unvisitedTileData : unvisited) {
-			if(unvisitedTileData.getCoords().equals(new Coords(x, y))) {
+			if(unvisitedTileData.getCoords().toString().equals(new Coords(x, y).toString())) {
 				unvisited.remove(unvisitedTileData);
 				return;
 			}
 		}
+	}
+	
+	public boolean isSuperSetOfUnvisited(HashSet<Coords> superSet) {
+		ArrayList<String> unvisitedStrs = new ArrayList<String>();
+		ArrayList<String> superSetStrs = new ArrayList<String>();
+		
+		for(Coords coord : getUnvisitedCoords()) {
+			unvisitedStrs.add(coord.toString());
+		}
+		
+		for(Coords coord : superSet) {
+			superSetStrs.add(coord.toString());
+		}
+		
+		return superSetStrs.containsAll(unvisitedStrs);
 	}
 	
 	public void setLastSilverTile(Coords coords) {
@@ -212,4 +248,25 @@ public class SharedData2 {
 	public void setRampDir(String direction) {
 		rampDir = direction;
 	}
+
+	public int getTime() {
+		return time;
+	}
+
+	public void setTime(int time) {
+		this.time = time;
+	}
+	
+	public void timeAdd(int time) {
+		this.time += time;
+	}
+	
+	public ArrayList<String> getFullPath() {
+		return fullPath;
+	}
+	
+	public void pathAppend(String direction) {
+		fullPath.add(direction);
+	}
+	
 }

@@ -59,5 +59,6 @@ public abstract class Infrared {
 	
 	//Abstract implementation
 	public abstract ArrayList<Boolean> get();
-	public abstract boolean get(int i);
+	public abstract boolean get(String key);
+
 }

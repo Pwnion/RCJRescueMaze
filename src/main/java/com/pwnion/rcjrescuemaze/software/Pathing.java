@@ -25,13 +25,13 @@ public abstract class Pathing {
 		HashSet<Coords> viableSurroundingCoords = new HashSet<Coords>();
 		
 		//Directions mapped to relative coordinates for the surrounding tiles
-		HashMap<Integer, Coords> coordsToAdd = new HashMap<Integer, Coords>() {
+		HashMap<String, Coords> coordsToAdd = new HashMap<String, Coords>() {
 			private static final long serialVersionUID = 1L;
 			{
-				put(0, new Coords(0, 1));
-				put(1, new Coords(-1, 0));
-				put(2, new Coords(0, -1));
-				put(3, new Coords(1, 0));
+				put("front", new Coords(0, 1));
+				put("left", new Coords(-1, 0));
+				put("back", new Coords(0, -1));
+				put("right", new Coords(1, 0));
 			}
 		};
 
@@ -40,9 +40,9 @@ public abstract class Pathing {
 		
 		if(visitedIndex != -1) {
 			Coords nextTile;
-			for(int i = 0; i < 4; i++) {
-				nextTile = coords.plus(coordsToAdd.get(i));
-				if(!sharedData.getWallsFromVisited(coords).get(i) && !sharedData.getBlackTiles().contains(nextTile)) {
+			for(String position : sharedData.getPositions()) {
+				nextTile = coords.plus(coordsToAdd.get(position));
+				if(!sharedData.getWallsFromVisited(coords).get(position) && !sharedData.getBlackTiles().contains(nextTile)) {
 					viableSurroundingCoords.add(nextTile);
 				}
 			}

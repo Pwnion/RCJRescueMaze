@@ -1,5 +1,7 @@
 package com.pwnion.rcjrescuemaze.hardware;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,8 +27,8 @@ public abstract class Ultrasonic {
 	private final float getDistance(String pos) throws InterruptedException {
 		ArrayList<Float> sensorOutputs = new ArrayList<Float>();
 		boolean continueCondition = false;
-		for(int i = 0; i < 10; i++) {
-			System.out.println(i + "p1");
+		int passes = 20;
+		for(int i = 0; i < passes; i++) {
 			pins.sendPin.high(); // Make trigger pin HIGH
 			Thread.sleep((long) 0.01); // Delay for 10 microseconds
 			pins.sendPin.low(); //Make trigger pin LOW
@@ -45,8 +47,6 @@ public abstract class Ultrasonic {
 				continue;
 			}
 			
-			System.out.println(i + "p2");
-			
 			long startTime = System.nanoTime(); // Store the current time to calculate ECHO pin HIGH time.
 			
 			while(pins.receivePins.get(pos).isHigh()) {
@@ -62,14 +62,33 @@ public abstract class Ultrasonic {
 			
 			long endTime = System.nanoTime(); // Store the echo pin HIGH end time to calculate ECHO pin HIGH time.
 			
-			System.out.println(i + "p3");
 			sensorOutputs.add((float) ((((endTime - startTime) / 1e3) / 2) / 29.1));
+			
+			Thread.sleep(3);
 		}
 		
-		if(sensorOutputs.isEmpty()) {
+		System.out.println(pos);
+		if(sensorOutputs.isEmpty() || (sensorOutputs.size() < (passes / 2.5))) {
 			return (float) -1;
 		}
-		return getMean(eliminateOutliers(sensorOutputs, 1));
+		
+		//
+		ArrayList<Float> newSensorOut = eliminateOutliers(sensorOutputs, (float) 0.5);
+		float newMean = getMean(newSensorOut);
+		
+		if(findDifference(newSensorOut) > 10) { return (float) -1; }
+		
+		switch (pos) {
+			case "front":
+				newMean -= 0.5;
+		}
+		
+		newMean = round(newMean, 1);
+
+		System.out.println("Mean Before = " + round(getMean(newSensorOut), 1));
+		System.out.println("Mean After = " + newMean);
+		
+		return newMean;
 	}
 	
 	//Runs getDistance() for all four sensors, associates them with a position in a hashmap and returns said hashmap
@@ -99,45 +118,48 @@ public abstract class Ultrasonic {
 		};
 	}
 	
+	private static float round(float value, int places) {
+	    if (places < 0) throw new IllegalArgumentException();
+	 
+	    BigDecimal bd = new BigDecimal(Double.toString(value));
+	    bd = bd.setScale(places, RoundingMode.HALF_UP);
+	    return bd.floatValue();
+	}
+	
 	protected static float getMean(ArrayList<Float> values) {
-		System.out.println("Getting Mean");
 		
 		if(values.isEmpty()) {
-			System.out.println("getMean values is Empty");
 			return -1;
 		}
 		
 		Iterator<Float> it = values.iterator();
 		while(it.hasNext()) {
-			if(it.next() < 1) {
-				System.out.println("eliminateOutliers values is less then 1");
+			if(it.next() <= 0.2) {
 				it.remove();
 			}
 		}
 		
-	    int sum = 0;
+	    float sum = 0;
 	    for (float value : values) {
 	        sum += value;
 	    }
 
-	    return (sum / values.size());
+	    return sum / values.size();
 	}
 
-	public static double getVariance(ArrayList<Float> values) {
-		System.out.println("Getting Variance");
-	    double mean = getMean(values);
-	    int temp = 0;
+	public static float getVariance(ArrayList<Float> values) {
+	    float mean = getMean(values);
+	    float temp = 0;
 
 	    for (float a : values) {
 	        temp += (a - mean) * (a - mean);
 	    }
-
+	    
 	    return temp / (values.size() - 1);
 	}
 
-	public static double getStdDev(ArrayList<Float> values) {
-		System.out.println("Getting Standard Deviation");
-	    return Math.sqrt(getVariance(values));
+	public static float getStdDev(ArrayList<Float> values) {
+	    return (float) Math.sqrt(getVariance(values));
 	}
 
 	public static ArrayList<Float> eliminateOutliers(ArrayList<Float> values, float scaleOfElimination) {
@@ -145,35 +167,70 @@ public abstract class Ultrasonic {
 		System.out.println("Running eliminateOutliers with " + values);
 		
 		if(values.isEmpty()) {
-			System.out.println("eliminateOutliers values is empty");
 			return new ArrayList<Float>();
 		}
 		
 		Iterator<Float> it = values.iterator();
 		while(it.hasNext()) {
-			if(it.next() < 1) {
-				System.out.println("eliminateOutliers values is less then 1");
+			if(it.next() <= 0.2) {
 				it.remove();
 			}
 		}
 		
-	    double mean = getMean(values);
-	    double stdDev = getStdDev(values);
+	    float mean = getMean(values);
+	    float stdDev = getStdDev(values);
 
-	    final ArrayList<Float> newList = new ArrayList<>();
+	    ArrayList<Float> newList = new ArrayList<>();
+	    ArrayList<Float> eliminated = new ArrayList<>();
 
 	    for (float value : values) {
+	    	float lowerBound = mean - stdDev * scaleOfElimination;
+	    	float upperBound = mean + stdDev * scaleOfElimination;
+	    	
 
-	        if (!((value < (mean - stdDev * scaleOfElimination)) || (value > (mean + stdDev * scaleOfElimination)))) {
+	        if (!(value < lowerBound) && !(value > upperBound)) {
 	            newList.add(value);
+	        } else {
+	        	eliminated.add(value);
 	        }
 	    }
+	    
+	    if(eliminated.size() > newList.size()) {
+	    	System.out.println("Eliminated > NewList");
+	    	return values;
+	    }
 
-	    return values;
-
+	    System.out.println("Eliminated " + eliminated);
+	    System.out.println("Running eliminateOutliers returns " + newList);
+	    return newList;
 	}
 	
+	protected static float findMax(ArrayList<Float> values) {
+		float max = values.get(0);
+		for(float value : values) {
+			if(value > max) {
+				max = value;
+			}
+		}
+		return max;
+	}
+	
+	protected static float findMin(ArrayList<Float> values) {
+		float min = values.get(0);
+		for(float value : values) {
+			if(value < min) {
+				min = value;
+			}
+		}
+		return min;
+	}
+	
+	protected static float findDifference(ArrayList<Float> values) {
+		return findMax(values) - findMin(values);
+	}
+	
+	
 	//Abstract implementation
-	public abstract ArrayList<Boolean> get();
-	public abstract boolean get(int i);
+	public abstract HashMap<String, Boolean> get();
+	public abstract boolean get(String position);
 }
