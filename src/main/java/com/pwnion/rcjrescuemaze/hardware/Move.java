@@ -13,7 +13,7 @@ import com.pwnion.rcjrescuemaze.software.SharedData1;
 @Singleton
 public class Move extends DrivingMotors {
 	
-	private final Camera findColour;
+	private final GetColour getColour;
 	private final SharedData1 sharedData;
 	private final Ultrasonic ultrasonic;
 	
@@ -48,11 +48,11 @@ public class Move extends DrivingMotors {
 	};
 	
 	@Inject
-	public Move(Pins pins, SharedData1 sharedData, Camera findColour, Ultrasonic ultrasonic) {
+	public Move(Pins pins, SharedData1 sharedData, ColourFactory colourFactory, Ultrasonic ultrasonic) {
 		super(pins);
 		
 		this.sharedData = sharedData;
-		this.findColour = findColour;
+		this.getColour = colourFactory.create("/home/pi/cam.jpg");
 		this.ultrasonic = ultrasonic;
 	}
 	
@@ -64,7 +64,7 @@ public class Move extends DrivingMotors {
 		long startTime = Gpio.millis();
 		long moveDuration;
 		while(Gpio.millis() - startTime < globalMoveDuration) {
-			if(findColour.get().equals("black")) {
+			if(getColour.get().equals("Black")) {
 				stop();
 				moveDuration = Gpio.millis() - startTime;
 				start(oppDirections.get(direction), Optional.of(moveDuration));

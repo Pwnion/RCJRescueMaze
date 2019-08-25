@@ -3,7 +3,8 @@ package com.pwnion.rcjrescuemaze.binders;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
-import com.pwnion.rcjrescuemaze.hardware.Camera;
+import com.pwnion.rcjrescuemaze.hardware.RGBFromImage;
+import com.pwnion.rcjrescuemaze.hardware.ColourFactory;
 import com.pwnion.rcjrescuemaze.hardware.DispenserMotor;
 import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
 import com.pwnion.rcjrescuemaze.hardware.GetSurvivors;
@@ -31,7 +32,6 @@ public class MainBinder extends AbstractModule implements Module {
     	bind(SharedData2.class).asEagerSingleton();
     	
     	bind(Ultrasonic.class).to(GetWalls.class);
-    	bind(Camera.class).to(GetColour.class);
     	bind(DrivingMotors.class).to(Move.class);
     	
     	bind(Pathing.class).to(MoveToCoords.class);
@@ -39,5 +39,9 @@ public class MainBinder extends AbstractModule implements Module {
     	install(new FactoryModuleBuilder()
     			.implement(Infrared.class, GetSurvivors.class)
     			.build(SurvivorFactory.class));
+    	
+    	install(new FactoryModuleBuilder()
+    			.implement(RGBFromImage.class, GetColour.class)
+    			.build(ColourFactory.class));
     }
 }

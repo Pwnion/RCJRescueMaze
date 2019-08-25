@@ -9,12 +9,13 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.pwnion.rcjrescuemaze.binders.MainBinder;
+import com.pwnion.rcjrescuemaze.hardware.ColourFactory;
 //import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
 import com.pwnion.rcjrescuemaze.hardware.GetColour;
 import com.pwnion.rcjrescuemaze.hardware.GetSurvivors;
 import com.pwnion.rcjrescuemaze.hardware.GetWalls;
-import com.pwnion.rcjrescuemaze.hardware.Pins;
 import com.pwnion.rcjrescuemaze.hardware.SurvivorFactory;
+import com.pwnion.rcjrescuemaze.software.SharedData1;
 
 public class Interpreter {
 	//@Inject
@@ -24,16 +25,26 @@ public class Interpreter {
 	private static SurvivorFactory survivorFactory;
 	
 	@Inject
-	private static Pins pins;
+	private static ColourFactory colourFactory;
+	
+	//@Inject
+	//private static Pins pins;
+	
+	@Inject
+	private static SharedData1 sharedData;
 	
 	private static GetSurvivors getSurvivors;
+	
+	public static HashMap<String, HashMap<String, Integer>> tileValues;
 	
 	public static void main(String[] args) throws NumberFormatException, InterruptedException {
 		Injector injector = Guice.createInjector(new MainBinder());
 		
 		//drivingMotors = injector.getInstance(DrivingMotors.class);
 		survivorFactory = injector.getInstance(SurvivorFactory.class);
-		pins = injector.getInstance(Pins.class);
+		colourFactory = injector.getInstance(ColourFactory.class);
+		sharedData = injector.getInstance(SharedData1.class);
+		//pins = injector.getInstance(Pins.class);
 		//drivingMotors = injector.getInstance(DrivingMotors.class);
 		
 		ArrayList<Boolean> walls = new ArrayList<Boolean>() {
@@ -109,17 +120,26 @@ public class Interpreter {
 					Thread.sleep(1000);
 				}
 			case "Colour":
+				for(String colour : sharedData.getTileValues().get(args[1]).keySet()) {
+					System.out.println(colour + ": " + sharedData.getTileValues().get(args[1]).get(colour));
+				}
+				
+				
+				/*
 				ProcessBuilder pb = new ProcessBuilder("raspistill", "-o", "/home/pi/cam.jpg", "-w", "32", "-h", "32", "-t", "0", "-tl", "0");
 				Process p = pb.start();
 				
 				long modBefore = new File("/home/pi/cam.jpg").lastModified();
 				long modAfter = modBefore;
 				
-				for(int i = 0; i < 20; i++) {
-					int colours[] = injector.getInstance(GetColour.class).getAvgColours();
-					System.out.println("RED: " + colours[0]);
-					System.out.println("GREEN: " + colours[1]);
-					System.out.println("BLUE: " + colours[2]);
+				for(int i = 0; i < 10; i++) {
+					GetColour getColour = colourFactory.create("/home/pi/cam.jpg");
+					HashMap<String, Integer> colours = getColour.getAvgColours();
+					System.out.println("RED: " + colours.get("Red"));
+					System.out.println("GREEN: " + colours.get("Green"));
+					System.out.println("BLUE: " + colours.get("Blue"));
+					
+					System.out.println("The tile colour is: " + getColour.get());
 					
 					while(modBefore == modAfter) {
 						modAfter = new File("/home/pi/cam.jpg").lastModified();
@@ -128,6 +148,7 @@ public class Interpreter {
 				}
 				
 				p.destroy();
+				*/
 			}
 		} catch(Exception e) {
 			System.out.println("Invalid input! Try again.");

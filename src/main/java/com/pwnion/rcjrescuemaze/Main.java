@@ -43,17 +43,17 @@ public class Main {
 	private static final void manageTiles(boolean start, GetWalls getWalls) {
 		
 		//Calculate any new corners found and add to list
-			boolean corner = false;
-			for (int i = 0; i < 4; i++) {
-				if (getWalls.get(i) && getWalls.get(i == 3 ? 0 : i + 1)) {
-					corner = true;
-				}
-		    }
+		boolean corner = false;
+		for (int i = 0; i < 4; i++) {
+			if (getWalls.get(i) && getWalls.get(i == 3 ? 0 : i + 1)) {
+				corner = true;
+			}
+		}
 		
 		System.out.println(" Append Visited, (" + sharedData.getCurrentPos().toString() + " (coords), " + getWalls.get() + " (walls), " + corner + " (corner), " + getColour.get() + "(colour))");
 		
 		//Add current tile to visited
-		sharedData.appendVisited(new VisitedTileData(new Coords(sharedData.getCurrentPos()), getWalls.get(), corner, getColour.get().equals("silver") ? true : false));
+		sharedData.appendVisited(new VisitedTileData(new Coords(sharedData.getCurrentPos()), getWalls.get(), corner, getColour.get().equals("Silver") ? true : false));
 		
 		System.out.println("Visited Coords, " + sharedData.getVisitedCoords() + " of Size, " + sharedData.getVisitedCoords().size());
 		
