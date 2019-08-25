@@ -173,6 +173,7 @@ public class Interpreter {
 					System.out.println(colour + ": " + sharedData.getTileValues().get(args[1]).get(colour));
 				}
 				
+				/*
 				ProcessBuilder pb = new ProcessBuilder("raspistill", "-o", "/home/pi/cam.jpg", "-w", "32", "-h", "32", "-t", "0", "-tl", "0");
 				Process p = pb.start();
 				
@@ -195,6 +196,7 @@ public class Interpreter {
 				}
 				
 				p.destroy();
+				*/
 			}
 		} catch(Exception e) {
 			System.out.println("Invalid input! Try again.");
