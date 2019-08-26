@@ -85,7 +85,7 @@ public abstract class Ultrasonic {
 		
 		newMean = round(newMean, 1);
 
-		System.out.println("Mean Before = " + round(getMean(newSensorOut), 1));
+		System.out.println("Mean Before = " + round(getMean(sensorOutputs), 1));
 		System.out.println("Mean After = " + newMean);
 		
 		return newMean;
