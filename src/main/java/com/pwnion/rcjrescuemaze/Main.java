@@ -56,7 +56,7 @@ public class Main {
 		for (int i = 0; i < 4; i++) {
 			int j = i + 1;
 			if(j == 4) { j = 0; }
-			if (getWalls.get(sharedData.getPositions(i)) && getWalls.get(sharedData.getPositions(i))) {
+			if (getWalls.get(sharedData.getPositions(i)) && getWalls.get(sharedData.getPositions(j))) {
 				corner = true;
 			}
 		}
