@@ -169,12 +169,12 @@ public class Interpreter {
 						
 				}
 			case "Colour":
+				/*
 				for(String colour : sharedData.getTileValues().get(args[1]).keySet()) {
 					System.out.println(colour + ": " + sharedData.getTileValues().get(args[1]).get(colour));
-				}
+				}*/
 				
-				/*
-				ProcessBuilder pb = new ProcessBuilder("raspistill", "-o", "/home/pi/cam.jpg", "-w", "32", "-h", "32", "-t", "0", "-tl", "0");
+				ProcessBuilder pb = new ProcessBuilder("raspistill", "-o", "/home/pi/cam.jpg", "-w", "720", "-h", "720", "-t", "0", "-tl", "0");
 				Process p = pb.start();
 				
 				long modBefore = new File("/home/pi/cam.jpg").lastModified();
@@ -182,12 +182,12 @@ public class Interpreter {
 				
 				for(int i = 0; i < 10; i++) {
 					GetColour getColour = colourFactory.create("/home/pi/cam.jpg");
-					HashMap<String, Integer> colours = getColour.getAvgColours();
+					HashMap<String, Long> colours = getColour.getAvgColours();
 					System.out.println("RED: " + colours.get("Red"));
 					System.out.println("GREEN: " + colours.get("Green"));
 					System.out.println("BLUE: " + colours.get("Blue"));
 					
-					System.out.println("The tile colour is: " + getColour.get());
+					//System.out.println("The tile colour is: " + getColour.get());
 					
 					while(modBefore == modAfter) {
 						modAfter = new File("/home/pi/cam.jpg").lastModified();
@@ -196,7 +196,6 @@ public class Interpreter {
 				}
 				
 				p.destroy();
-				*/
 			}
 		} catch(Exception e) {
 			System.out.println("Invalid input! Try again.");

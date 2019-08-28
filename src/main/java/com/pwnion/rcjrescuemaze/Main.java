@@ -17,6 +17,7 @@ import com.pwnion.rcjrescuemaze.hardware.GetSurvivors;
 import com.pwnion.rcjrescuemaze.hardware.GetWalls;
 import com.pwnion.rcjrescuemaze.hardware.GetColour;
 import com.pwnion.rcjrescuemaze.hardware.Move;
+import com.pwnion.rcjrescuemaze.hardware.Pins;
 import com.pwnion.rcjrescuemaze.hardware.SurvivorFactory;
 import com.pwnion.rcjrescuemaze.software.MoveToCoords;
 import com.pwnion.rcjrescuemaze.software.SharedData1;
@@ -40,10 +41,13 @@ public class Main {
 	@Inject
 	private static DrivingMotors move;
 	
+	@Inject
+	private static Pins pins;
+	
 	private static boolean start = false;
 	
 	private static final void manageTiles(GetWalls getWalls) {
-		if(start == true) {
+		if(start) {
 			getWalls.set(sharedData.getLastMoveWallLocation(), true); //Generates artificial wall at start
 			start = false;
 		} else {
@@ -55,7 +59,8 @@ public class Main {
 		boolean corner = false;
 		for (int i = 0; i < 4; i++) {
 			int j = i + 1;
-			if(j == 4) { j = 0; }
+			if(j == 4) j = 0;
+			
 			if (getWalls.get(sharedData.getPositions(i)) && getWalls.get(sharedData.getPositions(j))) {
 				corner = true;
 			}
@@ -105,6 +110,10 @@ public class Main {
 
 	public static void main(String[] args) throws IOException {
 		Injector injector = Guice.createInjector(new MainBinder());
+		
+		pins = injector.getInstance(Pins.class);
+		
+		while(pins.buttonPin.isLow());
 		
 		//ProcessBuilder pb = new ProcessBuilder("raspistill", "-o", "/home/pi/cam.jpg", "-w", "32", "-h", "32", "-t", "0", "-tl", "0");
 		//Process p = pb.start();

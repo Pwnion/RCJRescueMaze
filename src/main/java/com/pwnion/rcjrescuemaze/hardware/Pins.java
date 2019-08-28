@@ -69,17 +69,16 @@ public class Pins {
 		}
 		speedPin.setShutdownOptions(true, PinState.LOW);
 		
-		//tiltPin.setShutdownOptions(true, PinState.LOW);
+		buttonPin.setShutdownOptions(true, PinState.LOW);
 		
-		//gpio.provisionDigitalInputPin(RaspiPin.GPIO_23);
-		//gpio.provisionDigitalInputPin(RaspiPin.GPIO_24);
+		tiltPin.setShutdownOptions(true, PinState.LOW);
 	}
 		
 	//Initialise GpioController for the Pi4J Library
 	private final GpioController gpio = GpioFactory.getInstance();
 	
-	//Tilt Sensor OUT Pin
-	//final GpioPinDigitalInput tiltPin = gpio.provisionDigitalInputPin(RaspiPin.GPIO_28);
+	public final GpioPinDigitalOutput buttonPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_28);
+	public final GpioPinDigitalOutput tiltPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_29);
 	
 	//Stepper Motor IN(1/2/3/4) Pins
 	public final HashMap<String, GpioPinDigitalOutput> stepperPins = new HashMap<String, GpioPinDigitalOutput>() {

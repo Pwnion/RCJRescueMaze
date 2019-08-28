@@ -64,8 +64,8 @@ public class SharedData1 {
 			{
 				put("Silver", new HashMap<String, Integer>() {
 					private static final long serialVersionUID = 1L;
-						HashMap<String, Integer> silver = readAvgColours("/home/pi/tiles/silver.txt");
-						{
+					HashMap<String, Integer> silver = readAvgColours("/home/pi/tiles/silver.txt");
+					{
 						put("Red", silver.get("Red"));
 						put("Green", silver.get("Green"));
 						put("Blue", silver.get("Blue"));
@@ -78,7 +78,7 @@ public class SharedData1 {
 					HashMap<String, Integer> black = readAvgColours("/home/pi/tiles/black.txt");
 					{
 						put("Red", black.get("Red"));
-						put("Green",black.get("Green"));
+						put("Green", black.get("Green"));
 						put("Blue", black.get("Blue"));
 					}
 				});
