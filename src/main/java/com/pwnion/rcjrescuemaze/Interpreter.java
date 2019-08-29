@@ -174,17 +174,17 @@ public class Interpreter {
 					System.out.println(colour + ": " + sharedData.getTileValues().get(args[1]).get(colour));
 				}*/
 				
-				ProcessBuilder pb = new ProcessBuilder("raspistill", "-o", "/home/pi/cam.jpg", "-w", "720", "-h", "720", "-t", "0", "-tl", "0");
+				ProcessBuilder pb = new ProcessBuilder("raspistill", "-o", "/home/pi/cam.jpg", "-w", "32", "-h", "32", "-t", "0", "-tl", "0", "-ss", "100000", "-ex", "night",
+													   "-co", "25", "-sa", "10", "-br", "55", "-drc", "low").inheritIO();
 				Process p = pb.start();
 				
 				long modBefore = new File("/home/pi/cam.jpg").lastModified();
 				long modAfter = modBefore;
-				
 				for(int i = 0; i < 10; i++) {
 					GetColour getColour = colourFactory.create("/home/pi/cam.jpg");
+					
 					HashMap<String, Float> colourPercentages = getColour.getColourPercentages();
 					
-					System.out.println("****************************");
 					for(String colour : colourPercentages.keySet()) {
 						System.out.println(colour + ": " + colourPercentages.get(colour) + "%");
 					}

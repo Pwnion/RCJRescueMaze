@@ -38,8 +38,8 @@ public class SharedData1 {
 	private int time = 0;
 	ArrayList<String> fullPath = new ArrayList<String>();
 	
-	private int imgX = 720;
-	private int imgY = 720;
+	private int imgX = 32;
+	private int imgY = 32;
 	
 	private int[][][] readRGBValues(String path) throws IOException {
 		int[][][] rgbValues = new int[imgX][imgY][3];

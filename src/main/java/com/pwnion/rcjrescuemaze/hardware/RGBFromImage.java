@@ -3,13 +3,12 @@ package com.pwnion.rcjrescuemaze.hardware;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
 public abstract class RGBFromImage {
-	protected int imgX = 720;
-	protected int imgY = 720;
+	protected int imgX = 32;
+	protected int imgY = 32;
 	
 	protected int[][][] getRGBValues(String path) throws IOException {
 		
