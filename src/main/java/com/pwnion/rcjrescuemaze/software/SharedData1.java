@@ -38,105 +38,36 @@ public class SharedData1 {
 	private int time = 0;
 	ArrayList<String> fullPath = new ArrayList<String>();
 	
-	private HashMap<String, Integer> readAvgColours(String path) throws IOException {
-		ArrayList<Integer> avgColours = new ArrayList<Integer>();
+	private int imgX = 720;
+	private int imgY = 720;
+	
+	private int[][][] readRGBValues(String path) throws IOException {
+		int[][][] rgbValues = new int[imgX][imgY][3];
 		 
 		try (Scanner s = new Scanner(new FileReader(path))) {
-		    while (s.hasNext()) {
-		        avgColours.add(Integer.parseInt(s.nextLine()));
-		    }
-		}
-		
-		return new HashMap<String, Integer>() {
-			private static final long serialVersionUID = 1L;
-			{
-				put("Red", avgColours.get(0));
-				put("Green", avgColours.get(1));
-				put("Blue", avgColours.get(2));
+		    for(int y = 0; y < imgY; y++) {
+				for(int x = 0; x < imgX; x++) {
+					for(int i = 0; i < 3; i++) {
+						rgbValues[x][y][i] = s.nextInt();
+					}
+				}
 			}
-		};
+		}
+		return rgbValues;
 	}
 	
-	public HashMap<String, HashMap<String, Integer>> getTileValues() throws IOException {
-		return new HashMap<String, HashMap<String, Integer>>()
+	public HashMap<String, int[][][]> getTileValues() throws IOException {
+		return new HashMap<String, int[][][]>()
 		{
 			private static final long serialVersionUID = 1L;
 			{
-				put("Silver", new HashMap<String, Integer>() {
-					private static final long serialVersionUID = 1L;
-					HashMap<String, Integer> silver = readAvgColours("/home/pi/tiles/silver.txt");
-					{
-						put("Red", silver.get("Red"));
-						put("Green", silver.get("Green"));
-						put("Blue", silver.get("Blue"));
-					}
-				});
-			}
-			{
-				put("Black", new HashMap<String, Integer>() {
-					private static final long serialVersionUID = 1L;
-					HashMap<String, Integer> black = readAvgColours("/home/pi/tiles/black.txt");
-					{
-						put("Red", black.get("Red"));
-						put("Green", black.get("Green"));
-						put("Blue", black.get("Blue"));
-					}
-				});
-			}
-			{
-				put("White", new HashMap<String, Integer>() {
-					private static final long serialVersionUID = 1L;
-					HashMap<String, Integer> white = readAvgColours("/home/pi/tiles/white.txt");
-					{
-						put("Red", white.get("Red"));
-						put("Green", white.get("Green"));
-						put("Blue", white.get("Blue"));
-					}
-				});
-			}
-			{
-				put("Red", new HashMap<String, Integer>() {
-					private static final long serialVersionUID = 1L;
-					HashMap<String, Integer> red = readAvgColours("/home/pi/tiles/red.txt");
-					{
-						put("Red", red.get("Red"));
-						put("Green", red.get("Green"));
-						put("Blue", red.get("Blue"));
-					}
-				});
-			}
-			{
-				put("Green", new HashMap<String, Integer>() {
-					private static final long serialVersionUID = 1L;
-					HashMap<String, Integer> green = readAvgColours("/home/pi/tiles/green.txt");
-					{
-						put("Red", green.get("Red"));
-						put("Green", green.get("Green"));
-						put("Blue", green.get("Blue"));
-					}
-				});
-			}
-			{
-				put("Blue", new HashMap<String, Integer>() {
-					private static final long serialVersionUID = 1L;
-					HashMap<String, Integer> blue = readAvgColours("/home/pi/tiles/blue.txt");
-					{
-						put("Red", blue.get("Red"));
-						put("Green", blue.get("Green"));
-						put("Blue", blue.get("Blue"));
-					}
-				});
-			}
-			{
-				put("Yellow", new HashMap<String, Integer>() {
-					private static final long serialVersionUID = 1L;
-					HashMap<String, Integer> yellow = readAvgColours("/home/pi/tiles/yellow.txt");
-					{
-						put("Red", yellow.get("Red"));
-						put("Green", yellow.get("Green"));
-						put("Blue", yellow.get("Blue"));
-					}
-				});
+				put("silver", readRGBValues("/home/pi/tiles/silver.txt"));
+				put("black", readRGBValues("/home/pi/tiles/black.txt"));
+				put("white", readRGBValues("/home/pi/tiles/white.txt"));
+				put("red", readRGBValues("/home/pi/tiles/red.txt"));
+				put("green", readRGBValues("/home/pi/tiles/green.txt"));
+				put("blue", readRGBValues("/home/pi/tiles/blue.txt"));
+				put("yellow", readRGBValues("/home/pi/tiles/yellow.txt"));
 			}
 		};
 	}

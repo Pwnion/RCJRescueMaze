@@ -11,55 +11,68 @@ public class GetColour extends RGBFromImage {
 	private SharedData1 sharedData;
 	
 	private int[][][] rgbValues;
-	private String colourPerPixel[][][];
-	private String tile;
-	
-	private int redDiff = 1000;
-	private int greenDiff = 1000;
-	private int blueDiff = 1000;
+	private String colourPerPixel[][];
+	private HashMap<String, Float> colourPercentages;
 
-	private String[][][] getColourPerPixel() throws IOException {
-		String colourPerPixel[][][] = new String[imgX][imgY][3];
+	private String[][] getColourPerPixel() throws IOException {
+		String colourPerPixel[][] = new String[imgX][imgY];
 
 		for(int y = 0; y < imgY; y++) {
 			for(int x = 0; x < imgX; x++) {
-				sharedData.getTileValues().keySet().forEach((colour) -> {
+				int leastDiff = 1000;
+				for(String colour : sharedData.getTileValues().keySet()) {
 					try {
-						redDiff = Math.abs(sharedData.getTileValues().get(colour).get("Red") - rgbValues[imgX][imgY][0]);
-						greenDiff = Math.abs(sharedData.getTileValues().get(colour).get("Red") - rgbValues[imgX][imgY][0]);
-						blueDiff = Math.abs(sharedData.getTileValues().get(colour).get("Red") - rgbValues[imgX][imgY][0]);
+						int tempDiff = 0;
+						for(int i = 0; i < 3; i++) {
+							tempDiff += Math.abs(sharedData.getTileValues().get(colour)[imgX][imgY][i] - rgbValues[imgX][imgY][i]);
+						}
+						
+						if(tempDiff < leastDiff) {
+							leastDiff = tempDiff;
+							colourPerPixel[x][y] = colour;
+						}
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-				});
+				};
+			}
+		}
+		return colourPerPixel;
+	}
+	
+	public HashMap<String, Float> getColourPercentages() {
+		HashMap<String, Float> colourPercentages = new HashMap<String, Float>();
+		
+		try {
+			for(String colour : sharedData.getTileValues().keySet()) {
+				colourPercentages.put(colour, 0f);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		String pixelColour;
+		for(int y = 0; y < imgY; y++) {
+			for(int x = 0; x < imgX; x++) {
+				pixelColour = colourPerPixel[imgX][imgY];
+				colourPercentages.put(pixelColour, colourPercentages.get(pixelColour) + 1);
 			}
 		}
 		
-		return colourPerPixel;
+		for(String colour : colourPercentages.keySet()) {
+			colourPercentages.put(colour, (colourPercentages.get(colour) / (imgX * imgY)) * 100);
+		}
+		
+		return colourPercentages;
 	}
 	
 	@Inject
 	public GetColour(@Assisted String path, SharedData1 sharedData) throws IOException {
-		this.rgbValues = super.getRGBValues(path);
 		this.sharedData = sharedData;
 		
-		int totalColourDiff = 1000;
-		
-		String closestTile = "";
-		
-		for(String tile : sharedData.getTileValues().keySet()) {
-			int colourDiff = 0;
-			
-			for(String colour : sharedData.getTileValues().get(tile).keySet()) {
-				colourDiff += Math.abs(sharedData.getTileValues().get(tile).get(colour) - avgColours.get(colour));
-			}
-			
-			if(colourDiff < totalColourDiff) {
-				totalColourDiff = colourDiff;
-				closestTile = tile;
-			}
-		}
-		tile = closestTile;
+		this.rgbValues = super.getRGBValues(path);
+		this.colourPerPixel = getColourPerPixel();
+		this.colourPercentages = getColourPercentages();
 	}
 	
 	public int[][][] getRGBValues() {
@@ -68,6 +81,16 @@ public class GetColour extends RGBFromImage {
 	
 	@Override
 	public String get() {
-		return tile;
+		String tileColour = "";
+		float highestPercentage = 0;
+		for(String colour : colourPercentages.keySet()) {
+			if(colourPercentages.get(colour) > highestPercentage) {
+				highestPercentage = colourPercentages.get(colour);
+				tileColour = colour;
+			}
+		}
+		return tileColour;
 	}
+	
+	
 }

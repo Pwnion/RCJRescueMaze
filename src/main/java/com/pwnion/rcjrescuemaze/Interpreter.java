@@ -182,12 +182,12 @@ public class Interpreter {
 				
 				for(int i = 0; i < 10; i++) {
 					GetColour getColour = colourFactory.create("/home/pi/cam.jpg");
-					HashMap<String, Long> colours = getColour.getAvgColours();
-					System.out.println("RED: " + colours.get("Red"));
-					System.out.println("GREEN: " + colours.get("Green"));
-					System.out.println("BLUE: " + colours.get("Blue"));
+					HashMap<String, Float> colourPercentages = getColour.getColourPercentages();
 					
-					//System.out.println("The tile colour is: " + getColour.get());
+					System.out.println("****************************");
+					for(String colour : colourPercentages.keySet()) {
+						System.out.println(colour + ": " + colourPercentages.get(colour) + "%");
+					}
 					
 					while(modBefore == modAfter) {
 						modAfter = new File("/home/pi/cam.jpg").lastModified();
