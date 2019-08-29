@@ -7,22 +7,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 //import java.util.Optional;
 import java.util.Iterator;
+import java.util.Optional;
 
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.pwnion.rcjrescuemaze.binders.MainBinder;
 import com.pwnion.rcjrescuemaze.hardware.ColourFactory;
+import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
 //import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
 import com.pwnion.rcjrescuemaze.hardware.GetColour;
 import com.pwnion.rcjrescuemaze.hardware.GetSurvivors;
 import com.pwnion.rcjrescuemaze.hardware.GetWalls;
+import com.pwnion.rcjrescuemaze.hardware.Pins;
 import com.pwnion.rcjrescuemaze.hardware.SurvivorFactory;
 import com.pwnion.rcjrescuemaze.software.SharedData1;
 
 public class Interpreter {
-	//@Inject
-	//private static DrivingMotors drivingMotors;
+	@Inject
+	private static DrivingMotors drivingMotors;
 
 	@Inject
 	private static SurvivorFactory survivorFactory;
@@ -30,8 +33,8 @@ public class Interpreter {
 	@Inject
 	private static ColourFactory colourFactory;
 	
-	//@Inject
-	//private static Pins pins;
+	@Inject
+	private static Pins pins;
 	
 	@Inject
 	private static SharedData1 sharedData;
@@ -77,7 +80,7 @@ public class Interpreter {
 		
 		try {
 			switch(args[0]) {
-			/*
+			
 			case "DrivingMotors":
 				if(args[1].equals("all")) {
 					drivingMotors.start("up", Optional.of(Long.parseLong(args[2])));
@@ -101,7 +104,7 @@ public class Interpreter {
 					drivingMotors.stop();
 				}
 				break;
-				*/
+				
 			case "Ultrasonic":
 				
 				if(args[1].equals("all")) {
