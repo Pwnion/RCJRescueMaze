@@ -75,13 +75,9 @@ public class GetColour extends RGBFromImage {
 	public GetColour(@Assisted String path, SharedData1 sharedData) throws IOException {
 		this.sharedData = sharedData;
 		
-		System.out.println("this.rgbValues = super.getRGBValues(path);");
 		this.rgbValues = super.getRGBValues(path);
-		System.out.println("this.colourPerPixel = getColourPerPixel();");
 		this.colourPerPixel = getColourPerPixel();
-		System.out.println("this.colourPercentages = getColourPercentages();");
 		this.colourPercentages = getColourPercentages();
-		System.out.println("Finish");
 	}
 	
 	public int[][][] getRGBValues() {

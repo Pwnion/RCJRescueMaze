@@ -12,6 +12,7 @@ import com.pwnion.rcjrescuemaze.binders.MainBinder;
 import com.pwnion.rcjrescuemaze.datatypes.Coords;
 import com.pwnion.rcjrescuemaze.datatypes.UnvisitedTileData;
 import com.pwnion.rcjrescuemaze.datatypes.VisitedTileData;
+import com.pwnion.rcjrescuemaze.hardware.ColourFactory;
 import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
 import com.pwnion.rcjrescuemaze.hardware.GetSurvivors;
 import com.pwnion.rcjrescuemaze.hardware.GetWalls;
@@ -66,10 +67,10 @@ public class Main {
 			}
 		}
 		
-		System.out.println(" Append Visited, (" + sharedData.getCurrentPos() + " (coords), " + getWalls.get() + " (walls), " + corner + " (corner), " + true + "(colour))");
+		System.out.println(" Append Visited, (" + sharedData.getCurrentPos() + " (coords), " + getWalls.get() + " (walls), " + corner + " (corner), " + true + "(silver))");
 		
 		//Add current tile to visited
-		sharedData.appendVisited(new VisitedTileData(new Coords(sharedData.getCurrentPos()), getWalls.get(), corner, getColour.get().equals("Silver") ? true : false));
+		sharedData.appendVisited(new VisitedTileData(new Coords(sharedData.getCurrentPos()), getWalls.get(), corner, getColour.get().equals("silver") ? true : false));
 		
 		System.out.println("Visited Coords, " + sharedData.getVisitedCoords() + " of Size, " + sharedData.getVisitedCoords().size());
 		
@@ -113,14 +114,17 @@ public class Main {
 		
 		pins = injector.getInstance(Pins.class);
 		
+		System.out.println("Ready");
+		
 		while(pins.buttonPin.isLow());
 		
-		//ProcessBuilder pb = new ProcessBuilder("raspistill", "-o", "/home/pi/cam.jpg", "-w", "32", "-h", "32", "-t", "0", "-tl", "0");
-		//Process p = pb.start();
+		ProcessBuilder pb = new ProcessBuilder("raspistill", "-o", "/home/pi/cam.jpg", "-w", "32", "-h", "32", "-t", "0", "-tl", "0", "-ss", "100000", "-ex", "night",
+				   "-co", "25", "-sa", "10", "-br", "55", "-drc", "low").inheritIO();
+		Process p = pb.start();
 
 		sharedData = injector.getInstance(SharedData1.class);
 		move = injector.getInstance(Move.class);
-		//getColour = injector.getInstance(GetColour.class);		
+		getColour = injector.getInstance(ColourFactory.class).create("/home/pi/cam.jpg");
 		survivorFactory = injector.getInstance(SurvivorFactory.class);
 		getSurvivors = survivorFactory.create(new ArrayList<Boolean>(Collections.nCopies(4, false)));
 		
@@ -175,7 +179,7 @@ public class Main {
 		System.out.println("\n\n Finished in " + sharedData.getTime() + "sec, Moved " + (sharedData.getTime() / 3) + " tiles or " + (sharedData.getTime() * 10) + "cm");
 		System.out.println("Full Path: " + sharedData.getFullPath());
 		
-		//p.destroy();
+		p.destroy();
 		
 		System.exit(0);
 		

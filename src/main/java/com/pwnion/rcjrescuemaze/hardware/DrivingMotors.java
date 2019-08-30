@@ -9,7 +9,7 @@ import com.pi4j.io.gpio.GpioPinDigitalOutput;
 public abstract class DrivingMotors {
 	private final Pins pins;
 	
-	protected long globalMoveDuration = 1675;
+	protected long globalMoveDuration = 4000;
 
 	@Inject
 	public DrivingMotors(Pins pins) {
@@ -103,6 +103,18 @@ public abstract class DrivingMotors {
 			*/
 			
 			break;
+		case "clockwise":
+			pins.clockwisePins.get("front_right").pulse(localMoveDuration.orElse(globalMoveDuration));
+			pins.clockwisePins.get("front_left").pulse(localMoveDuration.orElse(globalMoveDuration));
+			pins.clockwisePins.get("back_left").pulse(localMoveDuration.orElse(globalMoveDuration));
+			pins.clockwisePins.get("back_right").pulse(localMoveDuration.orElse(globalMoveDuration));
+			break;
+		case "anticlockwise":
+			pins.anticlockwisePins.get("front_right").pulse(localMoveDuration.orElse(globalMoveDuration));
+			pins.anticlockwisePins.get("front_left").pulse(localMoveDuration.orElse(globalMoveDuration));
+			pins.anticlockwisePins.get("back_left").pulse(localMoveDuration.orElse(globalMoveDuration));
+			pins.anticlockwisePins.get("back_right").pulse(localMoveDuration.orElse(globalMoveDuration));
+			break;
 		}
 		pins.speedPin.setPwm(1024);
 	}
@@ -114,5 +126,7 @@ public abstract class DrivingMotors {
 	}
 	
 	public abstract void go(String direction);
+	public abstract void go2(String direction, long inputMoveDuration);
 	public abstract void goUntil(String direction, float distanceToWall) throws InterruptedException, ExecutionException;
+	
 }
