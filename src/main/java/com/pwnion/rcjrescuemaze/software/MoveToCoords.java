@@ -37,34 +37,33 @@ public class MoveToCoords extends Pathing {
 			sharedData.pathAppend(path.get(i));
 			sharedData.updateLastMoveWallLocation(path.get(i));
 			
-			move.go(path.get(i));
-			
-			//After moving 1 tile check for Silver tiles and update last visited silver (if required)
-			//(This process does not happen physically and just checks Silver tile list vs Current Position)
-			if(sharedData.getVisitedIndex(sharedData.getCurrentPos()) != - 1) {
-				if(sharedData.getVisited().get(sharedData.getVisitedIndex(sharedData.getCurrentPos())).getSilverTile()) {
-					sharedData.setLastSilverTile(sharedData.getCurrentPos());
+			if(move.go(path.get(i))) {
+				//After moving 1 tile check for Silver tiles and update last visited silver (if required)
+				//(This process does not happen physically and just checks Silver tile list vs Current Position)
+				if(sharedData.getVisitedIndex(sharedData.getCurrentPos()) != - 1) {
+					if(sharedData.getVisited().get(sharedData.getVisitedIndex(sharedData.getCurrentPos())).getSilverTile()) {
+						sharedData.setLastSilverTile(sharedData.getCurrentPos());
+					}
 				}
+				
+				//Update current position of the robot
+				Coords newPos = sharedData.getCurrentPos();
+				switch(path.get(i)) {
+				  case "up":
+					newPos.addY(1);
+				    break;
+				  case "down":
+				    newPos.addY(-1);
+				    break;
+				  case "left":
+					newPos.addX(-1);
+					break;
+				  case "right":
+					newPos.addX(1);
+					break;
+				}
+				sharedData.setCurrentPos(newPos);
 			}
-			
-			//Update current position of the robot
-			Coords newPos = sharedData.getCurrentPos();
-			switch(path.get(i)) {
-			  case "up":
-				newPos.addY(1);
-			    break;
-			  case "down":
-			    newPos.addY(-1);
-			    break;
-			  case "left":
-				newPos.addX(-1);
-				break;
-			  case "right":
-				newPos.addX(1);
-				break;
-			}
-			sharedData.setCurrentPos(newPos);
-
 			//Log any discrepancies with rotation or position 
 			//If over tolerance levels repathing may be required
 
