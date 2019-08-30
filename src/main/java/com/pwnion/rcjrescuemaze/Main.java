@@ -128,7 +128,7 @@ public class Main {
 		survivorFactory = injector.getInstance(SurvivorFactory.class);
 		getSurvivors = survivorFactory.create(new ArrayList<Boolean>(Collections.nCopies(4, false)));
 		
-		//Setup
+		//Setup Test
 		move.go("up");
 		sharedData.setCurrentPos(0, 0);
 		manageTiles(injector.getInstance(GetWalls.class));
