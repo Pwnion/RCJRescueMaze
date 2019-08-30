@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -12,7 +13,6 @@ import com.pwnion.rcjrescuemaze.binders.MainBinder;
 import com.pwnion.rcjrescuemaze.datatypes.Coords;
 import com.pwnion.rcjrescuemaze.datatypes.UnvisitedTileData;
 import com.pwnion.rcjrescuemaze.datatypes.VisitedTileData;
-import com.pwnion.rcjrescuemaze.hardware.ColourFactory;
 import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
 import com.pwnion.rcjrescuemaze.hardware.GetSurvivors;
 import com.pwnion.rcjrescuemaze.hardware.GetWalls;
@@ -67,10 +67,10 @@ public class Main {
 			}
 		}
 		
-		System.out.println(" Append Visited, (" + sharedData.getCurrentPos() + " (coords), " + getWalls.get() + " (walls), " + corner + " (corner), " + true + "(silver))");
+		System.out.println(" Append Visited, (" + sharedData.getCurrentPos() + " (coords), " + getWalls.get() + " (walls), " + corner + " (corner), " + true + "(colour))");
 		
 		//Add current tile to visited
-		sharedData.appendVisited(new VisitedTileData(new Coords(sharedData.getCurrentPos()), getWalls.get(), corner, getColour.get().equals("silver") ? true : false));
+		sharedData.appendVisited(new VisitedTileData(new Coords(sharedData.getCurrentPos()), getWalls.get(), corner, getColour.get().equals("Silver") ? true : false));
 		
 		System.out.println("Visited Coords, " + sharedData.getVisitedCoords() + " of Size, " + sharedData.getVisitedCoords().size());
 		
@@ -109,13 +109,12 @@ public class Main {
 		
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
 		Injector injector = Guice.createInjector(new MainBinder());
 		
 		pins = injector.getInstance(Pins.class);
 		
 		System.out.println("Ready");
-		
 		while(pins.buttonPin.isLow());
 		
 		ProcessBuilder pb = new ProcessBuilder("raspistill", "-o", "/home/pi/cam.jpg", "-w", "32", "-h", "32", "-t", "0", "-tl", "0", "-ss", "100000", "-ex", "night",
@@ -165,15 +164,6 @@ public class Main {
 			getSurvivors.get();
 			
 			//}
-			
-			/*
-			if(!sharedData.getRampTile().equals(new Coords(0, 0))) {
-				pathing.moveToCoords(sharedData.getRampTile());
-				
-				move.goUntil(sharedData.getRampDir(), 7);
-				
-				manageTiles(false, injector.getInstance(GetWalls.class));
-			}*/
 		}
 		
 		System.out.println("\n\n Finished in " + sharedData.getTime() + "sec, Moved " + (sharedData.getTime() / 3) + " tiles or " + (sharedData.getTime() * 10) + "cm");

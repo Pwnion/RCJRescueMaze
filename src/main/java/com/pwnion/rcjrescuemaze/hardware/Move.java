@@ -16,6 +16,7 @@ public class Move extends DrivingMotors {
 	private final GetColour getColour;
 	private final SharedData1 sharedData;
 	private final Ultrasonic ultrasonic;
+	private final Pins pins;
 	
 	boolean compCorrectiveTurning = true;
 	
@@ -53,6 +54,7 @@ public class Move extends DrivingMotors {
 	public Move(Pins pins, SharedData1 sharedData, ColourFactory colourFactory, Ultrasonic ultrasonic) {
 		super(pins);
 		
+		this.pins = pins;
 		this.sharedData = sharedData;
 		this.getColour = colourFactory.create("/home/pi/cam.jpg");
 		this.ultrasonic = ultrasonic;
@@ -92,9 +94,7 @@ public class Move extends DrivingMotors {
 			go2(direction, globalMoveDuration);
 		}
 	}
-	
-	@SuppressWarnings("unused")
-	@Override
+		
 	public final void go2(String direction, long inputMoveDuration) {	
 		start(direction, Optional.empty());
 		
@@ -102,6 +102,7 @@ public class Move extends DrivingMotors {
 		long moveDuration;
 		while(Gpio.millis() - startTime < inputMoveDuration) {
 			if(getColour.get().equals("Black")) {
+				returnVal = false;
 				stop();
 				moveDuration = Gpio.millis() - startTime;
 				start(oppDirections.get(direction), Optional.of(moveDuration));
@@ -117,11 +118,27 @@ public class Move extends DrivingMotors {
 				
 				sharedData.appendBlackTiles(blackCoords);
 				break;
-			} else if(false /*ramp condition*/) {
+			} else if(pins.tiltPin.isHigh()) {
+				returnVal = false;
+				stop();
+				moveDuration = Gpio.millis() - startTime;
+				start(oppDirections.get(direction), Optional.of(moveDuration));
+				try {
+					Thread.sleep(moveDuration);
+				} catch (InterruptedException e) {
+					System.out.print("Couldn't sleep the thread...");
+					e.printStackTrace();
+				}
 				
+				sharedData.setRampTile(sharedData.getCurrentPos());
+				sharedData.setRampDir(direction);
+				sharedData.addWallForCurrentVisited(direction);
+				
+				break;
 			}
 		}
 		stop();
+		return returnVal;
 	}
 	
 	@Override
