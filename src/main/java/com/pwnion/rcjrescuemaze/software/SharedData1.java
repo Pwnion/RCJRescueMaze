@@ -248,6 +248,10 @@ public class SharedData1 {
 		}
 	}
 	
+	public void addWallForCurrentVisited(String direction) {
+		getVisited().get(getVisitedIndex(getCurrentPos())).getWalls().put(direction, true);
+	}
+	
 	public void removeUnvisited(Coords coords) {
 		for(UnvisitedTileData unvisitedTileData : unvisited) {
 			if(unvisitedTileData.getCoords().toString().equals(coords.toString())) {
