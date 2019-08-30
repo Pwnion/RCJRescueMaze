@@ -61,28 +61,31 @@ public class Move extends DrivingMotors {
 	}
 	
 	@Override
-	public final boolean go2(String direction, long inputMoveDirection) {
+	public final boolean go(String direction) {
 		boolean returnVal = true;
+		
+		if(compCorrectiveTurning) {
+		switch (direction) {
 				case "up":
-					go2(direction, globalMoveDuration / 2);
+					returnVal = go2(direction, globalMoveDuration / 2);
 					go2("right", 200);
 					go2("anticlockwise", 20);
-					go2(direction, globalMoveDuration / 2);
+					returnVal = go2(direction, globalMoveDuration / 2);
 					go2("right", 300);
 					break;
 				case "right":
-					go2(direction, globalMoveDuration / 2);
+					returnVal = go2(direction, globalMoveDuration / 2);
 					go2("anticlockwise", 150);
 					go2("up", 200);
-					go2(direction, globalMoveDuration / 2);
+					returnVal = go2(direction, globalMoveDuration / 2);
 					go2("up", 300);
 					break;
 				case "left":
 					go2(direction, globalMoveDuration / 4);
 					go2("down", 400);
-					go2(direction, globalMoveDuration / 4);
+					returnVal = go2(direction, globalMoveDuration / 4);
 					go2("down", 200);
-					go2(direction, globalMoveDuration / 2);
+					returnVal = go2(direction, globalMoveDuration / 2);
 					go2("down", 300);
 					go2("left", 200);
 					break;
@@ -91,11 +94,14 @@ public class Move extends DrivingMotors {
 					break;
 			}
 		} else {
-			go2(direction, globalMoveDuration);
+			returnVal = go2(direction, globalMoveDuration);
 		}
+		return returnVal;
 	}
 		
-	public final void go2(String direction, long inputMoveDuration) {	
+	public final boolean go2(String direction, long inputMoveDuration) {	
+		boolean returnVal = true;
+		
 		start(direction, Optional.empty());
 		
 		long startTime = Gpio.millis();

@@ -125,7 +125,7 @@ public abstract class DrivingMotors {
 		for(GpioPinDigitalOutput pin : pins.anticlockwisePins.values()) pin.low();
 	}
 	
-	public abstract void go(String direction);
+	public abstract boolean go(String direction);
 	public abstract boolean go2(String direction, long inputMoveDuration);
 	public abstract void goUntil(String direction, float distanceToWall) throws InterruptedException, ExecutionException;
 	
