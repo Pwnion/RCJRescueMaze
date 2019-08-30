@@ -107,7 +107,7 @@ public class Move extends DrivingMotors {
 		long startTime = Gpio.millis();
 		long moveDuration;
 		while(Gpio.millis() - startTime < inputMoveDuration) {
-			if(getColour.get().equals("Black")) {
+			if(getColour.getColourPercentages().get("black") > 50f) {
 				returnVal = false;
 				stop();
 				moveDuration = Gpio.millis() - startTime;
