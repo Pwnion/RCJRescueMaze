@@ -126,7 +126,7 @@ public abstract class DrivingMotors {
 	}
 	
 	public abstract void go(String direction);
-	public abstract void go2(String direction, long inputMoveDuration);
+	public abstract boolean go2(String direction, long inputMoveDuration);
 	public abstract void goUntil(String direction, float distanceToWall) throws InterruptedException, ExecutionException;
 	
 }

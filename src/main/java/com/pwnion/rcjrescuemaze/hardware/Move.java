@@ -60,9 +60,9 @@ public class Move extends DrivingMotors {
 		this.ultrasonic = ultrasonic;
 	}
 	
-	public final void go(String direction) {
-		if(compCorrectiveTurning) {
-			switch (direction) {
+	@Override
+	public final boolean go2(String direction, long inputMoveDirection) {
+		boolean returnVal = true;
 				case "up":
 					go2(direction, globalMoveDuration / 2);
 					go2("right", 200);
