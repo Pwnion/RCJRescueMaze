@@ -10,10 +10,10 @@ import com.pwnion.rcjrescuemaze.datatypes.Coords;
 
 public abstract class Pathing {
 	
-	protected final SharedData1 sharedData;
+	protected final SharedData sharedData;
 	
 	@Inject
-	protected Pathing(SharedData1 sharedData) {
+	protected Pathing(SharedData sharedData) {
 		this.sharedData = sharedData;
 	}
 	

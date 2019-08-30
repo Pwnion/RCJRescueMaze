@@ -18,11 +18,11 @@ import com.pwnion.rcjrescuemaze.hardware.GetColour;
 import com.pwnion.rcjrescuemaze.hardware.Move;
 import com.pwnion.rcjrescuemaze.hardware.SurvivorFactory;
 import com.pwnion.rcjrescuemaze.software.MoveToCoords;
-import com.pwnion.rcjrescuemaze.software.SharedData1;
+import com.pwnion.rcjrescuemaze.software.SharedData;
 
 public class Main {
 	@Inject
-	private static SharedData1 sharedData;
+	private static SharedData sharedData;
 	
 	@Inject
 	private static MoveToCoords pathing;
@@ -98,7 +98,7 @@ public class Main {
 	public static void main(String[] args) {
 		Injector injector = Guice.createInjector(new MainBinder());
 
-		sharedData = injector.getInstance(SharedData1.class);
+		sharedData = injector.getInstance(SharedData.class);
 		move = injector.getInstance(Move.class);
 		getColour = injector.getInstance(GetColour.class);		
 		survivorFactory = injector.getInstance(SurvivorFactory.class);

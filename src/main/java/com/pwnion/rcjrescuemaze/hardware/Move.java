@@ -8,13 +8,13 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.pi4j.wiringpi.Gpio;
 import com.pwnion.rcjrescuemaze.datatypes.Coords;
-import com.pwnion.rcjrescuemaze.software.SharedData1;
+import com.pwnion.rcjrescuemaze.software.SharedData;
 
 @Singleton
 public class Move extends DrivingMotors {
 	
 	private final GetColour getColour;
-	private final SharedData1 sharedData;
+	private final SharedData sharedData;
 	private final Ultrasonic ultrasonic;
 	private final Pins pins;
 	
@@ -51,7 +51,7 @@ public class Move extends DrivingMotors {
 	};
 	
 	@Inject
-	public Move(Pins pins, SharedData1 sharedData, ColourFactory colourFactory, Ultrasonic ultrasonic) {
+	public Move(Pins pins, SharedData sharedData, ColourFactory colourFactory, Ultrasonic ultrasonic) {
 		super(pins);
 		
 		this.pins = pins;

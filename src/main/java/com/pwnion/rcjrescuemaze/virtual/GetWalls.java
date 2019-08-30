@@ -8,13 +8,13 @@ import java.util.stream.Stream;
 
 import com.google.inject.Inject;
 import com.pwnion.rcjrescuemaze.datatypes.Coords;
-import com.pwnion.rcjrescuemaze.software.SharedData1;
+import com.pwnion.rcjrescuemaze.software.SharedData;
 
 public class GetWalls {
 	private ArrayList<Boolean> walls;
 	
 	@Inject
-	public GetWalls(SharedData1 sharedData) {
+	public GetWalls(SharedData sharedData) {
 		ArrayList<Boolean> walls = new ArrayList<Boolean>();
 		ArrayList<String> file = new ArrayList<String>();
 		Coords pos = sharedData.getCurrentPos();

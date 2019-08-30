@@ -6,10 +6,10 @@ import java.util.Set;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.pwnion.rcjrescuemaze.software.SharedData1;
+import com.pwnion.rcjrescuemaze.software.SharedData;
 
 public class GetColour extends RGBFromImage {
-	private SharedData1 sharedData;
+	private SharedData sharedData;
 	
 	private int[][][] rgbValues;
 	private HashMap<String, int[][][]> sharedDataValues;
@@ -72,7 +72,7 @@ public class GetColour extends RGBFromImage {
 	}
 	
 	@Inject
-	public GetColour(@Assisted String path, SharedData1 sharedData) throws IOException {
+	public GetColour(@Assisted String path, SharedData sharedData) throws IOException {
 		this.sharedData = sharedData;
 		
 		System.out.println("this.rgbValues = super.getRGBValues(path);");

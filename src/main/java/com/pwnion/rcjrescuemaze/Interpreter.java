@@ -21,7 +21,7 @@ import com.pwnion.rcjrescuemaze.hardware.GetSurvivors;
 import com.pwnion.rcjrescuemaze.hardware.GetWalls;
 import com.pwnion.rcjrescuemaze.hardware.Pins;
 import com.pwnion.rcjrescuemaze.hardware.SurvivorFactory;
-import com.pwnion.rcjrescuemaze.software.SharedData1;
+import com.pwnion.rcjrescuemaze.software.SharedData;
 
 public class Interpreter {
 	@Inject
@@ -37,7 +37,7 @@ public class Interpreter {
 	private static Pins pins;
 	
 	@Inject
-	private static SharedData1 sharedData;
+	private static SharedData sharedData;
 	
 	private static GetSurvivors getSurvivors;
 	
@@ -50,7 +50,7 @@ public class Interpreter {
 		//drivingMotors = injector.getInstance(DrivingMotors.class);
 		survivorFactory = injector.getInstance(SurvivorFactory.class);
 		colourFactory = injector.getInstance(ColourFactory.class);
-		sharedData = injector.getInstance(SharedData1.class);
+		sharedData = injector.getInstance(SharedData.class);
 		//pins = injector.getInstance(Pins.class);
 		//drivingMotors = injector.getInstance(DrivingMotors.class);
 		

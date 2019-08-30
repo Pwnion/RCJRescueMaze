@@ -2,6 +2,7 @@ package com.pwnion.rcjrescuemaze.software;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,7 +14,9 @@ import com.pwnion.rcjrescuemaze.datatypes.UnvisitedTileData;
 import com.pwnion.rcjrescuemaze.datatypes.VisitedTileData;
 
 @Singleton
-public class SharedData1 {
+public class SharedData implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	//LIST VISITED: (Location, 4 bits for walls, 1 bit for Corner, 1 bit for Silver)
 	private ArrayList<VisitedTileData> visited = new ArrayList<VisitedTileData>();
 			
@@ -30,7 +33,7 @@ public class SharedData1 {
 	private Coords currentPos = new Coords(0, 0);
 	
 	//LOCATION AND DIRECTION OF THE RAMP TILE
-	private Coords rampTile = new Coords(0, 0);
+	private Coords rampTile = null;
 	private String rampDir = "";
 	
 	private String lastMoveWallLocation = "back";
@@ -38,8 +41,19 @@ public class SharedData1 {
 	private int time = 0;
 	ArrayList<String> fullPath = new ArrayList<String>();
 	
-	private int imgX = 32;
-	private int imgY = 32;
+	public void clear() {
+		visited = new ArrayList<VisitedTileData>();
+		unvisited = new ArrayList<UnvisitedTileData>();
+		blackTiles = new ArrayList<Coords>();
+		lastSilverTile = new Coords(0, 0);
+		currentPos = new Coords(0, 0);
+		rampTile = new Coords(0, 0);
+		rampDir = "";
+		time = 0;
+	}
+	
+	private final int imgX = 32;
+	private final int imgY = 32;
 	
 	private int[][][] readRGBValues(String path) throws IOException {
 		int[][][] rgbValues = new int[imgX][imgY][3];

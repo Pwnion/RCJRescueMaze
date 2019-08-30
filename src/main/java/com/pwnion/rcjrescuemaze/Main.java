@@ -1,6 +1,8 @@
 package com.pwnion.rcjrescuemaze;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,11 +24,11 @@ import com.pwnion.rcjrescuemaze.hardware.Move;
 import com.pwnion.rcjrescuemaze.hardware.Pins;
 import com.pwnion.rcjrescuemaze.hardware.SurvivorFactory;
 import com.pwnion.rcjrescuemaze.software.MoveToCoords;
-import com.pwnion.rcjrescuemaze.software.SharedData1;
+import com.pwnion.rcjrescuemaze.software.SharedData;
 
 public class Main {
 	@Inject
-	private static SharedData1 sharedData;
+	private static SharedData sharedData;
 	
 	@Inject
 	private static MoveToCoords pathing;
@@ -122,7 +124,7 @@ public class Main {
 				   "-co", "25", "-sa", "10", "-br", "55", "-drc", "low").inheritIO();
 		Process p = pb.start();
 
-		sharedData = injector.getInstance(SharedData1.class);
+		sharedData = injector.getInstance(SharedData.class);
 		move = injector.getInstance(Move.class);
 		getColour = injector.getInstance(ColourFactory.class).create("/home/pi/cam.jpg");
 		survivorFactory = injector.getInstance(SurvivorFactory.class);
@@ -133,38 +135,64 @@ public class Main {
 		sharedData.setCurrentPos(0, 0);
 		manageTiles(injector.getInstance(GetWalls.class));
 		
-		//for(int i = 0; i < 2; i++) {
-		while(sharedData.getUnvisited().size() > 0) {
-			//getColour = injector.getInstance(GetColour.class);
-			getSurvivors = survivorFactory.create(new ArrayList<Boolean>(Collections.nCopies(4, false)));
-			pathing = injector.getInstance(MoveToCoords.class);
+		for(int i = 0; i < 2; i++) {
+			while(sharedData.getUnvisited().size() > 0) {
+				//getColour = injector.getInstance(GetColour.class);
+				getSurvivors = survivorFactory.create(new ArrayList<Boolean>(Collections.nCopies(4, false)));
+				pathing = injector.getInstance(MoveToCoords.class);
+				
+				//Calculate distance to unvisited tiles and update each with new distance value (Uses Pathing.java functions)
+				HashMap<Coords, Integer> map = pathing.generateMap();
+				HashMap<String, Integer> mapStr = new HashMap<String, Integer>();
+				
+				for(Coords coord : map.keySet()) {
+					mapStr.put(coord.toString(), map.get(coord));
+				}
+				
+				for (UnvisitedTileData unvisitedTile : sharedData.getUnvisited()) {
+					unvisitedTile.setDistance(mapStr.get(unvisitedTile.getCoords().toString()));
+				}
 			
-			//Calculate distance to unvisited tiles and update each with new distance value (Uses Pathing.java functions)
-			HashMap<Coords, Integer> map = pathing.generateMap();
-			HashMap<String, Integer> mapStr = new HashMap<String, Integer>();
+				//Call upon searching function to find and move to next tile
+				System.out.println("Closest Tile, " + sharedData.getClosestTile());
+				
+				pathing.moveToCoords(sharedData.getClosestTile(), map);
 			
-			for(Coords coord : map.keySet()) {
-				mapStr.put(coord.toString(), map.get(coord));
+				//Remove current tile from unvisited
+				sharedData.removeUnvisited(sharedData.getCurrentPos());
+				
+				manageTiles(injector.getInstance(GetWalls.class));
+	
+				//Call upon Survivors function to search for any survivors and detect them
+				getSurvivors.get();
 			}
 			
-			for (UnvisitedTileData unvisitedTile : sharedData.getUnvisited()) {
-				unvisitedTile.setDistance(mapStr.get(unvisitedTile.getCoords().toString()));
-			}
-		
-			//Call upon searching function to find and move to next tile
-			System.out.println("Closest Tile, " + sharedData.getClosestTile());
-			
-			pathing.moveToCoords(sharedData.getClosestTile(), map);
-		
-			//Remove current tile from unvisited
-			sharedData.removeUnvisited(sharedData.getCurrentPos());
-			
-			manageTiles(injector.getInstance(GetWalls.class));
-
-			//Call upon Survivors function to search for any survivors and detect them
-			getSurvivors.get();
-			
-			//}
+			if(!sharedData.getRampTile().toString().equals(null)) {
+				FileOutputStream fileOutputStream = new FileOutputStream("/home/pi/sharedData.txt");
+			    ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+			    objectOutputStream.writeObject(sharedData);
+			    objectOutputStream.flush();
+			    objectOutputStream.close();
+				
+				pathing.moveToCoords(sharedData.getRampTile(), pathing.generateMap());
+				
+				String rampDir = sharedData.getRampDir();
+				move.goUntil(rampDir, 7);
+			    
+			    sharedData.clear();
+			    
+			    start = true;
+			    
+			    sharedData.setRampDir(new HashMap<String, String>() {
+					private static final long serialVersionUID = 1L;
+					{
+						put("up", "down");
+						put("left", "right");
+						put("down", "up");
+						put("right", "left");
+					}
+				}.get(rampDir));
+			} else break;
 		}
 		
 		System.out.println("\n\n Finished in " + sharedData.getTime() + "sec, Moved " + (sharedData.getTime() / 3) + " tiles or " + (sharedData.getTime() * 10) + "cm");

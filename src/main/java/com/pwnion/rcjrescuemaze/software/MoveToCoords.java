@@ -13,7 +13,7 @@ public class MoveToCoords extends Pathing {
 	private final Move move;
 	
 	@Inject
-	public MoveToCoords(SharedData1 sharedData, Move move) {
+	public MoveToCoords(SharedData sharedData, Move move) {
 		super(sharedData);
 		
 		this.move = move;
