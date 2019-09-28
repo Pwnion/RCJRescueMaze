@@ -135,7 +135,7 @@ public class Main {
 		sharedData.setCurrentPos(0, 0);
 		manageTiles(injector.getInstance(GetWalls.class));
 		
-		for(int i = 0; i < 2; i++) {
+		for(int i = 0; i < 3; i++) {
 			while(sharedData.getUnvisited().size() > 0) {
 				//getColour = injector.getInstance(GetColour.class);
 				getSurvivors = survivorFactory.create(new ArrayList<Boolean>(Collections.nCopies(4, false)));
@@ -168,11 +168,8 @@ public class Main {
 			}
 			
 			if(!sharedData.getRampTile().toString().equals(null)) {
-				FileOutputStream fileOutputStream = new FileOutputStream("/home/pi/sharedData.txt");
-			    ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-			    objectOutputStream.writeObject(sharedData);
-			    objectOutputStream.flush();
-			    objectOutputStream.close();
+				
+				//Function<void> saveAndEmpty
 				
 				pathing.moveToCoords(sharedData.getRampTile(), pathing.generateMap());
 				

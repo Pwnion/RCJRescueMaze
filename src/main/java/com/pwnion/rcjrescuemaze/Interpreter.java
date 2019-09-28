@@ -47,12 +47,11 @@ public class Interpreter {
 		long FullStartTime = System.nanoTime();
 		Injector injector = Guice.createInjector(new MainBinder());
 		
-		//drivingMotors = injector.getInstance(DrivingMotors.class);
 		survivorFactory = injector.getInstance(SurvivorFactory.class);
 		colourFactory = injector.getInstance(ColourFactory.class);
 		sharedData = injector.getInstance(SharedData.class);
 		//pins = injector.getInstance(Pins.class);
-		//drivingMotors = injector.getInstance(DrivingMotors.class);
+		drivingMotors = injector.getInstance(DrivingMotors.class);
 		
 		ArrayList<Boolean> walls = new ArrayList<Boolean>() {
 			private static final long serialVersionUID = 1L;

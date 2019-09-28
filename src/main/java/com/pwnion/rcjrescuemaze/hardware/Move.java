@@ -18,7 +18,7 @@ public class Move extends DrivingMotors {
 	private final Ultrasonic ultrasonic;
 	private final Pins pins;
 	
-	boolean compCorrectiveTurning = true;
+	boolean compCorrectiveTurning = false;
 	
 	private final HashMap<String, String> oppDirections = new HashMap<String, String>() {
 		private static final long serialVersionUID = 1L;
