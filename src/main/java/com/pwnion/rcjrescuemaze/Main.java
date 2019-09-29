@@ -85,13 +85,13 @@ public class Main {
 
 			if(!getWalls.get(position)) {
 				switch(position) {
-				case "front": 
+				case "up": 
 					coords.addY(1);
 					break;
 				case "left":
 					coords.addX(-1);
 					break;
-				case "back": 
+				case "down": 
 					coords.addY(-1);
 					break;
 				case "right": 
@@ -101,7 +101,7 @@ public class Main {
 				}
 				
 				System.out.println(" Coords in Visited, " + sharedData.visitedCoordsContains(coords));
-				if(!(position == "back")) {
+				if(!(position == "down")) {
 					sharedData.appendUnvisited(new UnvisitedTileData(coords, 1));
 					System.out.println("  Append Unvisted " + coords.toString());
 				}

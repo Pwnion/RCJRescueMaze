@@ -36,7 +36,7 @@ public class SharedData implements Serializable {
 	private Coords rampTile = null;
 	private String rampDir = "";
 	
-	private String lastMoveWallLocation = "back";
+	private String lastMoveWallLocation = "down";
 	
 	private int time = 0;
 	ArrayList<String> fullPath = new ArrayList<String>();
@@ -89,9 +89,9 @@ public class SharedData implements Serializable {
 	ArrayList<String> positions = new ArrayList<String>() {
 		private static final long serialVersionUID = 1L;
 		{
-			add("front");
+			add("up");
 			add("left");
-			add("back");
+			add("down");
 			add("right");
 		}
 	};
@@ -354,13 +354,13 @@ public class SharedData implements Serializable {
 	public void updateLastMoveWallLocation(String direction) {
 		switch (direction) {
 			case "up":
-				lastMoveWallLocation = "back";
+				lastMoveWallLocation = "down";
 				break;
 			case "left":
 				lastMoveWallLocation = "right";
 				break;
 			case "down":
-				lastMoveWallLocation = "front";
+				lastMoveWallLocation = "up";
 				break;
 			case "right":
 				lastMoveWallLocation = "left";

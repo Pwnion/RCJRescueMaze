@@ -18,7 +18,7 @@ public class Move extends DrivingMotors {
 	private final Ultrasonic ultrasonic;
 	private final Pins pins;
 	
-	boolean compCorrectiveTurning = false;
+	boolean compCorrectiveTurning = true;
 	
 	private final HashMap<String, String> oppDirections = new HashMap<String, String>() {
 		private static final long serialVersionUID = 1L;
@@ -40,19 +40,9 @@ public class Move extends DrivingMotors {
 		}
 	};
 	
-	private HashMap<String, String> dirToPos = new HashMap<String, String>() {
-		private static final long serialVersionUID = 1L;
-		{
-			put("up", "front");
-			put("left", "left");
-			put("down", "back");
-			put("right", "right");
-		}
-	};
-	
 	@Inject
 	public Move(Pins pins, SharedData sharedData, ColourFactory colourFactory, Ultrasonic ultrasonic) {
-		super(pins);
+		super(pins, ultrasonic);
 		
 		this.pins = pins;
 		this.sharedData = sharedData;
@@ -65,29 +55,33 @@ public class Move extends DrivingMotors {
 		boolean returnVal = true;
 		
 		if(compCorrectiveTurning) {
+			
+		int turnAmount = 0;
+			
 		switch (direction) {
 				case "up":
-					returnVal = go2(direction, globalMoveDuration / 2);
-					go2("right", 200);
-					go2("anticlockwise", 20);
-					returnVal = go2(direction, globalMoveDuration / 2);
-					go2("right", 300);
+					turnAmount = 150;
+					go2("clockwise", turnAmount);
+					returnVal = go2(direction, globalMoveDuration);
+					go2("anticlockwise", (long) (turnAmount * .8666));
 					break;
 				case "right":
-					returnVal = go2(direction, globalMoveDuration / 2);
-					go2("anticlockwise", 150);
-					go2("up", 200);
-					returnVal = go2(direction, globalMoveDuration / 2);
-					go2("up", 300);
+					turnAmount = 155;
+					go2("anticlockwise", turnAmount);
+					returnVal = go2(direction, globalMoveDuration);
+					go2("clockwise", (long) (turnAmount * .3));
 					break;
 				case "left":
-					go2(direction, globalMoveDuration / 4);
-					go2("down", 400);
-					returnVal = go2(direction, globalMoveDuration / 4);
-					go2("down", 200);
-					returnVal = go2(direction, globalMoveDuration / 2);
-					go2("down", 300);
-					go2("left", 200);
+					turnAmount = 95;
+					go2("anticlockwise", turnAmount);
+					returnVal = go2(direction, globalMoveDuration);
+					go2("clockwise", (long) (turnAmount * 1.3));
+					break;
+				case "down":
+					turnAmount = 40;
+					//go2("clockwise", turnAmount);
+					returnVal = go2(direction, globalMoveDuration);
+					go2("anticlockwise", (long) (turnAmount));
 					break;
 				default:
 					go2(direction, globalMoveDuration);
@@ -98,11 +92,24 @@ public class Move extends DrivingMotors {
 		}
 		return returnVal;
 	}
+	
+	
+	
+	public void setGlobal(int newGlobal) {
+		globalMoveDuration = newGlobal;
+	}
+	
+	
+	
 		
 	public final boolean go2(String direction, long inputMoveDuration) {	
 		boolean returnVal = true;
 		
-		start(direction, Optional.empty());
+		if(inputMoveDuration <= 0) {
+			return false;
+		}
+		
+		start(direction, inputMoveDuration);
 		
 		long startTime = Gpio.millis();
 		long moveDuration;
@@ -111,7 +118,7 @@ public class Move extends DrivingMotors {
 				returnVal = false;
 				stop();
 				moveDuration = Gpio.millis() - startTime;
-				start(oppDirections.get(direction), Optional.of(moveDuration));
+				start(oppDirections.get(direction), moveDuration);
 				try {
 					Thread.sleep(moveDuration);
 				} catch (InterruptedException e) {
@@ -128,7 +135,7 @@ public class Move extends DrivingMotors {
 				returnVal = false;
 				stop();
 				moveDuration = Gpio.millis() - startTime;
-				start(oppDirections.get(direction), Optional.of(moveDuration));
+				start(oppDirections.get(direction), moveDuration);
 				try {
 					Thread.sleep(moveDuration);
 				} catch (InterruptedException e) {
@@ -149,8 +156,8 @@ public class Move extends DrivingMotors {
 	
 	@Override
 	public final void goUntil(String direction, float distanceToWall) throws InterruptedException, ExecutionException {
-		start(direction, Optional.of((long) 100000));
-		while(ultrasonic.rawSensorOutput().get(dirToPos.get(direction)) > distanceToWall);
+		start(direction, 100000);
+		while(ultrasonic.rawSensorOutput().get(direction) > distanceToWall);
 		stop();
 	}
 }

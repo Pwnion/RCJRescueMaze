@@ -19,6 +19,7 @@ import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
 import com.pwnion.rcjrescuemaze.hardware.GetColour;
 import com.pwnion.rcjrescuemaze.hardware.GetSurvivors;
 import com.pwnion.rcjrescuemaze.hardware.GetWalls;
+import com.pwnion.rcjrescuemaze.hardware.Move;
 import com.pwnion.rcjrescuemaze.hardware.Pins;
 import com.pwnion.rcjrescuemaze.hardware.SurvivorFactory;
 import com.pwnion.rcjrescuemaze.software.SharedData;
@@ -26,20 +27,23 @@ import com.pwnion.rcjrescuemaze.software.SharedData;
 public class Interpreter {
 	@Inject
 	private static DrivingMotors drivingMotors;
-
-	@Inject
-	private static SurvivorFactory survivorFactory;
 	
 	@Inject
-	private static ColourFactory colourFactory;
+	private static Move move;
+
+	//@Inject
+	//private static SurvivorFactory survivorFactory;
+	
+	//@Inject
+	//private static ColourFactory colourFactory;
 	
 	@Inject
 	private static Pins pins;
 	
-	@Inject
-	private static SharedData sharedData;
+	//@Inject
+	//private static SharedData sharedData;
 	
-	private static GetSurvivors getSurvivors;
+	//private static GetSurvivors getSurvivors;
 	
 	public static HashMap<String, HashMap<String, Integer>> tileValues;
 	
@@ -47,11 +51,12 @@ public class Interpreter {
 		long FullStartTime = System.nanoTime();
 		Injector injector = Guice.createInjector(new MainBinder());
 		
-		survivorFactory = injector.getInstance(SurvivorFactory.class);
-		colourFactory = injector.getInstance(ColourFactory.class);
-		sharedData = injector.getInstance(SharedData.class);
-		//pins = injector.getInstance(Pins.class);
+		//survivorFactory = injector.getInstance(SurvivorFactory.class);
+		//colourFactory = injector.getInstance(ColourFactory.class);
+		//sharedData = injector.getInstance(SharedData.class);
+		pins = injector.getInstance(Pins.class);
 		drivingMotors = injector.getInstance(DrivingMotors.class);
+		move = injector.getInstance(Move.class);
 		
 		ArrayList<Boolean> walls = new ArrayList<Boolean>() {
 			private static final long serialVersionUID = 1L;
@@ -66,9 +71,9 @@ public class Interpreter {
 		ArrayList<String> directions = new ArrayList<String>() {
 			private static final long serialVersionUID = 1L;
 			{
-				add("front");
+				add("up");
 				add("left");
-				add("back");
+				add("down");
 				add("right");
 			}
 		};
@@ -79,9 +84,9 @@ public class Interpreter {
 		
 		try {
 			switch(args[0]) {
-			
 			case "DrivingMotors":
-				if(args[1].equals("all")) {
+				switch(args[1]) {
+				case "all":
 					drivingMotors.start("up", Optional.of(Long.parseLong(args[2])));
 					Thread.sleep(Long.parseLong(args[2]));
 					drivingMotors.stop();
@@ -97,13 +102,31 @@ public class Interpreter {
 					drivingMotors.start("right", Optional.of(Long.parseLong(args[2])));
 					Thread.sleep(Long.parseLong(args[2]));
 					drivingMotors.stop();
-				} else {
+					break;
+				case "global":
+					move.setGlobal(Integer.parseInt(args[2]));
+					move.go("down");
+					break;
+				case "test":
+					pins.clockwisePins.get("up_left").pulse(5000);
+					Thread.sleep(1000);
+					pins.clockwisePins.get("up_left").low();
+					pins.clockwisePins.get("up_left").high();
+					Thread.sleep(10000);
+					pins.clockwisePins.get("up_left").pulse(1000);
+					Thread.sleep(1000);
+					
+					break;
+				default:
 					drivingMotors.start(args[1], Optional.of(Long.parseLong(args[2])));
 					Thread.sleep(Long.parseLong(args[2]));
 					drivingMotors.stop();
+					break;
 				}
+				
 				break;
 				
+				/*
 			case "Ultrasonic":
 				
 				if(args[1].equals("all")) {
@@ -111,7 +134,7 @@ public class Interpreter {
 					HashMap<String, Float> rawSensorOutput = injector.getInstance(GetWalls.class).rawSensorOutput();
 					
 					for(String pos : rawSensorOutput.keySet()) {
-						System.out.println("US " + pos.toUpperCase() + "\n    VALUE: " + rawSensorOutput.get(pos)/* + "\n    PRESENT: " + getWalls.get(rawSensorOutput.keySet())*/);
+						System.out.println("US " + pos.toUpperCase() + "\n    VALUE: " + rawSensorOutput.get(pos));
 						//counter++;
 					}
 					
@@ -125,10 +148,11 @@ public class Interpreter {
 						});
 					}
 					pins.sendPin.low();
-					*/
+					
 				}
+				
 				break;
-			case "Infrared":
+			/*case "Infrared":
 				switch (args[1]) {
 					case "all":
 						int count = 0;
@@ -170,11 +194,13 @@ public class Interpreter {
 							System.out.println("    DIFFERENCE: " + (max - min));
 						
 				}
+				
+				break; 
 			case "Colour":
 				/*
 				for(String colour : sharedData.getTileValues().get(args[1]).keySet()) {
 					System.out.println(colour + ": " + sharedData.getTileValues().get(args[1]).get(colour));
-				}*/
+				}
 				
 				ProcessBuilder pb = new ProcessBuilder("raspistill", "-o", "/home/pi/cam.jpg", "-w", "32", "-h", "32", "-t", "0", "-tl", "0", "-ss", "100000", "-ex", "night",
 													   "-co", "25", "-sa", "10", "-br", "55", "-drc", "low").inheritIO();
@@ -198,6 +224,7 @@ public class Interpreter {
 				}
 				
 				p.destroy();
+				break; */
 			}
 		} catch(Exception e) {
 			System.out.println("Invalid input! Try again.");
