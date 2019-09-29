@@ -79,7 +79,7 @@ public abstract class Ultrasonic {
 		if(findDifference(newSensorOut) > 10) { return (float) -1; }
 		
 		switch (pos) {
-			case "front":
+			case "up":
 				newMean -= 0.5;
 		}
 		
@@ -98,17 +98,17 @@ public abstract class Ultrasonic {
 		return new HashMap<String, Float>() {
 			private static final long serialVersionUID = 1L;
 			{
-				put("front", pool.submit(new Callable<Float>() {
+				put("up", pool.submit(new Callable<Float>() {
 					@Override
-				    public Float call() throws InterruptedException { return getDistance("front"); }
+				    public Float call() throws InterruptedException { return getDistance("up"); }
 				}).get());
 				put("left", pool.submit(new Callable<Float>() {
 					@Override
 				    public Float call() throws InterruptedException { return getDistance("left"); }
 				}).get());
-				put("back", pool.submit(new Callable<Float>() {
+				put("down", pool.submit(new Callable<Float>() {
 					@Override
-				    public Float call() throws InterruptedException { return getDistance("back"); }
+				    public Float call() throws InterruptedException { return getDistance("down"); }
 				}).get());
 				put("right", pool.submit(new Callable<Float>() {
 					@Override

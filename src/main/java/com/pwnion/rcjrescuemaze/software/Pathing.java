@@ -28,9 +28,9 @@ public abstract class Pathing {
 		HashMap<String, Coords> coordsToAdd = new HashMap<String, Coords>() {
 			private static final long serialVersionUID = 1L;
 			{
-				put("front", new Coords(0, 1));
+				put("up", new Coords(0, 1));
 				put("left", new Coords(-1, 0));
-				put("back", new Coords(0, -1));
+				put("down", new Coords(0, -1));
 				put("right", new Coords(1, 0));
 			}
 		};

@@ -21,9 +21,9 @@ public abstract class Infrared {
 	protected ArrayList<String> positions = new ArrayList<String>() {
 		private static final long serialVersionUID = 1L;
 		{
-			add("front");
+			add("up");
 			add("left");
-			add("back");
+			add("down");
 			add("right");
 		}
 	};
