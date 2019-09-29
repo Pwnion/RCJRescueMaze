@@ -1,12 +1,17 @@
 package com.pwnion.rcjrescuemaze;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -49,6 +54,8 @@ public class Main {
 	private static Pins pins;
 	
 	private static boolean start = false;
+	
+	private static int levelChangeCounter = 0;
 	
 	private static final void manageTiles(GetWalls getWalls) {
 		if(start) {
@@ -114,7 +121,12 @@ public class Main {
 
 	public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
 		Injector injector = Guice.createInjector(new MainBinder());
-		
+
+		sharedData = injector.getInstance(SharedData.class);
+		move = injector.getInstance(Move.class);
+		getColour = injector.getInstance(ColourFactory.class).create("/home/pi/cam.jpg");
+		survivorFactory = injector.getInstance(SurvivorFactory.class);
+		getSurvivors = survivorFactory.create(new ArrayList<Boolean>(Collections.nCopies(4, false)));
 		pins = injector.getInstance(Pins.class);
 		
 		System.out.println("Ready");
@@ -123,12 +135,6 @@ public class Main {
 		ProcessBuilder pb = new ProcessBuilder("raspistill", "-o", "/home/pi/cam.jpg", "-w", "32", "-h", "32", "-t", "0", "-tl", "0", "-ss", "100000", "-ex", "night",
 				   "-co", "25", "-sa", "10", "-br", "55", "-drc", "low").inheritIO();
 		Process p = pb.start();
-
-		sharedData = injector.getInstance(SharedData.class);
-		move = injector.getInstance(Move.class);
-		getColour = injector.getInstance(ColourFactory.class).create("/home/pi/cam.jpg");
-		survivorFactory = injector.getInstance(SurvivorFactory.class);
-		getSurvivors = survivorFactory.create(new ArrayList<Boolean>(Collections.nCopies(4, false)));
 		
 		//Setup Test
 		move.go("up");
@@ -168,15 +174,51 @@ public class Main {
 			}
 			
 			if(!sharedData.getRampTile().toString().equals(null)) {
+				Consumer<Integer> save = num -> {
+					try {
+						FileOutputStream fileOutputStream = new FileOutputStream("/home/pi/sharedData" + String.valueOf(num) + ".txt");
+					    ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+					    objectOutputStream.writeObject(sharedData);
+					    objectOutputStream.flush();
+					    objectOutputStream.close();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				};
 				
-				//Function<void> saveAndEmpty
+				Consumer<Integer> load = num -> {
+				    try {
+				    	FileInputStream fileInputStream = new FileInputStream("/home/pi/sharedData" + String.valueOf(num) + ".txt");
+					    ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+					    SharedData loadedSharedData = (SharedData) objectInputStream.readObject();
+						objectInputStream.close();
+						
+						sharedData.load(
+								loadedSharedData.getVisited(),
+								loadedSharedData.getUnvisited(),
+								loadedSharedData.getBlackTiles(),
+								loadedSharedData.getLastSilverTile(),
+								loadedSharedData.getCurrentPos(),
+								loadedSharedData.getRampTile(),
+								loadedSharedData.getRampDir());
+					} catch (IOException | ClassNotFoundException e) {
+						e.printStackTrace();
+					}
+				};
+				
+				save.accept(levelChangeCounter);
 				
 				pathing.moveToCoords(sharedData.getRampTile(), pathing.generateMap());
 				
 				String rampDir = sharedData.getRampDir();
 				move.goUntil(rampDir, 7);
+				sharedData.pathAppend("RAMP - " + rampDir);
 			    
 			    sharedData.clear();
+			    if(levelChangeCounter == 1) {
+			    	load.accept(0);
+			    }
+			    levelChangeCounter++;
 			    
 			    start = true;
 			    

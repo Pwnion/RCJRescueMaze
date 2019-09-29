@@ -41,6 +41,24 @@ public class SharedData implements Serializable {
 	private int time = 0;
 	ArrayList<String> fullPath = new ArrayList<String>();
 	
+	public void load(
+			ArrayList<VisitedTileData> visited,
+			ArrayList<UnvisitedTileData> unvisited,
+			ArrayList<Coords> blackTiles,
+			Coords lastSilverTile,
+			Coords currentPos,
+			Coords rampTile,
+			String rampDir)
+	{
+		this.visited = visited;
+		this.unvisited = unvisited;
+		this.blackTiles = blackTiles;
+		this.lastSilverTile = lastSilverTile;
+		this.currentPos = currentPos;
+		this.rampTile = rampTile;
+		this.rampDir = rampDir;
+	}
+	
 	public void clear() {
 		visited = new ArrayList<VisitedTileData>();
 		unvisited = new ArrayList<UnvisitedTileData>();
@@ -49,7 +67,6 @@ public class SharedData implements Serializable {
 		currentPos = new Coords(0, 0);
 		rampTile = new Coords(0, 0);
 		rampDir = "";
-		time = 0;
 	}
 	
 	private final int imgX = 32;
