@@ -46,19 +46,22 @@ public abstract class DrivingMotors {
 		String direction;
 		long time;
 		
-		while(!(QueueDir.isEmpty() || QueueTime.isEmpty())) {
+		//Keep moving untill there are no more directions to follow in the queue
+		while(!(QueueDir.isEmpty())) {
 			direction = QueueDir.get(0);
 			time = QueueTime.get(0);
 			long timeMoved = 0;
 			
-			if(time > 3000) {
-				QueueTime.set(0, time - 3000);
-				start2(direction, 3000);
-			} else {
-				while(timeMoved < 3000) {
-					if(timeMoved + time > 3000) {
-						start2(direction, 3000 - timeMoved);
-						QueueTime.set(0, time - (3000 - timeMoved));
+			long interval = 3000; //interval between checking with ultrasonics for irregular activity
+			
+			if(time >= interval) {
+				QueueTime.set(0, time - interval);
+				start2(direction, interval);
+			} else { //time < interval
+				while(timeMoved < interval) {
+					if(timeMoved + time > interval) {
+						start2(direction, interval - timeMoved);
+						QueueTime.set(0, time - (interval - timeMoved));
 						break;
 					} else {
 						start2(direction, time);
@@ -92,12 +95,27 @@ public abstract class DrivingMotors {
 				}
 				if(dis != -1 && dis < 15) {
 					if(dis > 8.5) {
-						//Move(position, 100)
+						addDirToList(position, 100);
 					} else if(dis < 5.5) {
-						//move(oppDirections(position), 100)
+						addDirToList(oppDirections.get(position), 100);
 					}
 				}
 			}
+		}
+	}
+	
+	private void addDirToList(String direction, long time) {
+		int counter = 0;
+		long totalTime = 0;
+		
+		while(totalTime < time) {
+			QueueDir.set(counter, addDir(direction, QueueDir.get(counter)));
+			if(QueueTime.get(counter) + totalTime >= time) {
+				QueueTime.set(counter, time - totalTime);
+				break;
+			}
+			totalTime += QueueTime.get(counter);
+			counter += 1;
 		}
 	}
 	
