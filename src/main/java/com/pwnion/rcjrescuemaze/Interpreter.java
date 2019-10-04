@@ -31,8 +31,8 @@ public class Interpreter {
 	@Inject
 	private static Move move;
 
-	//@Inject
-	//private static SurvivorFactory survivorFactory;
+	@Inject
+	private static SurvivorFactory survivorFactory;
 	
 	//@Inject
 	//private static ColourFactory colourFactory;
@@ -43,7 +43,7 @@ public class Interpreter {
 	//@Inject
 	//private static SharedData sharedData;
 	
-	//private static GetSurvivors getSurvivors;
+	private static GetSurvivors getSurvivors;
 	
 	public static HashMap<String, HashMap<String, Integer>> tileValues;
 	
@@ -51,7 +51,7 @@ public class Interpreter {
 		long FullStartTime = System.nanoTime();
 		Injector injector = Guice.createInjector(new MainBinder());
 		
-		//survivorFactory = injector.getInstance(SurvivorFactory.class);
+		survivorFactory = injector.getInstance(SurvivorFactory.class);
 		//colourFactory = injector.getInstance(ColourFactory.class);
 		//sharedData = injector.getInstance(SharedData.class);
 		pins = injector.getInstance(Pins.class);
@@ -84,22 +84,25 @@ public class Interpreter {
 		
 		try {
 			switch(args[0]) {
+			
+			/*
+			
 			case "DrivingMotors":
 				switch(args[1]) {
 				case "all":
-					drivingMotors.start("up", Optional.of(Long.parseLong(args[2])));
+					drivingMotors.start("up", Long.parseLong(args[2]));
 					Thread.sleep(Long.parseLong(args[2]));
 					drivingMotors.stop();
 					
-					drivingMotors.start("left", Optional.of(Long.parseLong(args[2])));
+					drivingMotors.start("left", Long.parseLong(args[2]));
 					Thread.sleep(Long.parseLong(args[2]));
 					drivingMotors.stop();
 					
-					drivingMotors.start("down", Optional.of(Long.parseLong(args[2])));
+					drivingMotors.start("down", Long.parseLong(args[2]));
 					Thread.sleep(Long.parseLong(args[2]));
 					drivingMotors.stop();
 					
-					drivingMotors.start("right", Optional.of(Long.parseLong(args[2])));
+					drivingMotors.start("right", Long.parseLong(args[2]));
 					Thread.sleep(Long.parseLong(args[2]));
 					drivingMotors.stop();
 					break;
@@ -118,15 +121,13 @@ public class Interpreter {
 					
 					break;
 				default:
-					drivingMotors.start(args[1], Optional.of(Long.parseLong(args[2])));
+					drivingMotors.start(args[1], Long.parseLong(args[2]));
 					Thread.sleep(Long.parseLong(args[2]));
 					drivingMotors.stop();
 					break;
 				}
 				
 				break;
-				
-				/*
 			case "Ultrasonic":
 				
 				if(args[1].equals("all")) {
@@ -139,7 +140,6 @@ public class Interpreter {
 					}
 					
 					System.out.println("Finished in " + round((System.nanoTime() - FullStartTime) / 1e6, 2) + "ms");
-					/*
 					pins.sendPin.high();
 					Thread.sleep(2000);
 					for(int i = 0; i < 10000; i++) {
@@ -150,9 +150,11 @@ public class Interpreter {
 					pins.sendPin.low();
 					
 				}
-				
 				break;
-			/*case "Infrared":
+				
+				*/
+				
+			case "Infrared":
 				switch (args[1]) {
 					case "all":
 						int count = 0;
@@ -161,7 +163,7 @@ public class Interpreter {
 							for(int i = 0; i < 4; i++) {
 								System.out.println("*IR " + directions.get(i).toUpperCase() + "*");
 								System.out.println("    RAW: " + getSurvivors.rawSensorOutput().get(directions.get(i)));
-								System.out.println("    PRESENT: " + getSurvivors.get(directions.get(i)));
+								System.out.println("    PRESENT: " + getSurvivors.get(directions.get(i)) + "\n");
 							}
 							
 							count += 1;
@@ -195,9 +197,11 @@ public class Interpreter {
 						
 				}
 				
-				break; 
-			case "Colour":
+				break;
+				
 				/*
+				
+			case "Colour":
 				for(String colour : sharedData.getTileValues().get(args[1]).keySet()) {
 					System.out.println(colour + ": " + sharedData.getTileValues().get(args[1]).get(colour));
 				}
@@ -237,7 +241,10 @@ public class Interpreter {
 				}
 				
 				p.destroy();
-				break; */
+				break;
+				
+				*/
+				
 			}
 		} catch(Exception e) {
 			System.out.println("Invalid input! Try again.");
