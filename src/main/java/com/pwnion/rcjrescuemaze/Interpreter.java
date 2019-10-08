@@ -14,6 +14,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.pwnion.rcjrescuemaze.binders.MainBinder;
 import com.pwnion.rcjrescuemaze.hardware.ColourFactory;
+import com.pwnion.rcjrescuemaze.hardware.DispenserMotor;
 import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
 //import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
 import com.pwnion.rcjrescuemaze.hardware.GetColour;
@@ -41,6 +42,9 @@ public class Interpreter {
 	@Inject
 	private static Pins pins;
 	
+	@Inject
+	private static DispenserMotor dispenserMotor;
+	
 	//@Inject
 	//private static SharedData sharedData;
 	
@@ -58,6 +62,7 @@ public class Interpreter {
 		pins = injector.getInstance(Pins.class);
 		drivingMotors = injector.getInstance(DrivingMotors.class);
 		move = injector.getInstance(Move.class);
+		dispenserMotor = injector.getInstance(DispenserMotor.class);
 		
 		ArrayList<Boolean> walls = new ArrayList<Boolean>() {
 			private static final long serialVersionUID = 1L;
@@ -205,6 +210,11 @@ public class Interpreter {
 				}
 				
 				break;
+			case "Dispenser":
+				dispenserMotor.clockwise(360);
+				dispenserMotor.anticlockwise(360);
+				break;
+				
 				
 				/*
 				
