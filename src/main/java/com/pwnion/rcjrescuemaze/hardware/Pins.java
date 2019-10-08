@@ -11,6 +11,7 @@ import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import com.pi4j.io.gpio.GpioPinPwmOutput;
 import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiPin;
+import com.pi4j.component.motor.impl.GpioStepperMotorComponent;
 
 @Singleton
 public class Pins {
@@ -64,14 +65,20 @@ public class Pins {
 		for(GpioPinDigitalOutput pin : anticlockwisePins.values()) {
 			pin.setShutdownOptions(true, PinState.LOW);
 		}
-		for(GpioPinDigitalOutput pin : stepperPins.values()) {
-			pin.setShutdownOptions(true, PinState.LOW);
+		
+		for(int i = 0; i < 4; i++) {
+			stepperPins[i].setShutdownOptions(true, PinState.LOW);
 		}
+		
 		speedPin.setShutdownOptions(true, PinState.LOW);
 		
 		buttonPin.setShutdownOptions(true, PinState.LOW);
 		
 		tiltPin.setShutdownOptions(true, PinState.LOW);
+		
+		stepperMotor.setStepInterval(2);
+		stepperMotor.setStepSequence(single_step_sequence);
+		stepperMotor.setStepsPerRevolution(2048);
 	}
 		
 	//Initialise GpioController for the Pi4J Library
@@ -81,15 +88,16 @@ public class Pins {
 	public final GpioPinDigitalOutput tiltPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_29);
 	
 	//Stepper Motor IN(1/2/3/4) Pins
-	public final HashMap<String, GpioPinDigitalOutput> stepperPins = new HashMap<String, GpioPinDigitalOutput>() {
-		private static final long serialVersionUID = 1L;
-		{
-			put("IN1", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_21));
-			put("IN2", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_22));
-			put("IN3", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_25));
-			put("IN4", gpio.provisionDigitalOutputPin(RaspiPin.GPIO_27));
-		}
-	};
+	private final GpioPinDigitalOutput[] stepperPins = {
+            gpio.provisionDigitalOutputPin(RaspiPin.GPIO_21, PinState.LOW),
+            gpio.provisionDigitalOutputPin(RaspiPin.GPIO_22, PinState.LOW),
+            gpio.provisionDigitalOutputPin(RaspiPin.GPIO_25, PinState.LOW),
+            gpio.provisionDigitalOutputPin(RaspiPin.GPIO_27, PinState.LOW)
+    };
+	
+	private byte[] single_step_sequence = {(byte) 0b0001, (byte) 0b0010, (byte) 0b0100, (byte) 0b1000};
+	
+	public GpioStepperMotorComponent stepperMotor = new GpioStepperMotorComponent(stepperPins);
 	
 	//Provision digital ultrasonic output (trig) pins and populate a hashmap with them based on their position on the robot
 	public final GpioPinDigitalOutput sendPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_12);
