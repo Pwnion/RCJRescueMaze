@@ -114,7 +114,7 @@ public class Move extends DrivingMotors {
 		long startTime = Gpio.millis();
 		long moveDuration;
 		while(Gpio.millis() - startTime < inputMoveDuration) {
-			if(getColour.getColourPercentages().get("black") > 50f) {
+			/*if(getColour.getColourPercentages().get("black") > 50f) {
 				returnVal = false;
 				stop();
 				moveDuration = Gpio.millis() - startTime;
@@ -131,7 +131,8 @@ public class Move extends DrivingMotors {
 				
 				sharedData.appendBlackTiles(blackCoords);
 				break;
-			} else if(pins.tiltPin.isHigh()) {
+			} else //*/
+			if(pins.tiltPin.isHigh()) {
 				returnVal = false;
 				stop();
 				moveDuration = Gpio.millis() - startTime;
@@ -155,8 +156,15 @@ public class Move extends DrivingMotors {
 	}
 	
 	@Override
+	public final void goUntil(String direction, float distanceToWall, int speed) throws InterruptedException, ExecutionException {
+		start2(direction, 100000, speed);
+		while(ultrasonic.rawSensorOutput().get(direction) > distanceToWall);
+		stop();
+	}
+	
+	@Override
 	public final void goUntil(String direction, float distanceToWall) throws InterruptedException, ExecutionException {
-		start(direction, 100000);
+		start2(direction, 100000, 1024);
 		while(ultrasonic.rawSensorOutput().get(direction) > distanceToWall);
 		stop();
 	}

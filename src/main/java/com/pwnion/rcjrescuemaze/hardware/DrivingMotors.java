@@ -155,9 +155,13 @@ public abstract class DrivingMotors {
 		motor.get("anticlockwise").low();
 		motor.get(direction).pulse(pulseDuration);
 	}
+	
+	public final void start2(String direction, long localMoveDuration2) {
+		start2(direction, localMoveDuration2, 1024);
+	}
 
 	//Moves the robot in the given direction using all 4 motors
-	private final void start2(String direction, long localMoveDuration2) {
+	protected final void start2(String direction, long localMoveDuration2, int speed) {
 		Optional<Long> localMoveDuration = Optional.of(localMoveDuration2);
 		switch (direction) {
 		case "up":
@@ -223,7 +227,7 @@ public abstract class DrivingMotors {
 			pulse(pins.downLeft, "anticlockwise", localMoveDuration.orElse(globalMoveDuration));
 			break;
 		}
-		pins.speedPin.setPwm(1024);
+		pins.speedPin.setPwm(speed);
 	}
 	
 	public final void stop() {
@@ -234,6 +238,7 @@ public abstract class DrivingMotors {
 	
 	public abstract boolean go(String direction);
 	public abstract boolean go2(String direction, long inputMoveDuration);
+	public abstract void goUntil(String direction, float distanceToWall, int speed) throws InterruptedException, ExecutionException;
 	public abstract void goUntil(String direction, float distanceToWall) throws InterruptedException, ExecutionException;
 	
 }

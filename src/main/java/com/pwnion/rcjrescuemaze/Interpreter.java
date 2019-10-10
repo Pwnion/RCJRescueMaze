@@ -35,8 +35,8 @@ public class Interpreter {
 	@Inject
 	private static SurvivorFactory survivorFactory;
 	
-	//@Inject
-	//private static ColourFactory colourFactory;
+	@Inject
+	private static ColourFactory colourFactory;
 	
 	@Inject
 	private static Pins pins;
@@ -44,8 +44,8 @@ public class Interpreter {
 	@Inject
 	private static DispenserMotor dispenserMotor;
 	
-	//@Inject
-	//private static SharedData sharedData;
+	@Inject
+	private static SharedData sharedData;
 	
 	private static GetSurvivors getSurvivors;
 	
@@ -56,8 +56,8 @@ public class Interpreter {
 		Injector injector = Guice.createInjector(new MainBinder());
 		
 		survivorFactory = injector.getInstance(SurvivorFactory.class);
-		//colourFactory = injector.getInstance(ColourFactory.class);
-		//sharedData = injector.getInstance(SharedData.class);
+		colourFactory = injector.getInstance(ColourFactory.class);
+		sharedData = injector.getInstance(SharedData.class);
 		pins = injector.getInstance(Pins.class);
 		drivingMotors = injector.getInstance(DrivingMotors.class);
 		move = injector.getInstance(Move.class);
@@ -89,7 +89,19 @@ public class Interpreter {
 		
 		try {
 			switch(args[0]) {
-			
+			case "Calibration":
+				move.start2("up", 2000);
+				Thread.sleep(500);
+				move.goUntil("down", 30f);
+				Thread.sleep(1000);
+				
+				String dir = "up";
+				for(int i = 0; i < 8; i++) {
+					move.goUntil(dir, 30f, 1024 - i * 64);
+					dir = dir == "up" ? "down" : "up";
+					Thread.sleep(200);
+				}
+				break;
 			/*
 			
 			case "DrivingMotors":
@@ -207,14 +219,11 @@ public class Interpreter {
 				dispenserMotor.clockwise(360);
 				dispenserMotor.anticlockwise(360);
 				break;
-				
-				
-				/*
-				
 			case "Colour":
+				/*
 				for(String colour : sharedData.getTileValues().get(args[1]).keySet()) {
 					System.out.println(colour + ": " + sharedData.getTileValues().get(args[1]).get(colour));
-				}
+				}*/
 				
 				long modBefore = new File("/home/pi/cam.jpg").lastModified();
 				long modAfter = modBefore;
@@ -252,9 +261,6 @@ public class Interpreter {
 				
 				p.destroy();
 				break;
-				
-				*/
-				
 			}
 		} catch(Exception e) {
 			System.out.println("Invalid input! Try again.");
