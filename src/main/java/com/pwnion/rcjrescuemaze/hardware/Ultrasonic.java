@@ -85,14 +85,15 @@ public abstract class Ultrasonic {
 		
 		newMean = round(newMean, 1);
 
-		System.out.println("Mean Before = " + round(getMean(sensorOutputs), 1));
-		System.out.println("Mean After = " + newMean);
+		System.out.println("Ultrasonic location: " + pos.toUpperCase());
+		System.out.println("  Mean Before = " + round(getMean(sensorOutputs), 1));
+		System.out.println("  Mean After = " + newMean);
 		
 		return newMean;
 	}
 	
 	//Runs getDistance() for all four sensors, associates them with a position in a hashmap and returns said hashmap
-	protected HashMap<String, Float> rawSensorOutput() throws InterruptedException, ExecutionException {
+	public HashMap<String, Float> rawSensorOutput() throws InterruptedException, ExecutionException {
 		ExecutorService pool = Executors.newFixedThreadPool(5); // creates a pool of threads for the Future to draw from
 
 		return new HashMap<String, Float>() {
@@ -164,8 +165,6 @@ public abstract class Ultrasonic {
 
 	public static ArrayList<Float> eliminateOutliers(ArrayList<Float> values, float scaleOfElimination) {
 		
-		System.out.println("Running eliminateOutliers with " + values);
-		
 		if(values.isEmpty()) {
 			return new ArrayList<Float>();
 		}
@@ -196,12 +195,9 @@ public abstract class Ultrasonic {
 	    }
 	    
 	    if(eliminated.size() > newList.size()) {
-	    	System.out.println("Eliminated > NewList");
 	    	return values;
 	    }
 
-	    System.out.println("Eliminated " + eliminated);
-	    System.out.println("Running eliminateOutliers returns " + newList);
 	    return newList;
 	}
 	

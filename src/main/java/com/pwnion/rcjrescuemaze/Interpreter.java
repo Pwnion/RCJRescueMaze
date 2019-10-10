@@ -23,6 +23,7 @@ import com.pwnion.rcjrescuemaze.hardware.GetWalls;
 import com.pwnion.rcjrescuemaze.hardware.Move;
 import com.pwnion.rcjrescuemaze.hardware.Pins;
 import com.pwnion.rcjrescuemaze.hardware.SurvivorFactory;
+import com.pwnion.rcjrescuemaze.hardware.Ultrasonic;
 import com.pwnion.rcjrescuemaze.software.SharedData;
 
 public class Interpreter {
@@ -90,7 +91,7 @@ public class Interpreter {
 		try {
 			switch(args[0]) {
 			case "Calibration":
-				move.start2("up", 2000);
+				move.start2("up", 0, 2000);
 				Thread.sleep(500);
 				move.goUntil("down", 30f);
 				Thread.sleep(1000);
@@ -103,7 +104,6 @@ public class Interpreter {
 				}
 				break;
 			/*
-			
 			case "DrivingMotors":
 				switch(args[1]) {
 				case "all":
@@ -138,7 +138,7 @@ public class Interpreter {
 					
 					break;
 				default:
-					drivingMotors.start(args[1], Long.parseLong(args[2]));
+					drivingMotors.start2(args[1], Long.parseLong(args[2]));
 					Thread.sleep(Long.parseLong(args[2]));
 					drivingMotors.stop();
 					break;
@@ -149,12 +149,18 @@ public class Interpreter {
 				
 				if(args[1].equals("all")) {
 					FullStartTime = System.nanoTime();
-					HashMap<String, Float> rawSensorOutput = injector.getInstance(GetWalls.class).rawSensorOutput();
+					Ultrasonic ultrasonic = injector.getInstance(Ultrasonic.class);
+					HashMap<String, Float> rawSensorOutput = ultrasonic.rawSensorOutput();
 					
-					for(String pos : rawSensorOutput.keySet()) {
-						System.out.println("US " + pos.toUpperCase() + "\n    VALUE: " + rawSensorOutput.get(pos));
-						//counter++;
+					for(int i = 0; i < 10; i++) {
+						for(String pos : rawSensorOutput.keySet()) {
+							System.out.println("US " + pos.toUpperCase() + "\n    VALUE: " + rawSensorOutput.get(pos));
+							Thread.sleep(1000);
+							//counter++;
+						}
 					}
+					
+					
 					
 					System.out.println("Finished in " + round((System.nanoTime() - FullStartTime) / 1e6, 2) + "ms");
 					pins.sendPin.high();
@@ -169,7 +175,7 @@ public class Interpreter {
 				}
 				break;
 				
-				*/
+				
 				
 			case "Infrared":
 				switch (args[1]) {
@@ -218,7 +224,7 @@ public class Interpreter {
 			case "Dispenser":
 				dispenserMotor.clockwise(360);
 				dispenserMotor.anticlockwise(360);
-				break;
+				break;*/
 			case "Colour":
 				/*
 				for(String colour : sharedData.getTileValues().get(args[1]).keySet()) {

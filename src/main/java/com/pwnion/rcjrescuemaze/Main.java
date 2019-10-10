@@ -118,10 +118,10 @@ public class Main {
 		}
 		
 	}
+	
+	public static Injector injector = Guice.createInjector(new MainBinder());
 
 	public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
-		Injector injector = Guice.createInjector(new MainBinder());
-
 		sharedData = injector.getInstance(SharedData.class);
 		move = injector.getInstance(Move.class);
 		getColour = injector.getInstance(ColourFactory.class).create("/home/pi/cam.jpg");
