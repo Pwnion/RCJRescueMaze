@@ -156,15 +156,13 @@ public class Move extends DrivingMotors {
 	}
 	
 	@Override
-	public final void goUntil(String direction, float distanceToWall, int speed) throws InterruptedException, ExecutionException {
-		start2(direction, 100000, speed);
-		while(ultrasonic.rawSensorOutput().get(direction) > distanceToWall);
-		stop();
+	public final void goUntil(String direction, float distanceToWall) throws InterruptedException, ExecutionException {
+		goUntil(direction, distanceToWall, 1024);
 	}
 	
 	@Override
-	public final void goUntil(String direction, float distanceToWall) throws InterruptedException, ExecutionException {
-		start2(direction, 100000, 1024);
+	public final void goUntil(String direction, float distanceToWall, int speed) throws InterruptedException, ExecutionException {
+		start2(direction, 100000, 0, speed);
 		while(ultrasonic.rawSensorOutput().get(direction) > distanceToWall);
 		stop();
 	}
