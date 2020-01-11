@@ -38,7 +38,7 @@ public class SharedData implements Serializable {
 	
 	private String lastMoveWallLocation = "down";
 	
-	private int time = 0;
+	private long startTime = 0;
 	ArrayList<String> fullPath = new ArrayList<String>();
 	
 	public void load(
@@ -344,12 +344,12 @@ public class SharedData implements Serializable {
 		rampDir = direction;
 	}
 
-	public int getTime() {
-		return time;
+	public long getStartTime() {
+		return startTime;
 	}
 	
-	public void timeAdd(int time) {
-		this.time += time;
+	public void startTime() {
+		this.startTime = System.currentTimeMillis();
 	}
 	
 	public ArrayList<String> getFullPath() {

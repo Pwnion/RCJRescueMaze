@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 //import java.util.Optional;
 import java.util.Iterator;
-import java.util.Optional;
+import java.util.Scanner;
 
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -19,10 +19,8 @@ import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
 //import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
 import com.pwnion.rcjrescuemaze.hardware.GetColour;
 import com.pwnion.rcjrescuemaze.hardware.GetSurvivors;
-import com.pwnion.rcjrescuemaze.hardware.GetWalls;
 import com.pwnion.rcjrescuemaze.hardware.Move;
 import com.pwnion.rcjrescuemaze.hardware.Pins;
-import com.pwnion.rcjrescuemaze.hardware.SurvivorFactory;
 import com.pwnion.rcjrescuemaze.hardware.Ultrasonic;
 import com.pwnion.rcjrescuemaze.software.SharedData;
 
@@ -32,9 +30,6 @@ public class Interpreter {
 	
 	@Inject
 	private static Move move;
-
-	@Inject
-	private static SurvivorFactory survivorFactory;
 	
 	@Inject
 	private static ColourFactory colourFactory;
@@ -56,7 +51,6 @@ public class Interpreter {
 		long FullStartTime = System.nanoTime();
 		Injector injector = Guice.createInjector(new MainBinder());
 		
-		survivorFactory = injector.getInstance(SurvivorFactory.class);
 		colourFactory = injector.getInstance(ColourFactory.class);
 		sharedData = injector.getInstance(SharedData.class);
 		pins = injector.getInstance(Pins.class);
@@ -91,9 +85,9 @@ public class Interpreter {
 		try {
 			switch(args[0]) {
 			case "Calibration":
-				move.start2("up", 0, 2000);
+				move.start2("up", 2000, 0);
 				Thread.sleep(500);
-				move.goUntil("down", 30f);
+				move.goUntil("up", 30f);
 				Thread.sleep(1000);
 				
 				String dir = "up";
@@ -103,23 +97,22 @@ public class Interpreter {
 					Thread.sleep(200);
 				}
 				break;
-			/*
 			case "DrivingMotors":
 				switch(args[1]) {
 				case "all":
-					drivingMotors.start("up", Long.parseLong(args[2]));
+					drivingMotors.start2("up", Long.parseLong(args[2]));
 					Thread.sleep(Long.parseLong(args[2]));
 					drivingMotors.stop();
 					
-					drivingMotors.start("left", Long.parseLong(args[2]));
+					drivingMotors.start2("left", Long.parseLong(args[2]));
 					Thread.sleep(Long.parseLong(args[2]));
 					drivingMotors.stop();
 					
-					drivingMotors.start("down", Long.parseLong(args[2]));
+					drivingMotors.start2("down", Long.parseLong(args[2]));
 					Thread.sleep(Long.parseLong(args[2]));
 					drivingMotors.stop();
 					
-					drivingMotors.start("right", Long.parseLong(args[2]));
+					drivingMotors.start2("right", Long.parseLong(args[2]));
 					Thread.sleep(Long.parseLong(args[2]));
 					drivingMotors.stop();
 					break;
@@ -149,19 +142,47 @@ public class Interpreter {
 				
 				if(args[1].equals("all")) {
 					FullStartTime = System.nanoTime();
-					Ultrasonic ultrasonic = injector.getInstance(Ultrasonic.class);
-					HashMap<String, Float> rawSensorOutput = ultrasonic.rawSensorOutput();
+					//Ultrasonic ultrasonic = injector.getInstance(Ultrasonic.class);
 					
-					for(int i = 0; i < 10; i++) {
-						for(String pos : rawSensorOutput.keySet()) {
-							System.out.println("US " + pos.toUpperCase() + "\n    VALUE: " + rawSensorOutput.get(pos));
-							Thread.sleep(1000);
-							//counter++;
-						}
+					Ultrasonic ultrasonic = injector.getInstance(Ultrasonic.class);
+					for(int i = 0; i < 10000; i++) {
+						ultrasonic.populateSensorOutput();
+						ultrasonic.rawSensorOutput();
 					}
 					
+					/*
+					ExecutorService pool = Executors.newFixedThreadPool(5);
 					
+					for(int i = 0; i < 10; i++) {
+						new HashMap<String, Float>() {
+							private static final long serialVersionUID = 1L;
+							{
+								put("up", pool.submit(new Callable<Float>() {
+									@Override
+								    public Float call() throws InterruptedException { return ultrasonic.getDistance("up"); }
+								}).get());
+								put("left", pool.submit(new Callable<Float>() {
+									@Override
+								    public Float call() throws InterruptedException { return ultrasonic.getDistance("left"); }
+								}).get());
+								put("down", pool.submit(new Callable<Float>() {
+									@Override
+								    public Float call() throws InterruptedException { return ultrasonic.getDistance("down"); }
+								}).get());
+								put("right", pool.submit(new Callable<Float>() {
+									@Override
+								    public Float call() throws InterruptedException { return ultrasonic.getDistance("right"); }
+								}).get());
+							}
+						};
+						
+						Thread.sleep(1000);
+						
+					}*/
 					
+				}
+					
+					/*
 					System.out.println("Finished in " + round((System.nanoTime() - FullStartTime) / 1e6, 2) + "ms");
 					pins.sendPin.high();
 					Thread.sleep(2000);
@@ -170,9 +191,7 @@ public class Interpreter {
 							if(pin.isHigh()) System.out.print("OH MY FUCKING GOD ONE OF THE PINS IS HIGH!");
 						});
 					}
-					pins.sendPin.low();
-					
-				}
+					pins.sendPin.low();*/
 				break;
 				
 				
@@ -182,11 +201,11 @@ public class Interpreter {
 					case "all":
 						int count = 0;
 						while(true) {
-							getSurvivors = survivorFactory.create(walls);
+							getSurvivors = injector.getInstance(GetSurvivors.class);
 							for(int i = 0; i < 4; i++) {
 								System.out.println("*IR " + directions.get(i).toUpperCase() + "*");
 								System.out.println("    RAW: " + getSurvivors.rawSensorOutput().get(directions.get(i)));
-								System.out.println("    PRESENT: " + getSurvivors.get(directions.get(i)) + "\n");
+								System.out.println("    PRESENT: " + getSurvivors.get().get(directions.get(i)));
 							}
 							
 							count += 1;
@@ -204,7 +223,7 @@ public class Interpreter {
 						String direction = args[2];
 						
 						for(int i = 0; i < 50; i++) {
-							getSurvivors = survivorFactory.create(walls);
+							getSurvivors = injector.getInstance(GetSurvivors.class);
 							IRvalues.add(getSurvivors.rawSensorOutput().get(direction));
 							Thread.sleep(10);
 						}
@@ -222,9 +241,24 @@ public class Interpreter {
 				
 				break;
 			case "Dispenser":
-				dispenserMotor.clockwise(360);
-				dispenserMotor.anticlockwise(360);
-				break;*/
+				Scanner scanner = new Scanner(System.in);
+				while(true) {
+					try {
+						System.out.println("in or out?");
+						String direction = scanner.nextLine();
+						System.out.println("degrees?");
+						int degrees = scanner.nextInt();
+						
+						if(direction.equals("in")) {
+							dispenserMotor.in(degrees);
+						} else if(direction.equals("out")) {
+							dispenserMotor.out(degrees);
+						}
+					} catch(Exception e) {
+						System.out.println("Try again...");
+					}
+					System.out.print("\n\n");
+				}
 			case "Colour":
 				/*
 				for(String colour : sharedData.getTileValues().get(args[1]).keySet()) {

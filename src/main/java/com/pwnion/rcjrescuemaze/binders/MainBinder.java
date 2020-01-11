@@ -13,7 +13,6 @@ import com.pwnion.rcjrescuemaze.hardware.GetColour;
 import com.pwnion.rcjrescuemaze.hardware.Infrared;
 import com.pwnion.rcjrescuemaze.hardware.Move;
 import com.pwnion.rcjrescuemaze.hardware.Pins;
-import com.pwnion.rcjrescuemaze.hardware.SurvivorFactory;
 import com.pwnion.rcjrescuemaze.hardware.Ultrasonic;
 import com.pwnion.rcjrescuemaze.software.MoveToCoords;
 import com.pwnion.rcjrescuemaze.software.Pathing;
@@ -34,9 +33,7 @@ public class MainBinder extends AbstractModule implements Module {
     	
     	bind(Pathing.class).to(MoveToCoords.class);
     	
-    	install(new FactoryModuleBuilder()
-    			.implement(Infrared.class, GetSurvivors.class)
-    			.build(SurvivorFactory.class));
+    	bind(Infrared.class).to(GetSurvivors.class);
     	
     	install(new FactoryModuleBuilder()
     			.implement(RGBFromImage.class, GetColour.class)

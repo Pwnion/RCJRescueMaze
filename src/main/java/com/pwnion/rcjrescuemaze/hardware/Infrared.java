@@ -33,8 +33,9 @@ public abstract class Infrared {
 		try {
     		ProcessBuilder pb = new ProcessBuilder("i2cget", "-y", Integer.toString(pins.I2CBUS), Byte.toString(pins.I2CADDRS.get(positions.indexOf(pos))), Byte.toString(pins.RAWIR1));
 		    Process p = pb.start();
+		    Thread.sleep(50);
 		    BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-
+		    
 		    temp = Integer.parseInt(reader.lines().findAny().get().substring(2), 16);
 
 		    p.waitFor();
@@ -58,7 +59,7 @@ public abstract class Infrared {
 	}
 	
 	//Abstract implementation
-	public abstract ArrayList<Boolean> get();
+	public abstract HashMap<String, Boolean> get();
 	public abstract boolean get(String key);
 
 }

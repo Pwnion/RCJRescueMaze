@@ -41,8 +41,8 @@ public class Move extends DrivingMotors {
 	};
 	
 	@Inject
-	public Move(Pins pins, SharedData sharedData, ColourFactory colourFactory, Ultrasonic ultrasonic) {
-		super(pins, ultrasonic);
+	public Move(Pins pins, SharedData sharedData, ColourFactory colourFactory, Ultrasonic ultrasonic, DispenserMotor dispenserMotor, GetSurvivors getSurvivors) {
+		super(pins, ultrasonic, getSurvivors, dispenserMotor);
 		
 		this.pins = pins;
 		this.sharedData = sharedData;
@@ -155,6 +155,7 @@ public class Move extends DrivingMotors {
 		return returnVal;
 	}
 	
+	
 	@Override
 	public final void goUntil(String direction, float distanceToWall) throws InterruptedException, ExecutionException {
 		goUntil(direction, distanceToWall, 1024);
@@ -162,8 +163,27 @@ public class Move extends DrivingMotors {
 	
 	@Override
 	public final void goUntil(String direction, float distanceToWall, int speed) throws InterruptedException, ExecutionException {
-		start2(direction, 100000, 0, speed);
-		while(ultrasonic.rawSensorOutput().get(direction) > distanceToWall);
+		
+		System.out.println("US: " + ultrasonic.rawSensorOutput().get(direction));
+		System.out.println("distanceToWall: " + distanceToWall);
+		
+		ultrasonic.populateSensorOutput();
+		System.out.println(ultrasonic.rawSensorOutput());
+		if(ultrasonic.rawSensorOutput().get(direction) > distanceToWall) {
+			start2(direction, 100000, 100000, speed);
+			ultrasonic.populateSensorOutput();
+			while(ultrasonic.rawSensorOutput().get(direction) > distanceToWall) {
+				System.out.println(ultrasonic.rawSensorOutput().get(direction));
+				ultrasonic.populateSensorOutput();
+			}
+		} else {
+			start2(oppDir(direction), 100000, 100000, speed);
+			ultrasonic.populateSensorOutput();
+			while(ultrasonic.rawSensorOutput().get(oppDir(direction)) < distanceToWall) {
+				System.out.println(ultrasonic.rawSensorOutput().get(oppDir(direction)));
+				ultrasonic.populateSensorOutput();
+			}
+		}
 		stop();
 	}
 }

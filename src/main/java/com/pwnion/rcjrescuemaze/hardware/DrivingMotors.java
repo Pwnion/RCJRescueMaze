@@ -12,8 +12,10 @@ import com.pwnion.rcjrescuemaze.Main;
 public abstract class DrivingMotors {
 	private final Pins pins;
 	private final Ultrasonic ultrasonic;
+	private final GetSurvivors getSurvivors;
+	private final DispenserMotor dispenserMotor;
 	
-	protected long globalMoveDuration = 2150;
+	public static long globalMoveDuration = 2200;
 
 	private final HashMap<String, String> oppDirections = new HashMap<String, String>() {
 		private static final long serialVersionUID = 1L;
@@ -26,9 +28,11 @@ public abstract class DrivingMotors {
 	};
 	
 	@Inject
-	public DrivingMotors(Pins pins, Ultrasonic ultrasonic) {
+	public DrivingMotors(Pins pins, Ultrasonic ultrasonic, GetSurvivors getSurvivors, DispenserMotor dispenserMotor) {
 		this.pins = pins;
 		this.ultrasonic = ultrasonic;
+		this.getSurvivors = getSurvivors;
+		this.dispenserMotor = dispenserMotor;
 	}
 	
 	ArrayList<String> QueueDir = new ArrayList<String>();
@@ -55,7 +59,7 @@ public abstract class DrivingMotors {
 			time = QueueTime.get(0);
 			long timeMoved = 0;
 			
-			long interval = 500; //interval between checking with ultrasonics for irregular activity
+			long interval = 750; //interval between checking with ultrasonics for irregular activity
 			
 			if(time >= interval) {
 				QueueTime.set(0, time - interval);
@@ -102,7 +106,8 @@ public abstract class DrivingMotors {
 			//Do US stuff
 			HashMap<String, Float> sensorOutput = new HashMap<String, Float>();
 			try {
-				sensorOutput = Main.injector.getInstance(Ultrasonic.class).rawSensorOutput();
+				ultrasonic.populateSensorOutput();
+				sensorOutput = ultrasonic.rawSensorOutput();
 			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 			}
@@ -111,12 +116,16 @@ public abstract class DrivingMotors {
 			double defaultMargin = 7;
 			double normalTolerance = 1;
 			
-			long adjustTime = 300;
+			long adjustTime = 140;
 			
 			for(String position : sensorOutput.keySet()) {
+				if(QueueDir.isEmpty()) {
+					break;
+				}
 				boolean perp = true;
 				if(position == direction || oppDirections.get(position) == direction) {
 					perp = false;
+					continue;
 				}
 				float dis = sensorOutput.get(position);
 
@@ -151,6 +160,9 @@ public abstract class DrivingMotors {
 			if(addDir(direction, prevDir).length() == 0) {
 				QueueDir.remove(counter);
 				QueueTime.remove(counter);
+				if(QueueDir.isEmpty()) {
+					break;
+				}
 				continue;
 			}
 			
@@ -182,7 +194,7 @@ public abstract class DrivingMotors {
 		}
 	}
 	
-	private String oppDir(String dir) {
+	protected String oppDir(String dir) {
 		switch(dir) {
 		case "up":
 			return "down";
@@ -197,6 +209,8 @@ public abstract class DrivingMotors {
 	}
 	
 	private String addDir(String a, String b) {
+		return "both";
+		/*
 		System.out.println("ADDING DIRECTIONS A = " + a + " B = " + b);
 		String temp;
 		
@@ -232,13 +246,18 @@ public abstract class DrivingMotors {
 				}
 			}
 		}
-		return "";
+		return "";//*/
 	}
 	
 	private void pulse(HashMap<String, GpioPinDigitalOutput> motor, String direction, long pulseDuration) {
 		//motor.get("clockwise").low();
 		//motor.get("anticlockwise").low();
-		motor.get(direction).pulse(pulseDuration);
+		
+		if(pulseDuration > 0) {
+			motor.get(direction).pulse(pulseDuration);
+		}
+		
+		
 	}
 	
 	public final void start2(String direction, long localMoveDuration, long delay) {
@@ -265,6 +284,20 @@ public abstract class DrivingMotors {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+		
+		//Call upon Survivors function to search for any survivors and detect them
+		getSurvivors.read();
+		System.out.println("\n\n\n******\ngetSurvivors.get()\n*********\n\n\n" + getSurvivors.get());
+		if(getSurvivors.get().values().contains(true)) {
+			dispenserMotor.out(180);
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			dispenserMotor.in(185);
+			System.out.println("\n\n\nVICTORY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n");
 		}
 		
 		//Assign Motors to Move
@@ -338,11 +371,11 @@ public abstract class DrivingMotors {
 		
 		//Sleep for Pulse and Record AntiCrash Vars
 		try {
+			timeSince = System.currentTimeMillis();
 			if(moveDuration - delay > 0) {
 				Thread.sleep(moveDuration - delay);
 			}
 			timeTill = moveDuration - delay;
-			timeSince = System.currentTimeMillis();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

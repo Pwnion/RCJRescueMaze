@@ -1,17 +1,12 @@
 package com.pwnion.rcjrescuemaze;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -21,13 +16,13 @@ import com.pwnion.rcjrescuemaze.datatypes.Coords;
 import com.pwnion.rcjrescuemaze.datatypes.UnvisitedTileData;
 import com.pwnion.rcjrescuemaze.datatypes.VisitedTileData;
 import com.pwnion.rcjrescuemaze.hardware.ColourFactory;
+import com.pwnion.rcjrescuemaze.hardware.DispenserMotor;
 import com.pwnion.rcjrescuemaze.hardware.DrivingMotors;
 import com.pwnion.rcjrescuemaze.hardware.GetSurvivors;
 import com.pwnion.rcjrescuemaze.hardware.GetWalls;
 import com.pwnion.rcjrescuemaze.hardware.GetColour;
 import com.pwnion.rcjrescuemaze.hardware.Move;
 import com.pwnion.rcjrescuemaze.hardware.Pins;
-import com.pwnion.rcjrescuemaze.hardware.SurvivorFactory;
 import com.pwnion.rcjrescuemaze.software.MoveToCoords;
 import com.pwnion.rcjrescuemaze.software.SharedData;
 
@@ -45,17 +40,30 @@ public class Main {
 	private static GetSurvivors getSurvivors;
 	
 	@Inject
-	private static SurvivorFactory survivorFactory;
+	private static DrivingMotors move;
 	
 	@Inject
-	private static DrivingMotors move;
+	private static DispenserMotor dispenserMotor;
 	
 	@Inject
 	private static Pins pins;
 	
+	@Inject
+	private static GetWalls getWalls;
+	
 	private static boolean start = false;
 	
-	private static int levelChangeCounter = 0;
+	//private static int levelChangeCounter = 0;
+	
+	private final static HashMap<String, String> oppDir = new HashMap<String, String>() {
+		private static final long serialVersionUID = 1L;
+		{
+			put("up", "down");
+			put("left", "right");
+			put("down", "up");
+			put("right", "left");
+		}
+	};
 	
 	private static final void manageTiles(GetWalls getWalls) {
 		if(start) {
@@ -119,32 +127,47 @@ public class Main {
 		
 	}
 	
-	public static Injector injector = Guice.createInjector(new MainBinder());
+	public static boolean restart = false;
 
 	public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
+		Injector injector = Guice.createInjector(new MainBinder());
+		
 		sharedData = injector.getInstance(SharedData.class);
 		move = injector.getInstance(Move.class);
 		getColour = injector.getInstance(ColourFactory.class).create("/home/pi/cam.jpg");
-		survivorFactory = injector.getInstance(SurvivorFactory.class);
-		getSurvivors = survivorFactory.create(new ArrayList<Boolean>(Collections.nCopies(4, false)));
 		pins = injector.getInstance(Pins.class);
+		dispenserMotor = injector.getInstance(DispenserMotor.class);
+		getWalls = injector.getInstance(GetWalls.class);
 		
-		System.out.println("Ready");
-		while(pins.buttonPin.isLow());
-		
-		ProcessBuilder pb = new ProcessBuilder("raspistill", "-o", "/home/pi/cam.jpg", "-w", "32", "-h", "32", "-t", "0", "-tl", "0", "-ss", "100000", "-ex", "night",
-				   "-co", "25", "-sa", "10", "-br", "55", "-drc", "low").inheritIO();
-		Process p = pb.start();
-		
-		//Setup Test
-		move.go("up");
-		sharedData.setCurrentPos(0, 0);
-		manageTiles(injector.getInstance(GetWalls.class));
-		
-		for(int i = 0; i < 3; i++) {
+		while(true) {
+			ProcessBuilder pb = new ProcessBuilder("raspistill", "-o", "/home/pi/cam.jpg", "-w", "32", "-h", "32", "-t", "0", "-tl", "0", "-ss", "100000", "-ex", "night",
+					   "-co", "25", "-sa", "10", "-br", "55", "-drc", "low").inheritIO();
+			Process p = pb.start();
+			
+			System.out.println("Ready");
+			while(pins.buttonPin.isLow());
+			sharedData.startTime();
+			
+			//Setup Test
+			move.go("up");
+			sharedData.setCurrentPos(0, 0);
+			manageTiles(injector.getInstance(GetWalls.class));
+			
+			ExecutorService pool = Executors.newFixedThreadPool(2); // creates a pool of threads for the Future to draw from
+
+			pool.submit(new Callable<Integer>() {
+				@Override
+				public Integer call() throws IOException {
+					while(pins.buttonPin.isLow());
+					Main.restart = true;
+					System.out.println("23-8562-83956: " + Main.restart);
+					return 0;
+				}
+			});
+			
+			//for(int i = 0; i < 3; i++) {
 			while(sharedData.getUnvisited().size() > 0) {
 				//getColour = injector.getInstance(GetColour.class);
-				getSurvivors = survivorFactory.create(new ArrayList<Boolean>(Collections.nCopies(4, false)));
 				pathing = injector.getInstance(MoveToCoords.class);
 				
 				//Calculate distance to unvisited tiles and update each with new distance value (Uses Pathing.java functions)
@@ -162,17 +185,81 @@ public class Main {
 				//Call upon searching function to find and move to next tile
 				System.out.println("Closest Tile, " + sharedData.getClosestTile());
 				
+				if(restart) {
+					System.out.println("23-85sdvsdvsdv62-83956: " + restart);
+					restart = false;
+					break;
+				}
+				
 				pathing.moveToCoords(sharedData.getClosestTile(), map);
+				
+				if(restart) {
+					System.out.println("23-8562-839asvdfbd56: " + restart);
+					restart = false;
+					break;
+				}
+				
+				/*
+				long modTime = new File("/home/pi/cam.jpg").lastModified();
+				
+				while(modTime == new File("/home/pi/cam.jpg").lastModified());
+				
+				if(getColour.get().equals("")) {
+					long startTime = System.currentTimeMillis();
+					while((System.currentTimeMillis() - startTime) < 10000) {
+						if(pins.buttonPin.isHigh()) {
+							
+						}
+					}
+				}*/
 			
 				//Remove current tile from unvisited
 				sharedData.removeUnvisited(sharedData.getCurrentPos());
 				
 				manageTiles(injector.getInstance(GetWalls.class));
 	
-				//Call upon Survivors function to search for any survivors and detect them
-				getSurvivors.get();
+				
+				
+				
+				//Do Sensor stuff
+				getSurvivors = injector.getInstance(GetSurvivors.class);
+				HashMap<String, Float> sensorOutput = new HashMap<String, Float>();
+				HashMap<String, Integer> infa = new HashMap<String, Integer>();
+				getWalls.populateSensorOutput();
+				sensorOutput = getWalls.rawSensorOutput();
+				infa = getSurvivors.rawSensorOutput();
+				
+				//Measurements in cm
+				long adjustTime = 500;
+				long moveDuration = (DrivingMotors.globalMoveDuration / 4) - adjustTime;
+				int infaredThreshold = 40;
+				
+				System.out.println(sensorOutput.keySet());
+
+				
+				
+				for(int j = 0; j < 4; j++) {
+					String position = sharedData.getPositions(j);
+					System.out.println(sensorOutput.keySet() + " + " + position);
+					float dis = sensorOutput.get(position);
+
+					if(dis == -1 && (infa.get(position) > infaredThreshold)) {
+						System.out.println("Found Invalid Wall Readjusting");
+						move.start2(oppDir.get(position), adjustTime);
+						getWalls.populateSensorOutput();
+						float newWallDis = getWalls.rawSensorOutput().get(position);
+						if(newWallDis != -1) {
+							move.start2(oppDir.get(position), moveDuration);
+							System.out.println("/n/n/n           DETECTED WALL MOVING AWAY");
+						} else {
+							move.start2(position, adjustTime);
+						}
+					}
+					System.out.println(dis);
+				}	
 			}
 			
+			/*
 			if(!sharedData.getRampTile().toString().equals(null)) {
 				Consumer<Integer> save = num -> {
 					try {
@@ -231,18 +318,19 @@ public class Main {
 						put("right", "left");
 					}
 				}.get(rampDir));
-			} else break;
+			} else break;*/
+			//}
+			
+			//pathing.moveToCoords(new Coords(0, 0));
+			//move.go("down");
+			
+			p.destroy();
 		}
+		//System.out.println("\n\n Finished in " + ((System.currentTimeMillis() - sharedData.getStartTime()) / 1000) + "sec, Moved " + sharedData.getFullPath().size() + " tiles or " + (sharedData.getFullPath().size() * 30) + "cm");
+		//System.out.println("Full Path: " + sharedData.getFullPath());
 		
-		System.out.println("\n\n Finished in " + sharedData.getTime() + "sec, Moved " + (sharedData.getTime() / 3) + " tiles or " + (sharedData.getTime() * 10) + "cm");
-		System.out.println("Full Path: " + sharedData.getFullPath());
+		//p.destroy();
 		
-		p.destroy();
-		
-		System.exit(0);
-		
-		//pathing.moveToCoords(new Coords(0, 0));
-		//move.go("down");
-		
+		//System.exit(0);
 	}
 }

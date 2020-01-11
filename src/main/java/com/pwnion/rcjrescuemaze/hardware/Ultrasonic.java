@@ -17,14 +17,22 @@ public abstract class Ultrasonic {
 	//Inject a pins object as a dependency
 	private final Pins pins;
 	
+	protected HashMap<String, Float> rawSensorOutput = new HashMap<String, Float>();
+	
 	//Constructor that takes the position of the ultrasonic sensor on the robot as a parameter
 	@Inject
 	protected Ultrasonic(Pins pins) {
 		this.pins = pins;
+		
+		try {
+			populateSensorOutput();
+		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	//Triggers pulse of sound for sensor at specified position, records time and calculates/returns distance
-	private final float getDistance(String pos) throws InterruptedException {
+	public float getDistance(String pos) throws InterruptedException {
 		ArrayList<Float> sensorOutputs = new ArrayList<Float>();
 		boolean continueCondition = false;
 		int passes = 20;
@@ -35,9 +43,10 @@ public abstract class Ultrasonic {
 			
 			long timeoutCounter = System.nanoTime();
 			
+			long timeoutDis = 14; //cm
 			
 			while(pins.receivePins.get(pos).isLow()) {
-				if(System.nanoTime() - timeoutCounter > 1282000) {
+				if(System.nanoTime() - timeoutCounter > (58200 * timeoutDis)) {
 					continueCondition = true;
 					break;
 				}
@@ -50,7 +59,7 @@ public abstract class Ultrasonic {
 			long startTime = System.nanoTime(); // Store the current time to calculate ECHO pin HIGH time.
 			
 			while(pins.receivePins.get(pos).isHigh()) {
-				if(((((System.nanoTime() - startTime) / 1e3) / 2) / 29.1) > 22.5) {
+				if(((((System.nanoTime() - startTime) / 1e3) / 2) / 29.1) > timeoutDis) {
 					continueCondition = true;
 					break;
 				}
@@ -64,7 +73,7 @@ public abstract class Ultrasonic {
 			
 			sensorOutputs.add((float) ((((endTime - startTime) / 1e3) / 2) / 29.1));
 			
-			Thread.sleep(3);
+			Thread.sleep(10);
 		}
 		
 		System.out.println(pos);
@@ -92,11 +101,17 @@ public abstract class Ultrasonic {
 		return newMean;
 	}
 	
-	//Runs getDistance() for all four sensors, associates them with a position in a hashmap and returns said hashmap
-	public HashMap<String, Float> rawSensorOutput() throws InterruptedException, ExecutionException {
+	public void populateSensorOutput() throws InterruptedException, ExecutionException {
+		rawSensorOutput.clear();
+		rawSensorOutput.put("up", getDistance("up"));
+		rawSensorOutput.put("left", getDistance("left"));
+		rawSensorOutput.put("down", getDistance("down"));
+		rawSensorOutput.put("right", getDistance("right"));
+		
+		/*
 		ExecutorService pool = Executors.newFixedThreadPool(5); // creates a pool of threads for the Future to draw from
 
-		return new HashMap<String, Float>() {
+		rawSensorOutput = new HashMap<String, Float>() {
 			private static final long serialVersionUID = 1L;
 			{
 				put("up", pool.submit(new Callable<Float>() {
@@ -116,7 +131,12 @@ public abstract class Ultrasonic {
 				    public Float call() throws InterruptedException { return getDistance("right"); }
 				}).get());
 			}
-		};
+		};*/
+	}
+	
+	//Runs getDistance() for all four sensors, associates them with a position in a hashmap and returns said hashmap
+	public HashMap<String, Float> rawSensorOutput() throws InterruptedException, ExecutionException {
+		return rawSensorOutput;
 	}
 	
 	private static float round(float value, int places) {

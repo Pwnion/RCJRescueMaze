@@ -10,11 +10,11 @@ public class DispenserMotor {
 		this.pins = pins;
 	}
 	
-	public void clockwise(int degrees) {
-		pins.stepperMotor.step(2048 * (360 / degrees));
+	public void out(int degrees) {
+		pins.stepperMotor.step((int) (2048f * ((float) degrees / 360f)));
 	}
 	
-	public void anticlockwise(int degrees) {
-		pins.stepperMotor.step(-2048 * (360 / degrees));
+	public void in(int degrees) {
+		pins.stepperMotor.step((int) (-2048f * ((float) degrees / 360f)));
 	}
 }
